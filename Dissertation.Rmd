@@ -1,0 +1,1242 @@
+---
+title: "An Investigation Into The Use Of Socio-Demographics For The Location Optimisation Of 'Zero-Waste' Shops In England & Wales"
+#author: "Student id: 201578497"
+geometry: "left=1.2cm,right=1.2cm,top=1.5cm,bottom=1.5cm"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+    fig_caption: yes
+    toc: yes
+  
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{Calibri}
+  - \usepackage{placeins}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhead[R]{201578497}
+  - \fancyhead[L]{QM Dissertation}
+csl: https://www.zotero.org/styles/harvard-university-of-leeds
+bibliography: references.bib
+---
+
+```{=tex}
+\fancyhf{}
+\thispagestyle{fancy}
+\fancyhead[R]{201578497}
+\fancyhead[L]{GEOG3050}
+\rfoot{\thepage\ of \pageref{LastPage} }
+```
+
+------------------------------------------------------------------------
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	error = FALSE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	comment = "",
+	tidy = FALSE
+)
+cache.val = T
+
+# Load / Install packages-------------------------------------------------------
+#install.packages("", dependecies = TRUE)
+library(knitr)
+library(sf)
+library(kableExtra)
+library(ggplot2)
+library(basemaps)
+library(mapview)
+library(openrouteservice)
+library(ggspatial)
+library(stringr)
+library(patchwork)
+library(dplyr)
+library(rgdal)
+library(viridis)
+library(corrplot)
+library(tidyr)
+library(tidyverse)
+library(sp)
+library(maptools)
+library(rgeos)
+library(readxl)
+library(gridExtra)
+
+
+#API Key info - should only need loading once -  500
+#ors_api_key("5b3ce3597851110001cf62480f8858be0885487ca2a78900b689815b")
+
+#API Key info - should only need loading once -  2500
+#ors_api_key("5b3ce3597851110001cf624810789863e851418a86e0341fb278a772")
+```
+
+\FloatBarrier
+
+\maketitle
+
+------------------------------------------------------------------------
+
+\newpage
+
+## Literature Review
+
+This section will review the literature on some of the most relevant and important methods of store location planning that are employed in the retail sector. Each will be discussed and critiqued for appropriateness for use in this study. A review of studies that focus on environmentally conscious consumption behaviours and associated demographic profiles will be carried out. This will provide the justification for the decisions taken around the choices of data that will be used in the chosen method for this piece of work.
+
+Municipal waste, as a general concept, and in particular packaging waste, and the way in which we all as consumers can tackle the associated issues with the latter will be discussed. Firstly, a brief history of waste will be described for context, including some of the problems that are associated with production and consumerism. Secondly, the review will move on to a critique of the research in relation to zero-waste lifestyles and the changes in attitudes and practices towards environmentally conscious consumption. Insight in to the growth of zero-waste shops and the related product solutions that are linked to these, which help move retail towards zero-waste consumer practices will be addressed. The picture will move towards a focus on how these solutions are being practised in England and Wales.
+
+### Zero Waste Concept: Then & Now
+
+Prior to industrialization, society produced very little waste [@mauch2022]. People would feed livestock with leftover food, repair broken items, and household goods such as furniture would be handed down to the next generation. With the advent of industrial capitalism in the mid-nineteenth century, production was designed to maintain itself, and old products discarded when a new, or better product when one is made available. This is the defining feature of consumerism [@graeber2011]. After World War II the world inevitably saw a huge rise in waste of all kinds due to mass-production and mass-consumerism. As Figure \ref{globalwaste} shows, the amount of waste generated globally in 1965 was around 635 million tonnes (mt) increasing to 1999 mt in 2015, and is projected to rise to 3539 mt by 2050 [@chen2020].
+
+\FloatBarrier
+
+![Global Yearly Waste Production by Type [@chen2020]\label{globalwaste}](Images/Globalwaste.png){width="514"}
+
+\FloatBarrier
+
+The term "zero waste" was coined in 1973 by Paul Palmer [@zaman2015] in relation to the reusable "clean" chemical waste being produced in Silicone Valley. He started selling these chemicals back to the industry with the principal strategy that everything should be reused rather than used once and discarded [@mauch2022]. The term evolved over the following years and today, there seems to be no consensus on the definition as such [@pietzsch2017]. Zero-waste as a term that now encompasses the theory, practice, and learning of governments through to individuals, and is a catch-all term for the response to the perceived crisis of waste and the failure to manage it [@hannon2018].
+
+In England in 2002 for example, it was estimated that producers accounted for 91% of national waste [@murray2002]. Within the area of manufacturing and production for example, zero-waste as a concept is an effective way to help minimise solid waste, and through redesign, resource life cycles enable products to be reused [@song2015].
+
+From a consumer perspective, food waste reduction has become one of the biggest areas of concern for zero waste research [@zhang2022]. Around one third of all the food bought is thrown away in England [@murray2002], and environmental deterioration that is caused by this non-sustainable consumption impedes sustainable development [@chekima2016; @badowska2019]. Food waste is linked to packaging. Food retail uses the highest amount of plastics and is the reason why packaging makes up the largest constituent of plastic waste [@sastre2022]. Figure \ref{globalplastic} shows that global plastic production in 2015 was just under 350 mt with over 35% of all plastic produced being used for packaging (see figure \ref{plasticuses}).
+
+\FloatBarrier
+
+![Global Plastic Production : 1950 - 2015 [@beckman2018] \label{globalplastic}](Images/WorldPlastic_1950_2015.png){width="300"}
+
+![The different uses of plastic. [@beckman2018] \label{plasticuses}](Images/Plastic_use.png){width="300"}
+
+\FloatBarrier
+
+Figure \ref{ancum_plastic} shows that around 10 mt of plastics that are produced end up in the worlds oceans. Although the annual amount is predicted to fall, the cumulative effect of adding to the problem, is estimated to rise, albeit slower, to over 1500 mt by 2100.
+
+\FloatBarrier
+
+![Annual and Cumulative Plastic Input into Oceans [@chen2020]\label{ancum_plastic}](Images/ann_cum_plastic.png){width="514"}
+
+\FloatBarrier
+
+The problem of waste in food retail can partly be addressed through product design, where packaging can be produced to have as little impact on the environment as possible. The idea of minimising environmental damage from packaging and it's relationship with sustainability has indeed seen a large increase in research and literature [@sastre2022], and in the UK there have even been trials of changes to packaging free retail in some of the larger supermarket chains.
+
+In 2019, Waitrose launched a trial in its Oxford store where it dedicated a section of the store to a new refill station, where cleaning materials, wine, and dried goods such as rice were made available to customers that wanted to use their own reusable containers. By testing this method of shopping in store, they were able to gauge how much appetite there was for a different type of shopping experience [@smithers2019]. by doing this they have shown how significant the role of the consumer is in how food retail operates. and the problem of food waste and how a move to sustainable consumerism can be achieved. Due to the success of the trial of Waitrose "Unpacked", they introduced the refill options to three other stores, and as interest and demand grows, they hope to offer the "Unpacked" option in more stores and online over time [@waitrose&partners].
+
+### Zero Waste Shops
+
+Zero-waste shops are shops that are dedicated to eliminating all unnecessary waste from the retail consumer experience [@watson2020]. They do this with practices that eliminate plastic packaging by displaying products in bulk where they can, and customers bring their own containers for items, or use paper bags for supplied by the store. They also aim to send all food that expires to food-banks or community kitchens, further eliminating waste in this way. Bulk purchasing of sellable products is another goal, which minimises transport waste products such as CO~2~. Another important aim for zero-waste shops is to stock products with known origins and from suppliers with similar priorities, and also to buy as locally as possible [@believeearth2017].
+
+Zero-waste shops, using these practices, can help in the building of a sense of community. They are often small neighbourhood stores that have been started though crowd-funding or another local campaign [@greenpeaceusa2019]. This allows for the community around them to be involved from the start and provides a sense of investment in the success of the store.
+
+However, as the demand for sustainable retail rises, the competition for customers will increase, and as Waitrose have already stated, the larger stores will be able to offer more choice than perhaps the smaller dedicated local stores can. This may mean that product choice in the larger retailers will be greater, but as described above, there is more to environmentally conscious retail than simply packaging and the elimination of plastic. The larger retailers will also have to consider the ethical choices made by consumers in relation to the environmental impacts of supply chains, and the related support for local producers.
+
+### The customer
+
+Because the community tends to provide the customers for these shops, an important question to answer, is one that asks who these customers are likely to be. A survey to identify the levels of environmental awareness in consumers was carried out in Slovakia. It targeted the age groups between 1965-1980 (*gen' x*) and 1981-1996 (*gen' y*), due to their greater purchasing power over other groups. They found that amongst the *gen' y* group, 39% were likely to use zero-waste stores often as opposed to 10% of the *gen' x* group [@holotova2020]. This suggests that age is an important variable when analysing the demographics of the customer base of zero-waste stores. @diamantopoulos2003 highlights the weakness in using socio-demographics to try to define a 'green consumer', as environmental 'awareness' is not fully understood through gender, age and education etc. However, there are a large number of studies including [@sang2015; @bekhet2011; @yuan2013; @zhao2014], who have all found that environmentally conscious 'behaviours' are strongly associated with demographic characteristics such as age, education, occupation type, and income to name a few. AGE SHOULD ONT BE A VARIABLE AND SHOULD BE TESTED AFTER RESULTS HAVE BEEN SHOWN. THIS CAN HIGHLIGHT THE IMPORTANCE OF AGE RATHER THAN ARBITRARILY CHOOSING AN AGE A A VARIABLE TO INCLUDE IN THE SCORECARD.
+
+### Store planning
+
+**Geodemographics**
+
+1)  I think it is too general. Be specific in how this can relate to customers for this type of retail
+
+In order to analyse the potential of a location, retailers need to know the market demand that exists. To do this, they use, amongst other data, geodemographic classifications that have been aggregated from census and other sources. Data are aggregated in to small areas such as post-code, or the Output Area Classification [@birkin2017]. Potential customers must be identified from the data and in the case of the zero-waste store, environmentally conscious or green consumer behaviours and characteristics are essential to understand the demand.
+
+Around 86% of the UK population is classed as urban and as with cities across the globe, population growth is expected to see over 90% of the worlds population living in cities, and the waste that is produced in them also grow [@statista]. This hints at the need to look at the demographic make-up of urban populations rather than rural communities.
+
+The environmental context is complex to understand, therefore adults that have a high education level must be considered as potential ethical consumers in the first instance [@paul2016; @chekima2016]. It is known that urban populations are more likely to be highly educated, and gain higher incomes [@wensing2023a]. Gender and age are also indicators of environmentally conscious consumerism. @gilg2005 found that 65% of committed environmental behaviours in relation to consumerism were attributed to females in the study, and the mean age was 55 years. **HAS THIS CHANGED - GOTTEN YOUNGER RECENTLY??** However, in the UK 18-24 is the age at which females especially are likely to consume ethically.
+
+The UK urban population population is
+
+These provide a snapshot of the age ranges, ethnicities, population density, household compositions, housing type and socio-economic make-up and employment classifications for example, in each area, which can in turn be used to target specific groups based on the market for a particular service. A problem with the averaging of characteristics in this way is known as the ecological fallacy [@openshaw1984]. This is essentially when an averaged characteristic of an area is applied to the individual scale, which potentially ignores or fails to recognise finer detail in demographic make-up of an area. For example, an area may be calculated to be wealthy, but within that region there may be a pocket of poverty that is aggregated out and vital support for this population may be missed.
+
+**Catchment Area**
+
+Defining the catchment area for a store is highly important aspect of retail location analysis. To do this, a possible solution would be to draw an arbitrary boundary around the store location and include the population within that boundary as potential custom [@hernandez2000]. A more realistic catchment area definition would be to estimate how far a customer will travel, either by foot, car, or by public transport, to a store location. A boundary that is 20 minutes walk to the store location could be used for example, and would take in to account terrain and route layout in terms of accessibility. Using a buffer and overlay system available in GIS can build an accurate picture of an area through the addition or removal of features. For example, a discount retailer looking for a new store location may filter out customers from a higher income class in an area leaving lower income populations in the analysis data [@birkin2017]. It may also provide a better picture of the residential make-up of an area, by allowing for non-residential areas to be accounted for, thus providing a more accurate picture of the demographics of an area, and therefore potential custom. This can be used in conjunction with a network analysis, in which accessibility can be further investigated. This entails a more comprehensive analysis of road networks to deduce the travel times to the providers of a service [@birkin2017].
+
+**Location Choice**
+
+Once various locations have been identified, a choice must be made. There are numerous methods for choosing a location of a store, and these can range from the more simple to highly complex. The simpler, cheaper and traditional approach, where experience tells the planner where to locate a store has not entirely been replaced by the more complex methods such as checklists or scorecards [@hernandez2000].
+
+Checklists involve the scoring of a number of chosen variables that positively influence store performance. The variables are rated according to a points system which when combined, can be used to compare other potential locations [@hernandez2000]. This is part of an analogue method of location analysis, in which, once the demographic and retail centre classification variables to be used for the scorecard have been identified, each catchment area can be classified. It is apparent that this technique can be used to investigate the similarities and differences between each location, thus providing a picture of the customer base for a particular type of shop (in this case; zero-waste stores).
+
+Although this method is good at providing a rating of different locations and allows comparisons to be made, it is unable to estimate revenue [@birkin2017].
+
+Multi-variate regression methods are more complex still, and require a great deal of (good quality) data, computing power, and expertise. Decisions are based upon statistically significant results [@hernandez2000]. These methods are good at benchmarking sales forecasting, for example, and mainly used for future development for specific products, or new stores. The same restrictive factors such as computing power are also prevalent in methods such as cluster and factor analysis, where a retailers portfolio can be clustered in to types of offering and used to create a blueprint for strategic change, such as creating discount lines to be sold in cheaper stores based in lower income demographic areas.
+
+Gravity modelling, Spatial Interaction Models (SIMs), and neural network methods are even more complex and expensive to facilitate, in terms of expertise, computing and data. SIMs generally rely on the availability of data such as flows of revenue for example [@birkin1999]. They show the relationships between the flow of consumers and revenue, and are used in the analysis of a new store, or a competitor opening in a location, and the effect it will have on existing provision. [@hernandez2000]. Neural networks are essentially a scaled up version of this and are used to forecast performance related to a large number of new sites
+
+### Conclusion
+
+It has been suggested that statistical modelling such as regression analysis and Spatial interaction Modelling based on the link between flows of money are useful tools for retail location analysis and site planning [@wood2007; @birkin2017; @hernandez2000], however, access to sales data will is restricted and hard to access for resource limited studies. Buffer and overlay techniques take in to account non-residential areas, travel time, and mode of transport, and can be applied to define appropriate catchment areas. Using carefully chosen demographic features, a scorecard or rating system can be applied to these catchment areas which can then replicate the analogue method, in which comparison can be made between the stores and their surrounding demographics related to environmental consumer behaviour. This information can then be extended to look for similar retail centres or demographically similar areas, in which one would expect to find a similar store.
+
+# Methods
+
+Education data - This was cleaned so that only those with degree or above education levels were shown. Each lsoa was then given a % of the population for that lsoa, and this % was given a score out from 0-10. [@papaoikonomou2011]
+
+Occupation data [@bassi2023]
+
+Time [@park2018]
+
+####################### 
+
+Mean age of 55
+
+High level of home ownership
+
+High level of education
+
+High Level of Income - use occupation as a proxy
+
+Single Car per household
+
+2 ppl per household - increased spending available
+
+## Method
+
+In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics surrounding the locations of the stores in the study are of England and Wales. This included the creation of a scorecard based on the selected demographic variables for comparative purposes. This was then used to identify similar areas of the study area in which similar stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical representation, a visual landscape of ethical consumption will be built up. This will lead to the justification of the choices in data used, methodological approach and evaluation of results.
+
+#### Zero Waste Store Location Data
+
+Store data was retrieved using the metadata of the The Zero Waste Network [@thezerowastenetwork] (ZWN) website on which the most comprehensive listing was found during the research. These data were cleaned through manual searching using Google, to identify and remove any stores that were irrelevant to the study, such as incorrectly listed stores, wholesalers, and mobile refill vehicles, and also to highlight any that had closed since being listed. Of the initial 172 stores, 140 remained. Table \ref{tab:zws} shows the first 10 records of this cleaned store data.
+
+```{r zwstab}
+# Uses library(kableExtra)
+# Load zws RDS file
+zws <- readRDS("zws.rds")
+# Display a table of the first 10 records
+kable(zws[1:10,], caption = "\\label{tab:zws}Zero-waste stores data")|>
+  kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
+```
+
+\FloatBarrier
+
+Finally, to check that the remaining stores coordinates sit within the study area, they were plotted, as seen in Figure \ref{zwstores}.
+
+![Map of all Zero Waste Stores in Study Area. \label{zwstores}](Images/zwsmap.png){width="514"}
+
+\FloatBarrier
+
+#### LSOA Area Scale Boundary Data
+
+Boundary data [@opengeographyportala] was downloaded for the study area from the Open Geography Portal. This related to the latest 2021 boundaries at the LSOA scale.
+
+```{r lsoa_table}
+# Create a dataframe to summarise the LSOA Boundary and PWC data
+# Load lsoas and pwc RDS files
+lsoas <- readRDS("lsoas.rds")
+
+# remove the scores from the lsoa data
+lsoas = lsoas |> select(-one_of('occscr', 'tenscr', 'carscr', 'pplscr', 'dedscr'))
+
+kable(lsoas[1:4,c(2,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
+  kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
+```
+
+#### LSOA area scale population weighted centroids
+
+Population Weighted Centroids (PWCs) [@opengeographyportal2022] was retrieved for the study area at the LSOA scale which again related to the same boundary data previously mentioned. This was required in order to process the correct LSOA's that related to the future catchment area isochrone calculations, and capture only those weighted populations that sit within the catchment areas.
+
+```{r pwc_data}
+# Create a dataframe to summarise the LSOA Boundary and PWC data
+# Load lsoas and pwc RDS files
+lsoa_pwc <- readRDS("lsoa_pwc.rds")
+
+kable(lsoa_pwc[1:10,c(2:4)], caption = "\\label{tab:lsoa_pwcs}LSOA population weighted centroid data")|>
+  kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
+```
+
+#### Demographic data
+
+Nomisweb provided the 2021 census data. The percentages were calculated from the total households or population for all 5 variables at the LSOA scale (including area codes to provide linked identifiers for GIS processing) for England and Wales using the query tool provided [@nomis]. The variables were found under the following identifiers, and each was standardised using the scaling method in which each LSOA data point for each variable was scored / ranked from 0 to 1 using the following formula:-
+
+$$
+x_{norm} = (x_{raw} - min_{i})/(max_{i} - min_{i})
+$$
+
+These rankings were then multiplied up by 10 and rounded to the nearest integer to provide a final score for each individual LSOA for each variable between 0 and 10 inclusive.
+
+-   TS003 - Household composition
+
+    This dataset included those households that were classified as either, married single family households with no children, or, cohabiting couple families with no children. See Table \ref{tab:pplscr}.
+
+```{r 2ppl_head_table}
+# Create a table for the Household composition data 
+#a <- read.csv("ppl_cntry_lvl_head.csv") 
+#kable(a[,], caption = "\\label{tab:2pplmain}Total Household Composition for England and Wales")|>
+#  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+#  row_spec(0,bold = T) |>   
+#  column_spec(1,width = "0.8in") |>    
+#  column_spec(2,width = "0.5in") |>   
+#  column_spec(3,width = "0.75in") |>    
+#  column_spec(4,width = "0.35in")  |>    
+#  column_spec(5,width = "1.2in") |>    
+#  column_spec(6,width = "0.35in") |>    
+#  column_spec(7,width = "1.2in")  |>    
+#  column_spec(8,width = "0.35in") 
+#remove(a)
+```
+
+```{r 2ppl_data}
+# Create a table for the Household composition data 
+# Load the 2ppl data
+pplscr <- read.csv("2ppl.csv")
+
+# remove the country row
+pplscr = pplscr[-c(33756), ]
+
+# clean the unrequired columns
+pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Score'))
+
+pplscr <- pplscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+
+kable(pplscr[0:4,], caption = "\\label{tab:pplscr}Total LSOA scores for household composition data for England and Wales")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T) |>
+  column_spec(1,width = "0.8in") |>
+  column_spec(2,width = "0.5in") |>
+  column_spec(3,width = "0.75in")
+```
+
+-   TS045 - Car or van availability
+
+    This dataset included only those households that were reported as having access to a single vehicle only. See Table \ref{tab:carscr}.
+
+```{r car_table}
+# Load the vehicle access data
+carscr <- read.csv("1car.csv")
+
+# clean the unrequired columns and rename them for ease of use
+carscr = carscr |> select(-one_of('Total..All.households', 'X1.car.or.van.in.household', 'score_calc', 'X.'))
+carscr <- carscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+carscr <- carscr  |>  rename_at('score', ~'carscr')
+carscr <- carscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+
+kable(carscr[0:4,], caption = "\\label{tab:carscr}Total LSOA scores for single vehicle access data for England and Wales")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T) |>
+  column_spec(1,width = "0.8in") |>
+  column_spec(2,width = "0.5in") |>
+  column_spec(3,width = "0.75in")
+```
+
+-   TS054 - Tenure - Home Ownership
+
+    This variable included those households that were reported as having either owning their own homes outright, or under a mortgage. See Table \ref{tab:tenscr}.
+
+```{r tenure_table}
+# Load the tenure data
+tenscr <- read.csv("tenure.csv")
+
+# clean the unrequired columns and rename them for ease of use
+tenscr = tenscr |> select(-one_of('Total..All.households',  'score_calc', 'X.', 'Owned..Owns.outright', 'Owned..Owns.with.a.mortgage.or.loan', 'sum'))
+tenscr <- tenscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+tenscr <- tenscr  |>  rename_at('score', ~'tenscr')
+tenscr <- tenscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+
+kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Total LSOA scores for home owners (outright or mortgage) data for England and Wales")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T) |>
+  column_spec(1,width = "0.8in") |>
+  column_spec(2,width = "0.5in") |>
+  column_spec(3,width = "0.75in")
+```
+
+-   TS067 - Highest level of qualification - degree educated
+
+    Education level data was only included those people that have degree level education or above. See Table \ref{tab:dedscr}.
+
+```{r deg_ed_table}
+# Load the degree educated data
+dedscr <- read.csv("degree_educated.csv")
+
+# clean the unrequired columns and rename them for ease of use
+dedscr = dedscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over', 'degree_educated', 'X.', 'MinMax'))
+dedscr <- dedscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+dedscr <- dedscr  |>  rename_at('score', ~'dedscr')
+dedscr <- dedscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+
+kable(dedscr[0:4,], caption = "\\label{tab:dedscr}Total LSOA scores for degree education level or above data for England and Wales")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T) |>
+  column_spec(1,width = "0.8in") |>
+  column_spec(2,width = "0.5in") |>
+  column_spec(3,width = "0.75in")
+```
+
+-   TS063 - Occupation
+
+    Occupation data included those people whose occupations were classified as managers, directors, senior officials, and professional occupations. See Table \ref{tab:occscr}.
+
+```{r occ_data}
+# Load the occupation data
+occscr <- read.csv("occ.csv")
+
+# clean the unrequired columns and rename them for ease of use
+occscr = occscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over.in.employment.the.week.before.the.census', 'X.', 'X1..Managers..directors.and.senior.officials', 'X..1', 'X2..Professional.occupations', 'X..2', 'high_earners.', 'calc'))
+occscr <- occscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+occscr <- occscr  |>  rename_at('score', ~'occscr')
+occscr <- occscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+
+kable(occscr[0:4,], caption = "\\label{tab:occscr}Total LSOA scores for higher rated occupations for England and Wales")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T) |>
+  column_spec(1,width = "0.8in") |>
+  column_spec(2,width = "0.5in") |>
+  column_spec(3,width = "0.75in")
+```
+
+#### Retail Centres
+
+Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales so that once analysis of all current zero waste store locations was completed, potential areas that lack the supply of this type of retail could be identified. The retail centre data was processed through QGIS to identify the geometric centroid of each, which was added to the file.
+
+#### Combining score data and calculating totals
+
+The scores for each individual variable were allocated to the matching LSOA in the LSOA data. A total score for each LSOA was then calculated to a separate column and the data saved. These scores would then be available when analysing the current store locations and the potential un-supplied retail centres.
+
+```{r score_prep}
+# Load the results of the following code to save processing and memory when knitting
+lsoas <- readRDS("lsoas.rds")
+# Convert lsoas to a sf file format and set the CRS to 3857
+lsoas = st_as_sf(lsoas)
+lsoas = st_transform(lsoas, crs = st_crs(3857))
+
+#### Create a dataframe that holds the LSOA21CD id and the score for each variable
+# Convert the lsoas sf file to a data.frame
+#lsoas = as.data.frame(lsoas)
+
+# Join each variables score data and remove the unrequired columns each time
+# carscr
+#lsoas = left_join(lsoas, carscr, "LSOA21CD")
+#lsoas = lsoas |> select(-one_of('Area'))
+
+# dedscr
+#lsoas = left_join(lsoas, dedscr, "LSOA21CD")
+#lsoas = lsoas |> select(-one_of('Area'))
+
+# occscr
+#lsoas = left_join(lsoas, occscr, "LSOA21CD")
+#lsoas = lsoas |> select(-one_of('Area'))
+
+# pplscr
+#lsoas = left_join(lsoas, pplscr, "LSOA21CD")
+#lsoas = lsoas |> select(-one_of('Area'))
+
+# tenscr
+#lsoas = left_join(lsoas, tenscr, "LSOA21CD")
+#lsoas = lsoas |> select(-one_of('Area'))
+
+# sum the individual LSOA row values in columns 10 to 14 and add the result to a new column at the end after tenscr
+#lsoas = lsoas |> 
+#  mutate(lsoatotscr = rowSums(lsoas[,10:14], na.rm = TRUE),
+#         .after=tenscr)
+
+# remove unrequired temporary dataframes etc
+#remove(carscr, dedscr, occscr, pplscr, tenscr)
+
+# Save the lsoa data with the newly added individual scores and the calculated total scores
+#saveRDS(obj = lsoas, file = "lsoas.rds")
+```
+
+#### Creating a scorecard using a known store location example
+
+The following shows the process that will be followed for all zero waste stores. Once the zero waste stores data has been processed, the data for the retail centres that do not contain a zero waste store will be processed using the same methods.
+
+Once the underlying LSOA and demographic data had been cleaned and prepared, a single known store location was isolated from the zero waste store data to test the scorecard making processes on. See Table \ref{tab:bishytab}.
+
+```{r bishy_load}
+# Load bishy store boundary shapefile
+bishy <- read_sf("bishy.shp")
+
+# Convert this to the correct 3857 CRS
+bishy = st_transform(bishy, crs = st_crs(3857))
+
+# rename the geometry column
+bishy <- bishy  |>  rename_at('geometry', ~'bishygeometry')
+
+kable(bishy[,], caption = "\\label{tab:bishytab}Test store data for the Bishy Weigh store in York, England")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T)
+```
+
+Using the OpenRouteService [@openrouteservice], a 20 minute walking time isochrone was calculated around the test store to define the catchment area. This distance/time was chosen partly due to the environmentally beneficial nature of this mode, and partly due to the \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*COMPLETE THIS \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+
+```{r bishy_iso}
+# Load the York isochrone data from the previously run code below
+ywalktime20 <- readRDS("ywalktime20.rds")
+
+# Uses library(mapview) and library(openrouteservice)
+# Create an isochrone around the Bishy Weigh zero waste store
+
+# embed data in the output file
+#mapviewOptions(fgb = FALSE)
+
+# Get the coordinates of the bishy weigh
+#coordinates <- data.frame(lon = bishy$Lon, lat = bishy$Lat)
+
+## Calculate a 20 minute walking time to the store
+#ywalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
+#                      output = "sf", profile = ors_profile("walking"))
+#values <- levels(factor(ywalktime20$value))
+#ranges <- split(ywalktime20, values)
+#ranges <- ranges[rev(values)]
+#names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
+
+# Convert the walktime20 isochrone to the correct CRS
+#ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
+
+#remove(coordinates, values, ranges)
+#
+# Save the York isochrone data
+#saveRDS(obj = ywalktime20, file = "ywalktime20.rds")
+```
+
+Once the isochrone had been calculated from the test store, it was mapped to ensure that the correct store location and catchment area had been calculated for the the known store. See Figure \ref{fig:york_isochrone_test_map}.
+
+```{r york_isochrone_test_map, fig.cap="20 minutes walking distance isochrone from The Bishy Weigh store in York"}
+# Uses library(ggspatial)
+# Convert the walktime20 isochrone to the correct CRS
+ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
+
+# Map the 20 mins isochrone and store location
+# use the walktime LAYER isochrone as the main data layer
+ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
+  # Add the basemap tile 
+  annotation_map_tile(zoomin = 0, type = "osm") +
+  # set the walktime LAYER colour fill and transparency
+  geom_sf(fill = "blue", alpha = 0.1) +
+  # add the store and set its colour
+  geom_sf(data = bishy, colour = "red", size = 2,
+          aes(fill = st_nam)) +
+  # Adjust the legend titles based on the aes settings for both layers
+  guides(color = guide_legend(title = "Catchment Area")) +
+  guides(fill = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+After confirming that the isochrone calculation and store location data produced the desired results the PWCs data was clipped to contain only those that fell within the isochrone catchment area.
+
+```{r york_pwc_clipping}
+lsoas = st_as_sf(lsoas)
+lsoas <- st_transform(lsoas, crs = st_crs(3857))
+# clip the PWCs to only show those inside the 20 minute walk time
+pwc_clip = lsoa_pwc[ywalktime20$geometry,]
+# clip the LSOAs to only show those for the clipped PWCs
+lsoa_clip = lsoas[pwc_clip,]
+
+# convert both results to the correct CRS
+pwc_clip <- st_transform(pwc_clip, crs = st_crs(3857))
+lsoa_clip <- st_transform(lsoa_clip, crs = st_crs(3857))
+
+# calculate the scores for the test score
+
+```
+
+Figure \ref{fig:pwcs_lsoas_york_map} shows how once the PWCs and corresponding LSOAs for the catchment area were identified and mapped to visualise the results and confirm the accuracy of the procedure.
+
+```{r pwcs_lsoas_york_map, warning=FALSE, fig.cap= "Map showing the clipped LSOAs related to the PWCs that fall inside the 20 minute walk time catchment area."}
+# Map the test store, isochrone and corresponding LSOAs and PWCs
+ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
+  # Add the basemap tile 
+  annotation_map_tile(zoomin = 0, type = "osm") +
+  # set the walktime LAYER colour fill and transparency
+  geom_sf(data = lsoa_clip,  colour = "black", aes(alpha = "")) +
+  geom_sf(data = pwc_clip, colour = "black", aes(shape = "")) +
+    geom_sf(fill = "blue", alpha = 0.1) +
+  # add the store and set its colour
+  geom_sf(data = bishy, colour = "red", size = 2,
+          aes(fill = st_nam)) +
+  
+  # Adjust the legend titles based on the aes settings for both layers
+  guides(color = guide_legend(title = "Catchment Area")) +
+  guides(fill = guide_legend(title = "Store Name")) +
+  guides(alpha = guide_legend(title = "LSOA Boundaries")) +
+  guides(shape = guide_legend(title = "LSOA PWCs")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+The test store catchment are contained 18 population weighted centroids. The corresponding LSOAs were selected from the LSOA data and the scores for each variable mapped.
+
+```{r bishycar_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the carscr variable, which relates to % of households with access to a single vehicle."}
+#lsoa_clip <- as.data.frame(lsoa_clip)
+bishycarmap <- lsoa_clip = st_as_sf(lsoa_clip)
+ggplot(lsoa_clip) +
+    # Add the basemap tile 
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(fill = carscr)) +
+  scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
+  guides(fill = guide_legend(title = "Access to a\nsingle vehicle", reverse = TRUE)) +
+  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r ydedscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the dedscr variable, which relates to % of population that is degree educated and above."}
+#lsoa_clip <- as.data.frame(lsoa_clip)
+lsoa_clip = st_as_sf(lsoa_clip)
+ggplot(lsoa_clip) +
+    # Add the basemap tile 
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(fill = dedscr)) +
+  scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
+  guides(fill = guide_legend(title = "Education to degree\nlevel or above", reverse = TRUE)) +
+  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r yoccscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the occscr variable, which relates to the populations with the highest occupation types."}
+#lsoa_clip <- as.data.frame(lsoa_clip)
+lsoa_clip = st_as_sf(lsoa_clip)
+ggplot(lsoa_clip) +
+    # Add the basemap tile 
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(fill = occscr)) +
+  scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
+  guides(fill = guide_legend(title = "Highest occupation\ntypes", reverse = TRUE)) +
+  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r ypplscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the pplscr variable, which relates to % of households that contain 2 people with no children."}
+#lsoa_clip <- as.data.frame(lsoa_clip)
+lsoa_clip = st_as_sf(lsoa_clip)
+ggplot(lsoa_clip) +
+    # Add the basemap tile 
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(fill = pplscr)) +
+  scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
+  guides(fill = guide_legend(title = "Households with 2\npeople & 0 children", reverse = TRUE)) +
+  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r ytenscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the tenscr variable, which relates to % of households that either own outright or mortgage their home."}
+#lsoa_clip <- as.data.frame(lsoa_clip)
+lsoa_clip = st_as_sf(lsoa_clip)
+ggplot(lsoa_clip) +
+    # Add the basemap tile 
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(fill = tenscr)) +
+  scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
+  guides(fill = guide_legend(title = "Households\nthat own or\nmortgage their home", reverse = TRUE, ncol = 2)) +
+  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r ytotscr_map, warning=FALSE, fig.cap="Map showing the total score for the 5 variables for each individual LSOA."}
+#lsoa_clip <- as.data.frame(lsoa_clip)
+lsoa_clip = st_as_sf(lsoa_clip)
+ggplot(lsoa_clip) +
+    # Add the basemap tile 
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(fill = lsoatotscr)) +
+  scale_fill_viridis_c(breaks=seq(10,150,by=5), alpha = 0.7) +
+  guides(fill = guide_legend(title = "Total score\nfor 5 variables", reverse = TRUE, ncol = 2)) +
+  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+Once the variables scores for the test store had each been checked for validity, a final total mean score for the variables and the area as a whole was calculated by summing the scores for each variable and dividing this by the number of LSOAs in the area. This method was used to maintain equivalence and comparative ability between the scrorecard results of each store in the data. This was because some stores may have greater or fewer LSOAs within the catchment area for example, rendering them isolated in terms of data without comparison.
+
+```{r}
+# Create a new variable to hold the totals for the final joined data and convert to a data.frame
+
+lsoa_clip_tot = as.data.frame(lsoa_clip)
+
+##### create a row in the lsoa_clip_tot dataframe for the total MEAN for all lsoas in the area and the total of those totals
+  #r = nrow(b)
+  lsoa_clip_tot <- lsoa_clip_tot |>
+    bind_rows(summarise(lsoa_clip_tot[,9:14], across(where(is.numeric), mean), across(where(is.character), ~'Total')))
+
+  # Join the lsoas to a single shape - USE THIS "JOINED_LSOAS" AS THE FINAL LSOA SHAPE
+  joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
+  joined_lsoas <- as.data.frame(joined_lsoas)
+  joined_lsoas <- joined_lsoas  |>  rename_at('geometry', ~'joinlsoageometry')  
+  
+  # Create a tempp df "FT" to hold the totals for the whole joined LSOAs for each variable
+  ft <- data.frame(matrix(ncol = 6, nrow = 0))
+  ft = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
+  # rename the columns of the new temp df
+  #colnames(ft)<-c("occscrtot","tenscrtot","carscrtot","pplscrtot","dedscrtot", "totscrtot")
+
+  # sum the individual variables for the whole lsoa_clip_tot and add the result to the bottom of lsoa_clip_tot
+  #ft[nrow(ft) + 1,] = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
+
+  # Join all the data together
+  # ft contains the final mean scores for the LSOAs in the area
+  # joined_lsoas contains the single joined LSOA shape
+  bishyjoined = cbind(bishy$st_nam, bishy$bishygeometry, round(ft, digits = 0), joined_lsoas)
+#  remove(bishyjoined)
+```
+
+```{r yjoinscr_map, warning=FALSE, fig.cap="Map showing the total mean score for the total of the 5 variables for each individual LSOA once combined."}
+ggplot() +
+    # Add the basemap tile 
+  annotation_map_tile(zoomin = 0, type = "osm") +
+  # total score for LSOA layer
+  geom_sf(data = bishyjoined, aes(geometry = bishyjoined$joinlsoageometry, fill = bishyjoined$lsoatotscr)) +
+  # fill layer
+  scale_fill_viridis_c(alpha = 0.4) +
+  # Legend customisation
+  guides(fill = guide_legend(title = "Total mean score\nfor area", reverse = TRUE)) +
+  geom_sf(data = bishy, aes(colour = st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r}
+#remove(a, bishy, bishyjoined, ft, joined_lsoas, lsoa_clip, lsoa_clip_tot, lsoa_pwc, lsoas, m, p, pwc_clip, ym1, ym2, ym3, ym4, ym5, ym6, ywalktime20)
+```
+
+Once the test store data had been processed and mapped to ensure validity, the data for all 140 zero waste stores, including the test store, were processed in full using the same processing steps as the test store, and the results were combined with the location data in the zero waste store data for analysis.
+
+```{r zws_iso_loop}
+
+# Load the results file from the code below
+zwsiso <- readRDS("zwsiso.rds")
+
+
+# Loops throughthe zws file and creates a new dataframe (zwsiso) that holds the zws store data and the isochrone for the walktime20 mins boundary.
+
+#############################################################################
+#                                                                           #
+#          Commented out to stop it running                                 #
+#                                                                           #
+#############################################################################
+# create a dataframe to hold the iso results
+#zwsiso <- data.frame(matrix(ncol = 12, nrow = 0))
+#############################################################################
+#i = 0
+#i = i + 1
+#############################################################################
+#for(i in 1:nrow(zws)) {
+  # create a df variable to hold the zws values from row i of zws
+#  isodf = zws[i,]
+  # embed data in the output file rather than html streaming option
+#  mapviewOptions(fgb = FALSE)
+  
+  # Get the coordinates of the store in the (df)
+#  coordinates <- data.frame(lon = isodf$Lon, lat = isodf$Lat)
+  
+  # if there are no coordinates - skip to the next zws record
+#    if(is.na(coordinates$lon)) {
+#    next
+#  }
+  
+  # Calculate a 20 minute walking time isochrone around the store
+#  walktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
+#                               output = "sf", profile = ors_profile("walking"))
+#  values <- levels(factor(walktime20$value))
+#  ranges <- split(walktime20, values)
+#  ranges <- ranges[rev(values)]
+#  names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
+  
+  # Convert the walktime20 isochrone to the correct CRS
+  # USE THIS AS THE ISOCHRONE
+#  walktime20 <- st_transform(walktime20, crs = st_crs(3857))
+  
+  # rename the walktime20 geometry column
+#  walktime20 <- walktime20  |>  rename_at('geometry', ~'walktimegeometry')  
+  #walktime20 <- as.data.frame(walktime20)
+  
+  # Join the calculated walktime 20 data to the zws data in isodf
+#  zwsisoc <- cbind(isodf, walktime20)
+#  zwsiso = zwsiso <- rbind(zwsiso, zwsisoc) 
+  
+#  cat(i, "completed\r")
+  
+  # print i as a count of rows that have completed
+  #print(i)
+  
+  # remove the temporary environments
+#  remove(i, zwsisoc, walktime20, values, ranges, isodf, coordinates)
+#}
+# rename the "geometry" column to zwsgeometry"
+#zwsiso <- zwsiso  |>  rename_at('geometry', ~'zwsgeometry')
+# remove the "center" column
+#zwsiso = zwsiso |> select(-one_of('center', 'group_index', 'value'))
+# Save the zwsiso file
+#saveRDS(obj = zwsiso, file = "zwsiso.rds")
+```
+
+```{r zws_scr_loop}
+zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
+
+#############################################################################                                                                       
+#           Commented out to stop it running                                #
+############################################################################
+
+# Loop through each store to find the pwcs in zwsiso$walktimegeometry
+# Find all the LSOAs related to those PWCs
+# Get the scores for each LSOA
+# Add the scores and the joined LSOA geometry to the [i] row for that store
+
+# Load the data required
+#lsoa_pwc <- readRDS("lsoa_pwc.rds")
+# convert to CRS 3857
+#lsoa_pwc <- st_transform(lsoa_pwc, crs = st_crs(3857))
+#lsoas <- readRDS("lsoas.rds")
+# convert to sf
+#lsoas = st_as_sf(lsoas)
+# convert to CRS 3857
+#lsoas <- st_transform(lsoas, crs = st_crs(3857))
+#zws <- readRDS("zws.rds")
+#zws <- st_transform(zws, crs = st_crs(3857))
+#zwsiso <- readRDS("zwsiso.rds")
+#zwsiso <- st_transform(zwsiso, crs = st_crs(3857))
+
+# Create a dataframe to hold all the joined results
+#zws_joined_lsoa_scr <- data.frame(matrix(ncol = 16, nrow = 0))
+
+#initialise i
+#i = 0
+#i = i + 1
+#for (i in 1:nrow(zwsiso)) {
+  
+  # Select the pwcs that appear in the isochrone for that (i) record in zwsiso
+  
+  # get all the pwcs that appear in the iso for that store
+#  a = lsoa_pwc[zwsiso[i,]$walktimegeometry,]
+  
+  # Check if (a) has 0 rows. If so, sack it off and move to the next record
+#  if(nrow(a) == 0) {
+#    next
+#  }
+  
+  # Convert a to a dataframe to manipulate it
+#  a = as.data.frame(a)
+  
+  # Get all the lsoas that relate to the pwcs just found
+#  b = lsoas[(lsoas$LSOA21CD %in% a$LSOA21CD),]
+  
+  #convert b to a dataframe
+#  b = as.data.frame(b)
+  
+##### create a row in the b dataframe for the total for all lsoas in the area and the total mean of those totals
+  #r = nrow(b)
+#  b <- b |>
+#    bind_rows(summarise(b[9:14], across(where(is.numeric), mean),
+#                        across(where(is.character), ~'Total')))
+  
+  # Join the lsoas to a single shape so that a single line for this shape with the averages score can be used.
+  
+  # convert b to sf format
+#  b = st_as_sf(b)
+  # convert b to the correct CRS
+#  b = st_transform(b, crs = st_crs(3857))
+  
+  # Join the lsoas together
+#  joined_lsoas <- st_union(b$lsoageometry)
+  ## Create a new dataframe  for the joined data
+#  joined_lsoas_b = cbind(joined_lsoas, b[nrow(b),9:14])
+  # delete the blank geometry column
+#  joined_lsoas_b = subset(joined_lsoas_b, select = -c(lsoageometry))
+  # convert both to a dataframe
+#  b = as.data.frame(b)
+#  joined_lsoas_b = as.data.frame(joined_lsoas_b)
+  
+  
+  # retrieve the store name from zwsiso
+#  d = zwsiso[i,]
+  #d$st_nam<-apply(d,1,paste,collapse=" - ")
+  #remove the unwanted column
+  #d = d |> select(-one_of('town'))
+  
+#  d = as.data.frame(d)
+  # Join the store name and the scores and the joined LSOA geometry and the walktime geometry
+#  e = cbind(d, joined_lsoas_b)
+  # add this to a row in a new dataframe
+#  zws_joined_lsoa_scr <- rbind(zws_joined_lsoa_scr, e)
+
+  
+  # remove the temporary dataframes sf files etc 
+#  remove(r, a, b, d, e, joined_lsoas, joined_lsoas_b, i, zwsiso, zws)
+
+
+  # Print (i) as a counter
+#  cat(i, "completed\r")
+  # wait 1 second and move to the next iteration
+#  Sys.sleep(1)
+#}
+# clean the zws_joined_lsoa_scr names and columns
+#zws_joined_lsoa_scr <- zws_joined_lsoa_scr  |>  rename_at('d', ~'st_nam')
+#zws_joined_lsoa_scr <- zws_joined_lsoa_scr  |>  rename_at('geometry', ~'zwsjlsoageometry')
+# Round the scores to the nearest whole number
+zws_joined_lsoa_scr <- zws_joined_lsoa_scr %>% mutate(across(c('lsoatotscr', 'carscr', 'dedscr', 'tenscr', 'occscr', 'pplscr'), round, 0))
+
+# save the retail centres joined lsoas data that contains the average scores for the individua variables and the total meanscore for the whole joined lsoas area.
+#saveRDS(obj = zws_joined_lsoa_scr, file = "zws_joined_lsoa_scr.rds")
+```
+
+Of the original 140 stores, 133 were successfully processed. Those that were not, either did not produce isochrone calculations, with PWCs situated inside them, or did not have valid coordinate geometry data, as they were stores that closed prior to the study.
+
+The results for the remaining 133 stores were analysed to calculate the mean scores of the 5 variables. The total mean score was then calculated to give the final scorecard result. These scorecards were then used to analyse the locations that currently contain a store, and to identify the most suitable potential retail centre that was not already supplied by a zero waste store.
+
+OR WOULD THIS BE THE HIGHEST SCORES THAT SHOULD BE USED?!
+
+## Results
+
+This section will analyse the results of the initial scorecard calculations for the locations containing zero waste stores. It will discuss the demographic composition of the 20 minute walking time catchment areas around the stores, and how the resulting scores may help to understand what makes these locations most suitable for this sector of retail.
+
+### Zero Waste Scorecard
+
+Once the 133 stores had been scorecarded, a summary was produced. All scores were calculated as means, based on the number of LSOAs that appeared within the isochrone catchment area for each location. For example, the first record in table \ref{tab:allzwsscrtable} shows that the mean for each variable (carscr, dedscr, occscr, pplscr, and tenscr )were 6, 3, 4, 4 and 7 respectively, while the lsoatotalscr mean was 80. Calculating the results in this way, provides comparability across all stores for both the individual variables and the total score.
+
+```{r all_zws_scr_table}
+kable(zws_joined_lsoa_scr[c(1:10),c(1, 2, 11:15, 10)], caption = "\\label{tab:allzwsscrtable}Scorecard table for first 10 zero waste stores")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
+  row_spec(0,bold = T, font_size = 12) |>
+  column_spec(1,width = "0.5in") |>
+  column_spec(2,width = "0.5in") |>
+  column_spec(3,width = "0.5in") |>
+  column_spec(4,width = "0.5in") |>
+  column_spec(5,width = "0.5in") |>
+  column_spec(6,width = "0.5in") |>
+  column_spec(7,width = "0.5in")
+```
+
+Table \ref{tab:zws_scrsummary} shows that across all 133 stores, the total scores (*lsoatotscr*) ranged from 52 through to 107, with the mean being calculated at 78. The smallest variation in the range of scores was seen in the *pplscr* variable, which ranged from 2 to 6, with a mean of 4. The largest variation between the ranges of scores was seen in the *tenscr* variable (*home-ownership*). This varied from 1 through to 9, with a mean of 5.9.
+
+```{r zwsscrsummary}
+a = summary(round(zws_joined_lsoa_scr[,c(10:15)]), digits = 2)
+
+kable(t(a), caption = "\\label{tab:zws_scrsummary}Summary table for zero waste store scores")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 10)|>
+  column_spec(1,width = "0.8in", bold = T) |>
+  column_spec(2,width = "0.8in") |>
+  column_spec(3,width = "0.8in") |>
+  column_spec(4,width = "0.8in") |>
+  column_spec(5,width = "0.8in") |>
+  column_spec(6,width = "0.8in")
+```
+
+IS IT WORTH DOING A STANDARD REGRESSION ON THE RESULTS?
+
+```{r}
+m = lm(formula = lsoatotscr ~carscr+dedscr+occscr+pplscr+tenscr, data = zws_joined_lsoa_scr) 
+summary(m)
+```
+
+Figure \ref{fig:corr_plot} shows that all the variables have a positive relationship with total score (*lsoatotscr*) to varying extents. For example, the degree educated variable (*dedscr*), and occupation variable (*occscr*), both have a more positive linear relationship with the total score, that (*carscr*), for example.
+
+```{r corr_plot, fig.cap="Plot showing correlations between total scores and the 5 variables "}
+cor_plot <- plot(zws_joined_lsoa_scr[,c(10:15)], cex = 0.3, 
+     col = grey(0.145,alpha=0.5), upper.panel=panel.smooth)
+```
+
+```{r totscr_hist}
+h1 <- ggplot(zws_joined_lsoa_scr, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(40, 120, by = 10), colour = "orange", fill = "darkgrey")
+```
+
+```{r carscr_hist}
+h2 <- ggplot(zws_joined_lsoa_scr, aes(x=carscr)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+```
+
+```{r dedscr_hist}
+h3 <- ggplot(zws_joined_lsoa_scr, aes(x=dedscr)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+```
+
+```{r pplscr_hist}
+h4 <- ggplot(zws_joined_lsoa_scr, aes(x=pplscr)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+```
+
+```{r tenscr_hist}
+h5 <- ggplot(zws_joined_lsoa_scr, aes(x=tenscr)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+```
+
+```{r occscr_hist}
+h6 <- ggplot(zws_joined_lsoa_scr, aes(x=occscr)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+```
+
+```{r}
+plot_list <- list(h1, h2, h3, h4, h5, h6)
+```
+
+The distribution of the total scores shown in figure \ref{all_zws_hist} are fairly even, with a slight positive skew. This is showing that there were significant numbers of stores that scored less than and more than 80, but scores were concentrated around a similar score throughout. On an individual variable level for each area, around half of the households had access to a single car.
+
+The distribution of the scores for education level (*dedscr).* were again, slightly positively skewed, showing that the majority of locations scored below 5. However, the distribution does indicate that there were locations that fairly high. This distribution indicates that the number of degree educated residents is a somewhat important factor.
+
+The variable for the households comprised two people without children (*pplscr*) was very evenly distributed around a score of 4. Very few locations were made up of households with particularly low or high scores for this variable. This suggests that this variable is not as important as the literature (CITE) may imply.
+
+A more varied distribution than the other variables was seen for home-ownership (*occscr)*. Here a negative skew can be seen, with the majority of locations scoring between 4 and 7. This does suggest a degree of wealth, and the importance of wealth in the location of the stores.
+
+```{r all_zws_hist, fig.cap="Distribution histograms for the 5 individual variables and the total scores for all zero waste stores."}
+do.call("grid.arrange", c(plot_list, ncol = 3))
+```
+
+Figure \ref{fig:min_store_map} shows the store that scored the lowest of the 133, with a score of 52. As can be seen in the breakdown of the individual variables average scores, this area scored very low on all factors. This would at first glance suggest that it is not in the best location, however, the area it serves is highly residential
+
+```{r}
+minstore = zws_joined_lsoa_scr[which.min(zws_joined_lsoa_scr$lsoatotscr),]
+minstore = st_as_sf(minstore)
+minstore <- st_transform(minstore, crs = st_crs(3857))
+maxstore = zws_joined_lsoa_scr[which.max(zws_joined_lsoa_scr$lsoatotscr),]
+```
+
+```{r min_store_map, fig.cap="Map showig location and scorecard for the store with the lowest overall score."}
+ggplot(minstore) +
+  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(geometry = walktimegeometry, alpha = "")) +
+      guides(alpha = guide_legend(title = "Catchment Area", reverse = TRUE)) +
+  geom_sf(aes(geometry = minstore$zwsjlsoageometry, fill = lsoatotscr), alpha = 0.2) +
+      guides(fill = guide_legend(title = "LSOA Score", reverse = TRUE)) +
+  geom_sf(aes(geometry = zwsgeometry, colour = "")) +
+    guides(colour = guide_legend(title = str_wrap(minstore$st_nam, width = 15),reverse = TRUE)) +
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+```
+
+```{r}
+minstoretab = print(minstore[,8:13])
+kable(minstoretab, caption = "\\label{tab:zws_scrsummary}Summary table for zero waste store scores")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 10)|>
+  column_spec(1,width = "0.8in", bold = T) |>
+  column_spec(2,width = "0.8in") |>
+  column_spec(3,width = "0.8in") |>
+  column_spec(4,width = "0.8in") |>
+  column_spec(5,width = "0.8in") |>
+  column_spec(6,width = "0.8in")
+```
+
+The area that scored the highest overall can be seen in figure \ref{fig:maxstr_map}.
+
+```{r maxstr_map, fig.cap = "Map showing the store with the highest value scorecard, and the variable averages for the location.", warning=FALSE}
+maxstoremap <- 
+  ggplot(maxstore) +
+  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(geometry = walktimegeometry, alpha = ""), colour = "red") +
+  guides(alpha = guide_legend(title = "Catchment Area",reverse = TRUE)) +
+  geom_sf(aes(geometry = maxstore$zwsjlsoageometry, fill = maxstore$lsoatotscr), alpha = 0.2) +
+  guides(fill = guide_legend(title = "LSOA Score", reverse = TRUE)) +
+  geom_sf(aes(geometry = zwsgeometry, colour = "")) +
+  guides(colour = guide_legend(title = str_wrap(maxstore$st_nam, width = 15), reverse = TRUE)) +
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", 
+                         which_north = "true", 
+                         pad_x = unit(0.1, "in"), 
+                         pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+
+maxvarhead <- 
+  ggplot(maxstore) + 
+  geom_text(aes(label = paste("Variable Averages"),
+                x = 1,
+                y = 1)) +
+      theme_void()
+
+maxcarscr <-
+  ggplot(maxstore) +
+  geom_text(aes(label = paste("carscr \n", round(carscr, 2)),
+                x = 1,
+                y = 1)) +
+        theme_void()
+
+maxdedscr <- 
+  ggplot(maxstore) +
+  geom_text(aes(label = paste("dedscr \n", round(dedscr, 2)),
+                x = 1,
+                y = 1)) +
+      theme_void()
+
+maxoccscr <- 
+  ggplot(maxstore) +
+  geom_text(aes(label = paste("occscr \n", round(occscr, 2)),
+                x = 1,
+                y = 1)) + 
+        theme_void()
+
+maxpplscr <- 
+  ggplot(maxstore) +
+  geom_text(aes(label = paste("pplscr \n", round(pplscr, 2)),
+                x = 1,
+                y = 1)) + 
+        theme_void()
+
+maxtenscr <- 
+  ggplot(maxstore) +
+  geom_text(aes(label = paste("tenscr \n", round(tenscr, 2)),
+                x = 1,
+                y = 1)) +
+    theme_void()
+
+layout <- '
+AAAAA####
+AAAAABBBB
+AAAAACCCC
+AAAAADDEE
+AAAAAFFGG
+AAAAA####
+'
+
+wrap_plots(A = maxstoremap,
+           B = maxvarhead,
+           C = maxcarscr,
+           D = maxdedscr,
+           E = maxoccscr,
+           F = maxpplscr,
+           G = maxtenscr,
+           design = layout)
+```
+
+This could highlight that the people score variable is less significant than it had first seemed. Given that the distribution was very narrow and the areas with the overall lowest and highest scores, for this variable scored 2 and 4 respectively.
+
+\FloatBarrier
+
+```{r minstr_map, fig.cap="Map showing the store with the lowest value scorecard, and the variable averages for the location.", warning=FALSE}
+minstoremap <- 
+  ggplot(minstore) +
+  annotation_map_tile(zoomin = 0, type = "osm") +
+  geom_sf(aes(geometry = walktimegeometry, alpha = ""), colour = "blue") +
+  guides(alpha = guide_legend(title = "Catchment Area",reverse = TRUE)) +
+  geom_sf(aes(geometry = minstore$zwsjlsoageometry, fill = minstore$lsoatotscr), alpha = 0.2) +
+  guides(fill = guide_legend(title = "LSOA Score", reverse = TRUE)) +
+  geom_sf(aes(geometry = zwsgeometry, colour = "")) +
+  guides(colour = guide_legend(title = str_wrap(minstore$st_nam, width = 15), reverse = TRUE)) +
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", 
+                         which_north = "true", 
+                         pad_x = unit(0.1, "in"), 
+                         pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_bw()
+
+minvarhead <- 
+  ggplot(minstore) + 
+  geom_text(aes(label = paste("Variable Averages"),
+                x = 1,
+                y = 1)) +
+      theme_void()
+
+mincarscr <-
+  ggplot(minstore) +
+  geom_text(aes(label = paste("carscr \n", round(carscr, 2)),
+                x = 1,
+                y = 1)) +
+        theme_void()
+
+mindedscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("dedscr \n", round(dedscr, 2)),
+                x = 1,
+                y = 1)) +
+      theme_void()
+
+minoccscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("occscr \n", round(occscr, 2)),
+                x = 1,
+                y = 1)) + 
+        theme_void()
+
+minpplscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("pplscr \n", round(pplscr, 2)),
+                x = 1,
+                y = 1)) + 
+        theme_void()
+
+mintenscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("tenscr \n", round(tenscr, 2)),
+                x = 1,
+                y = 1)) +
+    theme_void()
+
+layout <- '
+AAAAA####
+AAAAABBBB
+AAAAACCCC
+AAAAADDEE
+AAAAAFFGG
+AAAAA####
+'
+
+wrap_plots(A = minstoremap,
+           B = minvarhead,
+           C = mincarscr,
+           D = mindedscr,
+           E = minoccscr,
+           F = minpplscr,
+           G = mintenscr,
+           design = layout)
+```
+
+
+# Bibliography
+
+::: {#refs}
+\noindent \vspace{-2em} \setlength{\parindent}{-0.5in} \setlength{\leftskip}{0.5in} \setlength{\parskip}{15pt}
+:::
