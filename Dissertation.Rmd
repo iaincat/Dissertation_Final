@@ -252,7 +252,7 @@ kable(lsoa_pwc[1:10,c(2:4)], caption = "\\label{tab:lsoa_pwcs}LSOA population we
 
 #### Demographic data
 
-Nomisweb provided the 2021 census data. The percentages were calculated from the total households or population for all 5 variables at the LSOA scale (including area codes to provide linked identifiers for GIS processing) for England and Wales using the query tool provided [@nomis]. The variables were found under the following identifiers, and each was standardised using the scaling method in which each LSOA data point for each variable was scored / ranked from 0 to 1 using the following formula:-
+Nomisweb provided the 2021 census data. The percentages were calculated from the total households or population for all 5 variables at the LSOA scale (including area codes to provide linked identifiers for GIS processing) for England and Wales using the query tool provided [@nomis]. The variables were found under the following identifiers, and each was standardised using the scaling method in which each LSOA data point for each variable was scored / ranked using the scaling method, from 0 to 1 using the following formula:-
 
 $$
 x_{norm} = (x_{raw} - min_{i})/(max_{i} - min_{i})
@@ -281,6 +281,14 @@ These rankings were then multiplied up by 10 and rounded to the nearest integer 
 #remove(a)
 ```
 
+Scores for this variable were calculated by totalling the counts of households in each LSOA for all single family households consisting of two people no children. The household composition options chosen were: -
+
+-   All aged 66 years and over
+-   Married or civil partnership couple : No children
+-   Cohabiting couple family : No children
+
+This count was then converted to a percentage of the total number of households in that LOSA. Using the scaling method as set out above, the final scores were applied to each LSOA.
+
 ```{r 2ppl_data}
 # Create a table for the Household composition data 
 # Load the 2ppl data
@@ -290,60 +298,56 @@ pplscr <- read.csv("2ppl.csv")
 #pplscr = pplscr[-c(33756), ]
 
 # clean the unrequired columns
-pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Score'))
+pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Single.family.household..All.aged.66.years.and.over', 'total_hhld', 'X2021.super.output.area...lower.layer', 'hhld_.', 'score_calc'))
 
 pplscr <- pplscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+pplscr <- pplscr  |>  rename_at('score', ~'LSOA_pplscr')
 
 kable(pplscr[0:4,], caption = "\\label{tab:pplscr}Total LSOA scores for household composition data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
-  column_spec(2,width = "0.5in") |>
-  column_spec(3,width = "0.75in")
+  column_spec(2,width = "0.5in")
 ```
 
 -   TS045 - Car or van availability
 
-    This dataset included only those households that were reported as having access to a single vehicle only. See Table \ref{tab:carscr}.
+    This dataset included only those households that were reported as having access to a single vehicle only. The scores for this variable were calculated in a similar way to the household composition data, by summing the households for the categories, and converting this to a percentage of the total households in the relevant LSOA, and using the scaling method to create a final score for each LSOA. See Table \ref{tab:carscr}.
 
 ```{r car_table}
 # Load the vehicle access data
 carscr <- read.csv("1car.csv")
 
 # clean the unrequired columns and rename them for ease of use
-carscr = carscr |> select(-one_of('Total..All.households', 'X1.car.or.van.in.household', 'score_calc', 'X.'))
-carscr <- carscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-carscr <- carscr  |>  rename_at('score', ~'carscr')
+carscr = carscr |> select(-one_of('X2021.super.output.area...lower.layer', 'Total..All.households', 'X1.car.or.van.in.household', 'score_calc', 'X.'))
+carscr <- carscr  |>  rename_at('score', ~'LSOA_carscr')
 carscr <- carscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
 kable(carscr[0:4,], caption = "\\label{tab:carscr}Total LSOA scores for single vehicle access data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
-  column_spec(2,width = "0.5in") |>
-  column_spec(3,width = "0.75in")
+  column_spec(2,width = "0.5in")
 ```
 
 -   TS054 - Tenure - Home Ownership
 
-    This variable included those households that were reported as having either owning their own homes outright, or under a mortgage. See Table \ref{tab:tenscr}.
+    This variable included only those households that were reported as having either owning their own homes outright, or with a mortgage or loan. Similarly to the household composition and vehicle ownership variables, the sum of the households was converted to a percentage of the total number of households for each LSOA and scaled to provide the final score. See Table \ref{tab:tenscr}.
 
 ```{r tenure_table}
 # Load the tenure data
 tenscr <- read.csv("tenure.csv")
 
 # clean the unrequired columns and rename them for ease of use
-tenscr = tenscr |> select(-one_of('Total..All.households',  'score_calc', 'X.', 'Owned..Owns.outright', 'Owned..Owns.with.a.mortgage.or.loan', 'sum'))
-tenscr <- tenscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-tenscr <- tenscr  |>  rename_at('score', ~'tenscr')
+tenscr = tenscr |> select(-one_of('Total..All.households',  'score_calc', 'X.', 'Owned..Owns.outright', 'Owned..Owns.with.a.mortgage.or.loan', 'sum', 'X2021.super.output.area...lower.layer'))
+tenscr <- tenscr  |>  rename_at('score', ~'LSOA_tenscr')
 tenscr <- tenscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
-kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Total LSOA scores for home owners (outright or mortgage) data for England and Wales")|>
+kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Total LSOA scores for home owners  data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
-  column_spec(2,width = "0.5in") |>
-  column_spec(3,width = "0.75in")
+  column_spec(2,width = "0.5in")
 ```
 
 -   TS067 - Highest level of qualification - degree educated
@@ -355,17 +359,15 @@ kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Total LSOA scores for home own
 dedscr <- read.csv("degree_educated.csv")
 
 # clean the unrequired columns and rename them for ease of use
-dedscr = dedscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over', 'degree_educated', 'X.', 'MinMax'))
-dedscr <- dedscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-dedscr <- dedscr  |>  rename_at('score', ~'dedscr')
+dedscr = dedscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over', 'degree_educated', 'X.', 'MinMax', 'X2021.super.output.area...lower.layer'))
+dedscr <- dedscr  |>  rename_at('score', ~'LSOA_dedscr')
 dedscr <- dedscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
 kable(dedscr[0:4,], caption = "\\label{tab:dedscr}Total LSOA scores for degree education level or above data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
-  column_spec(2,width = "0.5in") |>
-  column_spec(3,width = "0.75in")
+  column_spec(2,width = "0.5in")
 ```
 
 -   TS063 - Occupation
