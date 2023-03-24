@@ -229,10 +229,12 @@ Boundary data [@opengeographyportala] was downloaded for the study area from the
 lsoas <- readRDS("lsoas.rds")
 
 # remove the scores from the lsoa data
-lsoas = lsoas |> select(-one_of('occscr', 'tenscr', 'carscr', 'pplscr', 'dedscr'))
+lsoas = lsoas |> select(-one_of('occscr', 'tenscr', 'carscr', 'pplscr', 'dedscr', 'lsoatotscr'))
 
-kable(lsoas[1:4,c(2,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
-  kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
+saveRDS(obj = lsoas, file = "lsoas.rds")
+
+#kable(lsoas[1:4,c(2,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
+#  kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 ```
 
 #### LSOA area scale population weighted centroids
@@ -285,7 +287,7 @@ These rankings were then multiplied up by 10 and rounded to the nearest integer 
 pplscr <- read.csv("2ppl.csv")
 
 # remove the country row
-pplscr = pplscr[-c(33756), ]
+#pplscr = pplscr[-c(33756), ]
 
 # clean the unrequired columns
 pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Score'))
@@ -1233,7 +1235,6 @@ wrap_plots(A = minstoremap,
            G = mintenscr,
            design = layout)
 ```
-
 
 # Bibliography
 
