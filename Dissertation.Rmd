@@ -228,13 +228,12 @@ Boundary data [@opengeographyportala] was downloaded for the study area from the
 # Load lsoas and pwc RDS files
 lsoas <- readRDS("lsoas.rds")
 
-# remove the scores from the lsoa data
-lsoas = lsoas |> select(-one_of('occscr', 'tenscr', 'carscr', 'pplscr', 'dedscr', 'lsoatotscr'))
-
-saveRDS(obj = lsoas, file = "lsoas.rds")
-
-#kable(lsoas[1:4,c(2,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
-#  kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
+kable(
+  lsoas[1:4,c(2,3,9)],
+  caption = "\\label{tab:lsoas}LSOA boundary data") |>
+  kable_styling(
+    full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |>
+  row_spec(0,bold = T)
 ```
 
 #### LSOA area scale population weighted centroids
@@ -387,7 +386,7 @@ kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Rankings for homeownership dat
 
 -   TS067 - Highest level of qualification - degree educated
 
-    Education level data was only included for those people that have degree level education or above. Again, a similar process to calculate the rankings was followed. The number of people in each LSOA that . See Table \ref{tab:dedscr}.
+    Education level data was only included for those people that have degree level education or above. Again, a similar process to calculate the rankings was followed. The number of people in each LSOA that had a level of education at degree or above were summed, and this total was converted to a percentage of the total population for that LSOA. The ranking method was again applied to this percentage to provide the final integer ranking score for each LSOA. See Table \ref{tab:dedscr}.
 
 ```{r deg_ed_table}
 # Load the degree educated data
@@ -420,13 +419,12 @@ kable(tenscr[0:4,], caption = "\\label{tab:dedscr}Rankings for degree education 
 
 -   TS063 - Occupation
 
-    Occupation data included those people whose occupations were classified as managers, directors, senior officials, and professional occupations. See Table \ref{tab:occscr}.
+    Occupation data included those people whose occupations were classified as managers, directors, senior officials, and professional occupations. The ranking was produced for this data in the same way as the occupationdata. See Table \ref{tab:occscr}.
 
 ```{r occ_data}
 # Load the occupation data
 occscr <- read.csv("occ.csv")
 
-names(occscr)
 # clean the unrequired columns
 occscr = occscr |> select(-one_of('X.', 'X..1', 'X..2', 'high_earners.', 'score', 'calc'))
 
@@ -456,20 +454,17 @@ kable(occscr[0:4,], caption = "\\label{tab:occscr}Rankings for occupation data f
   column_spec(2,width = "0.5in")
 ```
 
-#### Retail Centres
-
-Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales so that once analysis of all current zero waste store locations was completed, potential areas that lack the supply of this type of retail could be identified. The retail centre data was processed through QGIS to identify the geometric centroid of each, which was added to the file.
-
 #### Combining score data and calculating totals
 
 The scores for each individual variable were allocated to the matching LSOA in the LSOA data. A total score for each LSOA was then calculated to a separate column and the data saved. These scores would then be available when analysing the current store locations and the potential un-supplied retail centres.
 
 ```{r score_prep}
-# Load the results of the following code to save processing and memory when knitting
+# # Load the results of the following code to save processing and memory when knitting
 lsoas <- readRDS("lsoas.rds")
-# Convert lsoas to a sf file format and set the CRS to 3857
-lsoas = st_as_sf(lsoas)
-lsoas = st_transform(lsoas, crs = st_crs(3857))
+
+# # # Convert lsoas to a sf file format and set the CRS to 3857
+# lsoas = st_as_sf(lsoas)
+# lsoas = st_transform(lsoas, crs = st_crs(3857))
 
 #### Create a dataframe that holds the LSOA21CD id and the score for each variable
 # Convert the lsoas sf file to a data.frame
@@ -477,24 +472,22 @@ lsoas = st_transform(lsoas, crs = st_crs(3857))
 
 # Join each variables score data and remove the unrequired columns each time
 # carscr
-#lsoas = left_join(lsoas, carscr, "LSOA21CD")
-#lsoas = lsoas |> select(-one_of('Area'))
+lsoas = merge(x = lsoas, y = carscr, all.x = TRUE)
 
 # dedscr
-#lsoas = left_join(lsoas, dedscr, "LSOA21CD")
-#lsoas = lsoas |> select(-one_of('Area'))
+lsoas = merge(x = lsoas, y = dedscr, all.x = TRUE)
 
 # occscr
-#lsoas = left_join(lsoas, occscr, "LSOA21CD")
-#lsoas = lsoas |> select(-one_of('Area'))
+lsoas = merge(x = lsoas, y = occscr, all.x = TRUE)
 
 # pplscr
-#lsoas = left_join(lsoas, pplscr, "LSOA21CD")
-#lsoas = lsoas |> select(-one_of('Area'))
+lsoas = merge(x = lsoas, y = pplscr, all.x = TRUE)
 
 # tenscr
-#lsoas = left_join(lsoas, tenscr, "LSOA21CD")
-#lsoas = lsoas |> select(-one_of('Area'))
+lsoas = merge(x = lsoas, y = tenscr, all.x = TRUE)
+
+# Save the lsoas dataframe
+saveRDS(obj = lsoas, file = "lsoas.rds")
 
 # sum the individual LSOA row values in columns 10 to 14 and add the result to a new column at the end after tenscr
 #lsoas = lsoas |> 
