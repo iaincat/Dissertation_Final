@@ -470,7 +470,7 @@ lsoas <- readRDS("lsoas.rds")
 # Convert the lsoas sf file to a data.frame
 #lsoas = as.data.frame(lsoas)
 
-# Join each variables score data and remove the unrequired columns each time
+# Join each variables score data to the lsoas data and remove the unrequired columns each time
 # carscr
 lsoas = merge(x = lsoas, y = carscr, all.x = TRUE)
 
@@ -489,16 +489,16 @@ lsoas = merge(x = lsoas, y = tenscr, all.x = TRUE)
 # Save the lsoas dataframe
 saveRDS(obj = lsoas, file = "lsoas.rds")
 
-# sum the individual LSOA row values in columns 10 to 14 and add the result to a new column at the end after tenscr
-#lsoas = lsoas |> 
-#  mutate(lsoatotscr = rowSums(lsoas[,10:14], na.rm = TRUE),
-#         .after=tenscr)
+# sum the individual LSOA row rankings in columns 10 to 14 and add the total ranking result to a new column at the end
+lsoas = lsoas |>
+  mutate(lsoatotscr = rowSums(lsoas[,10:14], na.rm = TRUE),
+         .after=tenrank)
 
 # remove unrequired temporary dataframes etc
-#remove(carscr, dedscr, occscr, pplscr, tenscr)
+remove(carscr, dedscr, occscr, pplscr, tenscr)
 
 # Save the lsoa data with the newly added individual scores and the calculated total scores
-#saveRDS(obj = lsoas, file = "lsoas.rds")
+saveRDS(obj = lsoas, file = "lsoas.rds")
 ```
 
 #### Creating a scorecard using a known store location example
@@ -508,14 +508,22 @@ The following shows the process that will be followed for all zero waste stores.
 Once the underlying LSOA and demographic data had been cleaned and prepared, a single known store location was isolated from the zero waste store data to test the scorecard making processes on. See Table \ref{tab:bishytab}.
 
 ```{r bishy_load}
-# Load bishy store boundary shapefile
-bishy <- read_sf("bishy.shp")
+# Load bishy store boundary shapefile as a dataframe
+# bishy <- as.data.frame(readRDS("bishy.rds"))
+bishy <- as.data.frame(readRDS("bishy.rds"))
 
-# Convert this to the correct 3857 CRS
-bishy = st_transform(bishy, crs = st_crs(3857))
+# clean the file
+bishy = bishy |> select(-one_of('joinedlsoageometry', 'dedscr', 'pplscr', 'carscr', 'tenscr', 'occscr', 'bishygeometry'))
 
+geomdf = bishy |> 
+  st_as_sf(coords = c("Lon", "Lat"), crs = 4326) |> 
+  summarise(geometry = st_combine(geometry))  |> 
+  st_cast("POINT")
+
+bishy = cbind(bishy, geomdf)
+remove(geomdf)
 # rename the geometry column
-bishy <- bishy  |>  rename_at('geometry', ~'bishygeometry')
+bishy <- bishy  |>  rename_at('geometry', ~'bishystorepoint')
 
 kable(bishy[,], caption = "\\label{tab:bishytab}Test store data for the Bishy Weigh store in York, England")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
@@ -526,44 +534,53 @@ Using the OpenRouteService [@openrouteservice], a 20 minute walking time isochro
 
 ```{r bishy_iso}
 # Load the York isochrone data from the previously run code below
-ywalktime20 <- readRDS("ywalktime20.rds")
+# ywalktime20 <- readRDS("ywalktime20.rds")
 
 # Uses library(mapview) and library(openrouteservice)
 # Create an isochrone around the Bishy Weigh zero waste store
 
 # embed data in the output file
-#mapviewOptions(fgb = FALSE)
+mapviewOptions(fgb = FALSE)
 
 # Get the coordinates of the bishy weigh
-#coordinates <- data.frame(lon = bishy$Lon, lat = bishy$Lat)
+coordinates <- data.frame(lon = bishy$Lon, lat = bishy$Lat)
 
 ## Calculate a 20 minute walking time to the store
-#ywalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
-#                      output = "sf", profile = ors_profile("walking"))
-#values <- levels(factor(ywalktime20$value))
-#ranges <- split(ywalktime20, values)
-#ranges <- ranges[rev(values)]
-#names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
+ywalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200,
+                     output = "sf", profile = ors_profile("walking"))
+values <- levels(factor(ywalktime20$value))
+ranges <- split(ywalktime20, values)
+ranges <- ranges[rev(values)]
+names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
 
 # Convert the walktime20 isochrone to the correct CRS
-#ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
+ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
 
-#remove(coordinates, values, ranges)
-#
+remove(coordinates, values, ranges)
+
+# add the isochrone data to the bishy file
+bishy = as.data.frame(bishy)
+bishy = cbind(bishy, ywalktime20[4])
+
+# rename this geometry to a meaningful name
+bishy <- bishy  |>  rename_at('geometry', ~'bishyisochrone')
+
+# convert bishy to an sf format
+bishy = st_as_sf(bishy)
+bishy <- st_transform(bishy, crs = st_crs(4326))
+remove(ywalktime20)
 # Save the York isochrone data
 #saveRDS(obj = ywalktime20, file = "ywalktime20.rds")
 ```
 
-Once the isochrone had been calculated from the test store, it was mapped to ensure that the correct store location and catchment area had been calculated for the the known store. See Figure \ref{fig:york_isochrone_test_map}.
+Once the isochrone had been calculated from the test store, it was mapped to ensure that the correct location and catchment area had been calculated for the the known store data. See Figure \ref{fig:york_isochrone_test_map}.
 
 ```{r york_isochrone_test_map, fig.cap="20 minutes walking distance isochrone from The Bishy Weigh store in York"}
 # Uses library(ggspatial)
-# Convert the walktime20 isochrone to the correct CRS
-ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
 
 # Map the 20 mins isochrone and store location
 # use the walktime LAYER isochrone as the main data layer
-ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
+ggplot(data = bishy$bishyisochrone, aes(colour = "20 minutes walk time")) +
   # Add the basemap tile 
   annotation_map_tile(zoomin = 0, type = "osm") +
   # set the walktime LAYER colour fill and transparency
@@ -586,26 +603,24 @@ ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
 After confirming that the isochrone calculation and store location data produced the desired results the PWCs data was clipped to contain only those that fell within the isochrone catchment area.
 
 ```{r york_pwc_clipping}
+# Convert the lsoas data to an sf format
 lsoas = st_as_sf(lsoas)
 lsoas <- st_transform(lsoas, crs = st_crs(3857))
 # clip the PWCs to only show those inside the 20 minute walk time
-pwc_clip = lsoa_pwc[ywalktime20$geometry,]
+pwc_clip = lsoa_pwc[bishy$bishyisochrone,]
 # clip the LSOAs to only show those for the clipped PWCs
 lsoa_clip = lsoas[pwc_clip,]
 
 # convert both results to the correct CRS
 pwc_clip <- st_transform(pwc_clip, crs = st_crs(3857))
 lsoa_clip <- st_transform(lsoa_clip, crs = st_crs(3857))
-
-# calculate the scores for the test score
-
 ```
 
 Figure \ref{fig:pwcs_lsoas_york_map} shows how once the PWCs and corresponding LSOAs for the catchment area were identified and mapped to visualise the results and confirm the accuracy of the procedure.
 
 ```{r pwcs_lsoas_york_map, warning=FALSE, fig.cap= "Map showing the clipped LSOAs related to the PWCs that fall inside the 20 minute walk time catchment area."}
 # Map the test store, isochrone and corresponding LSOAs and PWCs
-ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
+ggplot(data = bishy$bishyisochrone, aes(colour = "20 minutes walk time")) +
   # Add the basemap tile 
   annotation_map_tile(zoomin = 0, type = "osm") +
   # set the walktime LAYER colour fill and transparency
@@ -634,11 +649,11 @@ The test store catchment are contained 18 population weighted centroids. The cor
 
 ```{r bishycar_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the carscr variable, which relates to % of households with access to a single vehicle."}
 #lsoa_clip <- as.data.frame(lsoa_clip)
-bishycarmap <- lsoa_clip = st_as_sf(lsoa_clip)
+#bishycarmap <- lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = carscr)) +
+  geom_sf(aes(fill = carrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Access to a\nsingle vehicle", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -658,7 +673,7 @@ lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = dedscr)) +
+  geom_sf(aes(fill = dedrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Education to degree\nlevel or above", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -678,7 +693,7 @@ lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = occscr)) +
+  geom_sf(aes(fill = occrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Highest occupation\ntypes", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -698,7 +713,7 @@ lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = pplscr)) +
+  geom_sf(aes(fill = pplrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Households with 2\npeople & 0 children", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -718,7 +733,7 @@ lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = tenscr)) +
+  geom_sf(aes(fill = tenrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Households\nthat own or\nmortgage their home", reverse = TRUE, ncol = 2)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -751,45 +766,36 @@ ggplot(lsoa_clip) +
   theme_bw()
 ```
 
-Once the variables scores for the test store had each been checked for validity, a final total mean score for the variables and the area as a whole was calculated by summing the scores for each variable and dividing this by the number of LSOAs in the area. This method was used to maintain equivalence and comparative ability between the scrorecard results of each store in the data. This was because some stores may have greater or fewer LSOAs within the catchment area for example, rendering them isolated in terms of data without comparison.
+Once the variables scores for the test store had each been checked for validity, a final total mean score for the variables and the area as a whole was calculated by summing the scores for each variable and dividing this by the number of LSOAs in the area. This method was used to maintain equivalence and comparative ability between the scorecard results of each store in the data. This was because some stores may have greater or fewer LSOAs within the catchment area for example, rendering them isolated in terms of data without comparison. See \ref{fig:ytotalscore_map}.
 
-```{r}
+```{r ytotalscore_calc}
 # Create a new variable to hold the totals for the final joined data and convert to a data.frame
 
 lsoa_clip_tot = as.data.frame(lsoa_clip)
 
-##### create a row in the lsoa_clip_tot dataframe for the total MEAN for all lsoas in the area and the total of those totals
-  #r = nrow(b)
-  lsoa_clip_tot <- lsoa_clip_tot |>
-    bind_rows(summarise(lsoa_clip_tot[,9:14], across(where(is.numeric), mean), across(where(is.character), ~'Total')))
-
   # Join the lsoas to a single shape - USE THIS "JOINED_LSOAS" AS THE FINAL LSOA SHAPE
-  joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
-  joined_lsoas <- as.data.frame(joined_lsoas)
-  joined_lsoas <- joined_lsoas  |>  rename_at('geometry', ~'joinlsoageometry')  
-  
-  # Create a tempp df "FT" to hold the totals for the whole joined LSOAs for each variable
-  ft <- data.frame(matrix(ncol = 6, nrow = 0))
-  ft = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
-  # rename the columns of the new temp df
-  #colnames(ft)<-c("occscrtot","tenscrtot","carscrtot","pplscrtot","dedscrtot", "totscrtot")
+joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
+joined_lsoas <- as.data.frame(joined_lsoas)
+joined_lsoas <- joined_lsoas  |>  rename_at('geometry', ~'joinedlsoageometry')  
 
-  # sum the individual variables for the whole lsoa_clip_tot and add the result to the bottom of lsoa_clip_tot
-  #ft[nrow(ft) + 1,] = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
+# calculate total score for all joined lsoas in the area
+a = sum(round(lsoa_clip_tot[,14]/nrow(lsoa_clip_tot)), digits = 0)
 
-  # Join all the data together
-  # ft contains the final mean scores for the LSOAs in the area
-  # joined_lsoas contains the single joined LSOA shape
-  bishyjoined = cbind(bishy$st_nam, bishy$bishygeometry, round(ft, digits = 0), joined_lsoas)
-#  remove(bishyjoined)
+# Joint the joinedlsoa geometry and the total score for the area to the bish data
+bishy = cbind(bishy, joined_lsoas, a)
+# rename the a column
+bishy <- bishy  |>  rename_at('a', ~'totalscore')  
+
+# remove the not required dataframes etc
+remove(a, joined_lsoas, lsoa_clip, lsoa_clip_tot, pwc_clip)
 ```
 
-```{r yjoinscr_map, warning=FALSE, fig.cap="Map showing the total mean score for the total of the 5 variables for each individual LSOA once combined."}
+```{r ytotalscore_map, warning=FALSE, fig.cap="Map showing the total mean score for the total of the 5 variables for each individual LSOA once combined."}
 ggplot() +
     # Add the basemap tile 
   annotation_map_tile(zoomin = 0, type = "osm") +
   # total score for LSOA layer
-  geom_sf(data = bishyjoined, aes(geometry = bishyjoined$joinlsoageometry, fill = bishyjoined$lsoatotscr)) +
+  geom_sf(data = bishy, aes(geometry = bishy$joinedlsoageometry, fill = totalscore)) +
   # fill layer
   scale_fill_viridis_c(alpha = 0.4) +
   # Legend customisation
@@ -803,10 +809,6 @@ ggplot() +
                          pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
                          style = north_arrow_minimal) +
   theme_bw()
-```
-
-```{r}
-#remove(a, bishy, bishyjoined, ft, joined_lsoas, lsoa_clip, lsoa_clip_tot, lsoa_pwc, lsoas, m, p, pwc_clip, ym1, ym2, ym3, ym4, ym5, ym6, ywalktime20)
 ```
 
 Once the test store data had been processed and mapped to ensure validity, the data for all 140 zero waste stores, including the test store, were processed in full using the same processing steps as the test store, and the results were combined with the location data in the zero waste store data for analysis.
