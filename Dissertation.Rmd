@@ -262,7 +262,7 @@ These rankings were then multiplied up by 10 and rounded to the nearest integer 
 
 -   TS003 - Household composition
 
-    This dataset included those households that were classified as either, married single family households with no children, or, cohabiting couple families with no children. See Table \ref{tab:pplscr}.
+    This dataset included those households that were classified as either, married single family households with no children, or, cohabiting couple families with no children.
 
 ```{r 2ppl_head_table}
 # Create a table for the Household composition data 
@@ -287,23 +287,32 @@ Scores for this variable were calculated by totalling the counts of households i
 -   Married or civil partnership couple : No children
 -   Cohabiting couple family : No children
 
-This count was then converted to a percentage of the total number of households in that LOSA. Using the scaling method as set out above, the final scores were applied to each LSOA.
+This count was then converted to a percentage of the total number of households in that LOSA. Using the scaling method formula, as set out above, the final ranking scores were multiplied by 10 to provide an integer ranking for each LSOA. See Table \ref{tab:pplscr}.
 
 ```{r 2ppl_data}
-# Create a table for the Household composition data 
-# Load the 2ppl data
+# Load the data
 pplscr <- read.csv("2ppl.csv")
 
-# remove the country row
-#pplscr = pplscr[-c(33756), ]
+# remove the unwanted columns
+pplscr = pplscr |> select(-one_of('score', 'score_calc', 'hhld_.', 'hhld_.', 'total_hhld'))
 
-# clean the unrequired columns
-pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Single.family.household..All.aged.66.years.and.over', 'total_hhld', 'X2021.super.output.area...lower.layer', 'hhld_.', 'score_calc'))
+### Create the score
+# Sum the relevant columns
+pplscr$tothhld = rowSums(pplscr[,4:6])
 
+#Create a % column from the sum
+pplscr$hhldpcnt = (pplscr$tothhld/pplscr$Total..All.households)*100
+
+# Use the scaling method to rank the % column 
+pplscr$pplrank = round((pplscr$hhldpcnt - min(pplscr$hhldpcnt)) / (max(pplscr$hhldpcnt) - min(pplscr$hhldpcnt)), digits = 1)*10
+
+# remove the unrequired columns
+pplscr = pplscr |> select(-one_of('hhldpcnt', 'tothhld', 'Single.family.household..Cohabiting.couple.family..No.children', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'Single.family.household..All.aged.66.years.and.over', 'Total..All.households', 'X2021.super.output.area...lower.layer'))
+
+# Rename the mnemonic column
 pplscr <- pplscr  |>  rename_at('mnemonic', ~'LSOA21CD')
-pplscr <- pplscr  |>  rename_at('score', ~'LSOA_pplscr')
 
-kable(pplscr[0:4,], caption = "\\label{tab:pplscr}Total LSOA scores for household composition data for England and Wales")|>
+kable(pplscr[0:4,], caption = "\\label{tab:pplscr}Rankings for household composition data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
@@ -312,18 +321,29 @@ kable(pplscr[0:4,], caption = "\\label{tab:pplscr}Total LSOA scores for househol
 
 -   TS045 - Car or van availability
 
-    This dataset included only those households that were reported as having access to a single vehicle only. The scores for this variable were calculated in a similar way to the household composition data, by summing the households for the categories, and converting this to a percentage of the total households in the relevant LSOA, and using the scaling method to create a final score for each LSOA. See Table \ref{tab:carscr}.
+    This dataset included only those households that were reported as having access to a single vehicle only. The scores for this variable were calculated in a similar way to the household composition data, by summing the number of households for the categories, and converting this to a percentage of the total households in the relevant LSOA, and using the scaling method to create a final integer score for each LSOA. See Table \ref{tab:carscr}.
 
 ```{r car_table}
 # Load the vehicle access data
 carscr <- read.csv("1car.csv")
 
-# clean the unrequired columns and rename them for ease of use
-carscr = carscr |> select(-one_of('X2021.super.output.area...lower.layer', 'Total..All.households', 'X1.car.or.van.in.household', 'score_calc', 'X.'))
-carscr <- carscr  |>  rename_at('score', ~'LSOA_carscr')
+# remove the unwanted columns
+carscr = carscr |> select(-one_of('score', 'score_calc', 'X.'))
+
+### Create the score
+#Create a % column from the sum
+carscr$hhldpcnt = (carscr$X1.car.or.van.in.household/carscr$Total..All.households)*100
+
+# Use the scaling method to rank the % column 
+carscr$carrank = round((carscr$hhldpcnt - min(carscr$hhldpcnt)) / (max(carscr$hhldpcnt) - min(carscr$hhldpcnt)), digits = 1)*10
+
+# remove the unrequired columns
+carscr = carscr |> select(-one_of('hhldpcnt', 'X1.car.or.van.in.household', 'Total..All.households', 'X2021.super.output.area...lower.layer'))
+
+# Rename the mnemonic column
 carscr <- carscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
-kable(carscr[0:4,], caption = "\\label{tab:carscr}Total LSOA scores for single vehicle access data for England and Wales")|>
+kable(carscr[0:4,], caption = "\\label{tab:carscr}Rankings for vehicle access data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
@@ -332,18 +352,33 @@ kable(carscr[0:4,], caption = "\\label{tab:carscr}Total LSOA scores for single v
 
 -   TS054 - Tenure - Home Ownership
 
-    This variable included only those households that were reported as having either owning their own homes outright, or with a mortgage or loan. Similarly to the household composition and vehicle ownership variables, the sum of the households was converted to a percentage of the total number of households for each LSOA and scaled to provide the final score. See Table \ref{tab:tenscr}.
+    This variable included only those households that were reported as either owning their own homes outright, or with a mortgage or loan. Similarly to the household composition and vehicle ownership variables, the sum of the households was converted to a percentage of the total number of households for each LSOA and scaled to provide the final integer score. See Table \ref{tab:tenscr}.
 
 ```{r tenure_table}
 # Load the tenure data
 tenscr <- read.csv("tenure.csv")
 
 # clean the unrequired columns and rename them for ease of use
-tenscr = tenscr |> select(-one_of('Total..All.households',  'score_calc', 'X.', 'Owned..Owns.outright', 'Owned..Owns.with.a.mortgage.or.loan', 'sum', 'X2021.super.output.area...lower.layer'))
-tenscr <- tenscr  |>  rename_at('score', ~'LSOA_tenscr')
+tenscr = tenscr |> select(-one_of('score', 'score_calc', 'X.', 'sum'))
+
+### Create the score
+# Sum the relevant columns
+tenscr$tothhld = rowSums(tenscr[,4:5])
+
+#Create a % column from the sum
+tenscr$hhldpcnt = (tenscr$tothhld/tenscr$Total..All.households)*100
+
+# Use the scaling method to rank the % column 
+tenscr$tenrank = round((tenscr$hhldpcnt - min(tenscr$hhldpcnt)) / (max(tenscr$hhldpcnt) - min(tenscr$hhldpcnt)), digits = 1)*10
+
+
+# remove the unrequired columns
+tenscr = tenscr |> select(-one_of('hhldpcnt', 'tothhld', 'Owned..Owns.with.a.mortgage.or.loan', 'Owned..Owns.outright', 'Total..All.households', 'X2021.super.output.area...lower.layer'))
+
+# Rename the mnemonic column
 tenscr <- tenscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
-kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Total LSOA scores for home owners  data for England and Wales")|>
+kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Rankings for homeownership data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
@@ -352,18 +387,31 @@ kable(tenscr[0:4,], caption = "\\label{tab:tenscr}Total LSOA scores for home own
 
 -   TS067 - Highest level of qualification - degree educated
 
-    Education level data was only included those people that have degree level education or above. See Table \ref{tab:dedscr}.
+    Education level data was only included for those people that have degree level education or above. Again, a similar process to calculate the rankings was followed. The number of people in each LSOA that . See Table \ref{tab:dedscr}.
 
 ```{r deg_ed_table}
 # Load the degree educated data
 dedscr <- read.csv("degree_educated.csv")
 
 # clean the unrequired columns and rename them for ease of use
-dedscr = dedscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over', 'degree_educated', 'X.', 'MinMax', 'X2021.super.output.area...lower.layer'))
-dedscr <- dedscr  |>  rename_at('score', ~'LSOA_dedscr')
+dedscr = dedscr |> select(-one_of('score', 'X.', 'MinMax'))
+
+#Create a % column from the sum
+dedscr$hhldpcnt = (dedscr$degree_educated/dedscr$Total..All.usual.residents.aged.16.years.and.over)*100
+
+# Use the scaling method to rank the % column
+dedscr$dedrank = round((dedscr$hhldpcnt - min(dedscr$hhldpcnt)) / (max(dedscr$hhldpcnt) - min(dedscr$hhldpcnt)), digits = 1)*10
+
+# remove the unrequired columns
+dedscr = dedscr |> select(-one_of('hhldpcnt', 'degree_educated', 'Total..All.usual.residents.aged.16.years.and.over', 'X2021.super.output.area...lower.layer'))
+
+# Rename the mnemonic column
 dedscr <- dedscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
-kable(dedscr[0:4,], caption = "\\label{tab:dedscr}Total LSOA scores for degree education level or above data for England and Wales")|>
+# Sort by LSOA21CD
+dedscr = dedscr[order(dedscr$LSOA21CD), ]
+
+kable(tenscr[0:4,], caption = "\\label{tab:dedscr}Rankings for degree education level or above data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
@@ -378,18 +426,34 @@ kable(dedscr[0:4,], caption = "\\label{tab:dedscr}Total LSOA scores for degree e
 # Load the occupation data
 occscr <- read.csv("occ.csv")
 
-# clean the unrequired columns and rename them for ease of use
-occscr = occscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over.in.employment.the.week.before.the.census', 'X.', 'X1..Managers..directors.and.senior.officials', 'X..1', 'X2..Professional.occupations', 'X..2', 'high_earners.', 'calc'))
-occscr <- occscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-occscr <- occscr  |>  rename_at('score', ~'occscr')
+names(occscr)
+# clean the unrequired columns
+occscr = occscr |> select(-one_of('X.', 'X..1', 'X..2', 'high_earners.', 'score', 'calc'))
+
+### Create the score
+# Sum the relevant columns
+occscr$tothhld = rowSums(occscr[,4:5])
+
+#Create a % column from the sum
+occscr$hhldpcnt = (occscr$tothhld/occscr$Total..All.usual.residents.aged.16.years.and.over.in.employment.the.week.before.the.census)*100
+
+# Use the scaling method to rank the % column 
+occscr$occrank = round((occscr$hhldpcnt - min(occscr$hhldpcnt)) / (max(occscr$hhldpcnt) - min(occscr$hhldpcnt)), digits = 1)*10
+
+# remove the unrequired columns
+occscr = occscr |> select(-one_of('hhldpcnt', 'tothhld', 'X2..Professional.occupations', 'X1..Managers..directors.and.senior.officials', 'Total..All.usual.residents.aged.16.years.and.over.in.employment.the.week.before.the.census', 'X2021.super.output.area...lower.layer'))
+
+# Rename the mnemonic column
 occscr <- occscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
-kable(occscr[0:4,], caption = "\\label{tab:occscr}Total LSOA scores for higher rated occupations for England and Wales")|>
+# Sort by LSOA21CD
+occscr = occscr[order(occscr$LSOA21CD), ]
+
+kable(occscr[0:4,], caption = "\\label{tab:occscr}Rankings for occupation data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
-  column_spec(2,width = "0.5in") |>
-  column_spec(3,width = "0.75in")
+  column_spec(2,width = "0.5in")
 ```
 
 #### Retail Centres
