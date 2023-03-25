@@ -611,6 +611,10 @@ pwc_clip = lsoa_pwc[bishy$bishyisochrone,]
 # clip the LSOAs to only show those for the clipped PWCs
 lsoa_clip = lsoas[pwc_clip,]
 
+# save the lsoa_clip file for Nick to look at
+#saveRDS(obj = lsoa_clip, file = "lsoa_clip.rds")
+#saveRDS(obj = lsoa_clip, file = "lsoa_clip.rds")
+
 # convert both results to the correct CRS
 pwc_clip <- st_transform(pwc_clip, crs = st_crs(3857))
 lsoa_clip <- st_transform(lsoa_clip, crs = st_crs(3857))
@@ -788,6 +792,9 @@ bishy <- bishy  |>  rename_at('a', ~'totalscore')
 
 # remove the not required dataframes etc
 remove(a, joined_lsoas, lsoa_clip, lsoa_clip_tot, pwc_clip)
+
+# Save the bishy data
+saveRDS(obj = bishy, file = "bishy.rds")
 ```
 
 ```{r ytotalscore_map, warning=FALSE, fig.cap="Map showing the total mean score for the total of the 5 variables for each individual LSOA once combined."}
