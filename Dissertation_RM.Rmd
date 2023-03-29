@@ -715,26 +715,24 @@ Once the variables scores for the test store had each been checked for validity,
 ```{r}
 # Create a new variable to hold the totals for the final joined data and convert to a data.frame
 # CRS should be 3857
-# remove(lsoa_clip_tot)
-remove(bishyjoined)
 lsoa_clip_tot = as.data.frame(lsoa_clip)
 
 ##### create a row in the lsoa_clip_tot dataframe for the total MEAN for all lsoas in the area and the total of those totals
-  #r = nrow(b)
   lsoa_clip_tot <- lsoa_clip_tot |>
     bind_rows(summarise(lsoa_clip_tot[,9:14], across(where(is.numeric), mean), across(where(is.character), ~'Total')))
 lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
-  # Join the lsoas to a single shape - USE THIS "JOINED_LSOAS" AS THE FINAL LSOA SHAPE
-gglpot() +
-  annotation_map_tile(zoomin = 0, type = "hotstyle") +
-  geom_sf(aes(geometry = lsoa_clip_tot$lsoageometry))
 
+# Join the lsoas to a single shape - USE THIS "JOINED_LSOAS" AS THE FINAL LSOA SHAPE
+# gglpot() +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = lsoa_clip_tot$lsoageometry))
 
-  
-
-plot(st_union(lsoa_clip_tot$lsoageometry))
-  joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
-  joined_lsoas <- st_union()
+###################################################################################
+# Test Plot
+#plot(st_union(lsoa_clip_tot$lsoageometry))
+#  joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
+#  joined_lsoas <- st_union()
+# THIS WORKED
 ###################################################################################
 # Test Plot
 # ggplot(joined_lsoas) +
@@ -747,51 +745,34 @@ plot(st_union(lsoa_clip_tot$lsoageometry))
   lsoa_clip_tot = as.data.frame(lsoa_clip_tot)
   ft = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
   lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
-  # rename the columns of the new temp df
-  # colnames(ft)<-c("occscrtot","tenscrtot","carscrtot","pplscrtot","dedscrtot", "totscrtot")
 
   # sum the individual variables for the whole lsoa_clip_tot and add the result to the bottom of lsoa_clip_tot
-  #ft[nrow(ft) + 1,] = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
-
-  # Join all the data together
-  # ft contains the final mean scores for the LSOAs in the area
-  # joined_lsoas contains the single joined LSOA shape
-  # bishy <- bishy  |>  rename_at('geometry', ~'store_location')
-  # bishy = as.data.frame(bishy)
-  # joined_lsoas = as.data.frame(joined_lsoas)
-  # ft = as.data.frame(ft)
-  
-  # remove(bishyjoined)
-  # bishyjoined = cbind(bishy[,1], bishy[,8])
-  # bishyjoined = as.data.frame(bishyjoined)
    bishy = st_as_sf(bishy)
    joined_lsoas = st_as_sf(joined_lsoas)
    joined_lsoas <- st_transform(joined_lsoas, crs = st_crs(3857))
 ###################################################################################
 # Test Plot Bishy
- ggplot(bishy) +
-    annotation_map_tile(zoomin = 0, type = "hotstyle") +
-    geom_sf(aes(geometry = joined_lsoas$x)) +
-    geom_sf(aes(geometry = bishy$store_location))
+ # ggplot(bishy) +
+ #    annotation_map_tile(zoomin = 0, type = "hotstyle") +
+ #    geom_sf(aes(geometry = joined_lsoas$x)) +
+ #    geom_sf(aes(geometry = bishy$store_location))
 # THIS WORKED
 ##################################################################################
-  # bishyjoined <- bishyjoined  |>  rename_at('V1', ~'st_nam')
-  # bishyjoined <- bishyjoined  |>  rename_at('V2', ~'store_location')
-  joined_lsoas = st_as_sf(joined_lsoas)
-  bishyjoined = cbind(bishy, round(ft[,1:6], digits = 0))
-  bishyjoined = cbind(bishyjoined, joined_lsoas)
-  bishyjoined <- bishyjoined  |>  rename_at('x', ~'joined_lsoas')
+#  joined_lsoas = st_as_sf(joined_lsoas)
+#  bishyjoined = cbind(bishy, round(ft[,1:6], digits = 0))
+#  bishyjoined = cbind(bishyjoined, joined_lsoas)
+#  bishyjoined <- bishyjoined  |>  rename_at('x', ~'joined_lsoas')
   
 ##################################################################################
 # Test plot
   bishyjoined = st_as_sf(bishyjoined)
   bishyjoined = as.data.frame(bishyjoined)
   bishyjoined <- st_transform(bishyjoined, crs = st_crs(3857))
-  ggplot() +
-    annotation_map_tile(zoomin = 0, type = "hotstyle") +
-    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$store_location)) +
-   geom_sf(data = ywalktime20, aes(geometry = ywalktime20$geometry), alpha = 0.1) +
-    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$joined_lsoas), alpha = 0.1)
+#  ggplot() +
+#    annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$store_location)) +
+#   geom_sf(data = ywalktime20, aes(geometry = ywalktime20$geometry), alpha = 0.1) #+
+#    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$joined_lsoas), alpha = 0.1)
 # THIS WORKED
 ##################################################################################
 ```
