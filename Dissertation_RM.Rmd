@@ -775,85 +775,101 @@ lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
 #    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$joined_lsoas), alpha = 0.1)
 # THIS WORKED
 ##################################################################################
+saveRDS(obj = bishyjoined, file = "bishyjoined.rds")
 ```
 
 ```{r}
-
-```
-
-```{r}
-#remove(a, bishy, bishyjoined, ft, joined_lsoas, lsoa_clip, lsoa_clip_tot, lsoa_pwc, lsoas, m, p, pwc_clip, ym1, ym2, ym3, ym4, ym5, ym6, ywalktime20)
+remove(a, bishy, bishyjoined, ft, joined_lsoas, lsoa_clip, lsoa_clip_tot, lsoa_pwc, lsoas, m, p, pwc_clip, ym1, ym2, ym3, ym4, ym5, ym6, ywalktime20)
 ```
 
 Once the test store data had been processed and mapped to ensure validity, the data for all 140 zero waste stores, including the test store, were processed in full using the same processing steps as the test store, and the results were combined with the location data in the zero waste store data for analysis.
 
 ```{r zws_iso_loop}
-
 # Load the results file from the code below
 zwsiso <- readRDS("zwsiso.rds")
 
-
-# Loops throughthe zws file and creates a new dataframe (zwsiso) that holds the zws store data and the isochrone for the walktime20 mins boundary.
-
-#############################################################################
-#                                                                           #
-#          Commented out to stop it running                                 #
-#                                                                           #
-#############################################################################
-# create a dataframe to hold the iso results
-#zwsiso <- data.frame(matrix(ncol = 12, nrow = 0))
-#############################################################################
-#i = 0
-#i = i + 1
-#############################################################################
-#for(i in 1:nrow(zws)) {
-  # create a df variable to hold the zws values from row i of zws
+# remove(i, zws, zwsiso)
+# 
+# zws <- readRDS("zws.rds")
+# # Loops throughthe zws file and creates a new dataframe (zwsiso) that holds the zws store data and the isochrone for the walktime20 mins boundary.
+# 
+# #############################################################################
+# #                                                                           #
+# #          Commented out to stop it running                                 #
+# #                                                                           #
+# #############################################################################
+# # create a dataframe to hold the iso results
+# zwsiso <- data.frame(matrix(ncol = 12, nrow = 0))
+# #############################################################################
+# i = 0
+# i = i + 1
+# #############################################################################
+# for(i in 1:nrow(zws)) {
+#   # create a df variable to hold the zws values from row i of zws
 #  isodf = zws[i,]
-  # embed data in the output file rather than html streaming option
+#   # embed data in the output file rather than html streaming option
 #  mapviewOptions(fgb = FALSE)
-  
-  # Get the coordinates of the store in the (df)
+#   
+#   # Get the coordinates of the store in the (df)
 #  coordinates <- data.frame(lon = isodf$Lon, lat = isodf$Lat)
-  
-  # if there are no coordinates - skip to the next zws record
+#   
+#   # if there are no coordinates - skip to the next zws record
 #    if(is.na(coordinates$lon)) {
+#      cat(i, "No Coordinates\r")
 #    next
 #  }
-  
-  # Calculate a 20 minute walking time isochrone around the store
-#  walktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
+#   
+#   # Calculate a 20 minute walking time isochrone around the store
+#  walktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200,
 #                               output = "sf", profile = ors_profile("walking"))
 #  values <- levels(factor(walktime20$value))
 #  ranges <- split(walktime20, values)
 #  ranges <- ranges[rev(values)]
 #  names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
-  
-  # Convert the walktime20 isochrone to the correct CRS
-  # USE THIS AS THE ISOCHRONE
-#  walktime20 <- st_transform(walktime20, crs = st_crs(3857))
-  
-  # rename the walktime20 geometry column
-#  walktime20 <- walktime20  |>  rename_at('geometry', ~'walktimegeometry')  
-  #walktime20 <- as.data.frame(walktime20)
-  
-  # Join the calculated walktime 20 data to the zws data in isodf
+#   
+# #################################################################################### TEST PLOT THE ISOCHRONE
+#  # ggplot(walktime20) +
+#  #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#  #   geom_sf(aes(geometry = geometry), alpha = 0.1) +
+#  #   geom_sf(data = isodf, aes(geometry = geometry))
+# # THIS WORKED 
+# ###################################################################################
+#   # Convert the walktime20 isochrone to the correct CRS
+#   # USE THIS AS THE ISOCHRONE
+#   # rename the walktime20 geometry column
+#  walktime20 <- walktime20  |>  rename_at('geometry', ~'isogeometry')
+# 
+#   # Join the calculated walktime 20 data to the zws data in isodf
 #  zwsisoc <- cbind(isodf, walktime20)
-#  zwsiso = zwsiso <- rbind(zwsiso, zwsisoc) 
-  
+#  # rename the geometry column
+#  zwsisoc <- zwsisoc  |>  rename_at('geometry', ~'zwsgeometry')
+#  zwsiso = zwsiso <- rbind(zwsiso, zwsisoc)
+# ###################################################################################
+# # TEST PLOT THE DATA AGAIN
+# # ggplot(zwsiso) +
+# #    annotation_map_tile(zoomin = 0, type = "hotstyle") +
+# #    geom_sf(aes(geometry = zwsgeometry)) +
+# #    geom_sf(aes(geometry = isogeometry), alpha = 0.1)
+# # THIS WORKED
+# ###################################################################################   # print i as a count of rows that have completed
 #  cat(i, "completed\r")
-  
-  # print i as a count of rows that have completed
-  #print(i)
-  
-  # remove the temporary environments
-#  remove(i, zwsisoc, walktime20, values, ranges, isodf, coordinates)
-#}
-# rename the "geometry" column to zwsgeometry"
-#zwsiso <- zwsiso  |>  rename_at('geometry', ~'zwsgeometry')
-# remove the "center" column
-#zwsiso = zwsiso |> select(-one_of('center', 'group_index', 'value'))
-# Save the zwsiso file
-#saveRDS(obj = zwsiso, file = "zwsiso.rds")
+#   
+# # remove the temporary environments
+#  remove(coordinates, isodf, ranges, values, walktime20, zwsisoc)
+#  Sys.sleep(3)
+# }
+# # Save the zwsiso file
+# saveRDS(obj = zwsiso, file = "zwsiso.rds")
+# 
+# ###################################################################################
+# # TEST PLOT THE DATA AGAIN
+#  # ggplot(zwsiso[97,]) +
+#  #    annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#  #    geom_sf(aes(geometry = zwsgeometry)) +
+#  #    geom_sf(aes(geometry = isogeometry), alpha = 0.1)
+# # THIS WORKED
+# #################################################################################
+# remove(coordinates, i, isodf, zws)
 ```
 
 ```{r zws_scr_loop}
