@@ -65,7 +65,7 @@ library(maptools)
 library(rgeos)
 library(readxl)
 library(gridExtra)
-
+library(psych)
 
 #API Key info - should only need loading once -  500
 #ors_api_key("5b3ce3597851110001cf62480f8858be0885487ca2a78900b689815b")
@@ -1001,7 +1001,6 @@ b = lsoa_pwc[a,]
   # add this to a row in a new dataframe
   zws_joined_lsoa_scr <- rbind(zws_joined_lsoa_scr, e)
 
-  
   # remove the temporary dataframes sf files etc 
  remove(a, b, c, d, e, joined_lsoas, joined_lsoas_c)
 
@@ -1016,10 +1015,8 @@ b = lsoa_pwc[a,]
 ###################################################################################
   # Print (i) as a counter
   cat(i, "completed\r")
-  # wait 1 second and move to the next iteration
 }
 # clean the zws_joined_lsoa_scr names and columns
-
 # Round the scores to the nearest whole number
 zws_joined_lsoa_scr = as.data.frame(zws_joined_lsoa_scr)
 zws_joined_lsoa_scr = st_as_sf(zws_joined_lsoa_scr)
@@ -1030,15 +1027,24 @@ rownames(zws_joined_lsoa_scr) <- 1:nrow(zws_joined_lsoa_scr)
 
 ###################################################################################
 # TEST PLOT
-# ggplot(zws_joined_lsoa_scr[93,]) +
-#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
-#   geom_sf(aes(geometry = zwsgeometry)) +
-#   geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
-#   geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+ggplot(zws_joined_lsoa_scr[93,]) +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(aes(geometry = zwsgeometry)) +
+  geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = joinedlsoageom, alpha = lsoatotscr))
 # THIS WORKED
 ###################################################################################
-
+# 
+# st_geometry(zws_joined_lsoa_scr) <- "isogeometry"
+# zws_joined_lsoa_scr
+# 
+# 
+# remove(a, zwsiso)
 # Save the zws_joined_lsoa_scr data
+#remove the errors
+zws_joined_lsoa_scr <- zws_joined_lsoa_scr[-c(82), ]
+# reindex the data
+rownames(zws_joined_lsoa_scr) <- 1:nrow(zws_joined_lsoa_scr)
 saveRDS(obj = zws_joined_lsoa_scr, file = "zws_joined_lsoa_scr.rds")
 ```
 
@@ -1057,7 +1063,8 @@ This section will analyse the results of the initial scorecard calculations for 
 Once the 133 stores had been scorecarded, a summary was produced. All scores were calculated as means, based on the number of LSOAs that appeared within the isochrone catchment area for each location. For example, the first record in table \ref{tab:allzwsscrtable} shows that the mean for each variable (carscr, dedscr, occscr, pplscr, and tenscr )were 6, 3, 4, 4 and 7 respectively, while the lsoatotalscr mean was 80. Calculating the results in this way, provides comparability across all stores for both the individual variables and the total score.
 
 ```{r all_zws_scr_table}
-kable(zws_joined_lsoa_scr[c(1:10),c(1, 2, 11:15, 10)], caption = "\\label{tab:allzwsscrtable}Scorecard table for first 10 zero waste stores")|>
+a = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[1:10, c(1, 2, 11:16)]))
+kable(a, caption = "\\label{tab:allzwsscrtable}Scorecard table for first 10 zero waste stores")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T, font_size = 12) |>
   column_spec(1,width = "0.5in") |>
@@ -1067,14 +1074,19 @@ kable(zws_joined_lsoa_scr[c(1:10),c(1, 2, 11:15, 10)], caption = "\\label{tab:al
   column_spec(5,width = "0.5in") |>
   column_spec(6,width = "0.5in") |>
   column_spec(7,width = "0.5in")
+
+remove(a)
 ```
 
 Table \ref{tab:zws_scrsummary} shows that across all 133 stores, the total scores (*lsoatotscr*) ranged from 52 through to 107, with the mean being calculated at 78. The smallest variation in the range of scores was seen in the *pplscr* variable, which ranged from 2 to 6, with a mean of 4. The largest variation between the ranges of scores was seen in the *tenscr* variable (*home-ownership*). This varied from 1 through to 9, with a mean of 5.9.
 
 ```{r zwsscrsummary}
-a = summary(round(zws_joined_lsoa_scr[,c(10:15)]), digits = 2)
+remove(a,b,c,d)
+a = st_drop_geometry(zws_joined_lsoa_scr[,c(11:16)])
 
-kable(t(a), caption = "\\label{tab:zws_scrsummary}Summary table for zero waste store scores")|>
+# FIX THIS
+
+kable(t(c), caption = "\\label{tab:zws_scrsummary}Summary table for zero waste store scores")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 10)|>
   column_spec(1,width = "0.8in", bold = T) |>
   column_spec(2,width = "0.8in") |>
@@ -1087,44 +1099,44 @@ kable(t(a), caption = "\\label{tab:zws_scrsummary}Summary table for zero waste s
 IS IT WORTH DOING A STANDARD REGRESSION ON THE RESULTS?
 
 ```{r}
-m = lm(formula = lsoatotscr ~carscr+dedscr+occscr+pplscr+tenscr, data = zws_joined_lsoa_scr) 
+m = lm(formula = lsoatotscr ~carrank+dedrank+occrank+pplrank+tenrank, data = zws_joined_lsoa_scr) 
 summary(m)
 ```
 
 Figure \ref{fig:corr_plot} shows that all the variables have a positive relationship with total score (*lsoatotscr*) to varying extents. For example, the degree educated variable (*dedscr*), and occupation variable (*occscr*), both have a more positive linear relationship with the total score, that (*carscr*), for example.
 
 ```{r corr_plot, fig.cap="Plot showing correlations between total scores and the 5 variables "}
-cor_plot <- plot(zws_joined_lsoa_scr[,c(10:15)], cex = 0.3, 
+cor_plot <- plot(a, cex = 0.3, 
      col = grey(0.145,alpha=0.5), upper.panel=panel.smooth)
 ```
 
 ```{r totscr_hist}
-h1 <- ggplot(zws_joined_lsoa_scr, aes(x=lsoatotscr)) + 
-  geom_histogram(breaks = seq(40, 120, by = 10), colour = "orange", fill = "darkgrey")
+h1 <- ggplot(a, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
 ```
 
 ```{r carscr_hist}
-h2 <- ggplot(zws_joined_lsoa_scr, aes(x=carscr)) + 
+h2 <- ggplot(a, aes(x=carrank)) + 
   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 ```
 
 ```{r dedscr_hist}
-h3 <- ggplot(zws_joined_lsoa_scr, aes(x=dedscr)) + 
+h3 <- ggplot(a, aes(x=dedrank)) + 
   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 ```
 
 ```{r pplscr_hist}
-h4 <- ggplot(zws_joined_lsoa_scr, aes(x=pplscr)) + 
+h4 <- ggplot(a, aes(x=pplrank)) + 
   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 ```
 
 ```{r tenscr_hist}
-h5 <- ggplot(zws_joined_lsoa_scr, aes(x=tenscr)) + 
+h5 <- ggplot(a, aes(x=tenrank)) + 
   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 ```
 
 ```{r occscr_hist}
-h6 <- ggplot(zws_joined_lsoa_scr, aes(x=occscr)) + 
+h6 <- ggplot(a, aes(x=occrank)) + 
   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 ```
 
@@ -1144,34 +1156,28 @@ A more varied distribution than the other variables was seen for home-ownership 
 do.call("grid.arrange", c(plot_list, ncol = 3))
 ```
 
+```{r}
+###################################################################################
+# TEST PLOT
+#i= 0
+#i=i+1
+#ggplot(zws_joined_lsoa_scr[i,]) +
+#  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#  geom_sf(aes(geometry = zwsgeometry)) +
+#  geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+#  geom_sf(aes(geometry = joinedlsoageom, alpha = lsoatotscr))
+# THIS WORKED
+#
+#
+###################################################################################
+```
+
+FIX THIS
+
 Figure \ref{fig:min_store_map} shows the store that scored the lowest of the 133, with a score of 52. As can be seen in the breakdown of the individual variables average scores, this area scored very low on all factors. This would at first glance suggest that it is not in the best location, however, the area it serves is highly residential
 
 ```{r}
-minstore = zws_joined_lsoa_scr[which.min(zws_joined_lsoa_scr$lsoatotscr),]
-minstore = st_as_sf(minstore)
-minstore <- st_transform(minstore, crs = st_crs(3857))
-maxstore = zws_joined_lsoa_scr[which.max(zws_joined_lsoa_scr$lsoatotscr),]
-```
-
-```{r min_store_map, fig.cap="Map showig location and scorecard for the store with the lowest overall score."}
-ggplot(minstore) +
-  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(geometry = walktimegeometry, alpha = "")) +
-      guides(alpha = guide_legend(title = "Catchment Area", reverse = TRUE)) +
-  geom_sf(aes(geometry = minstore$zwsjlsoageometry, fill = lsoatotscr), alpha = 0.2) +
-      guides(fill = guide_legend(title = "LSOA Score", reverse = TRUE)) +
-  geom_sf(aes(geometry = zwsgeometry, colour = "")) +
-    guides(colour = guide_legend(title = str_wrap(minstore$st_nam, width = 15),reverse = TRUE)) +
-  # North arrow and scale bar
-  annotation_scale(location = "br") +
-  annotation_north_arrow(location = "tr", which_north = "true", 
-                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
-                         style = north_arrow_minimal) +
-  theme_bw()
-```
-
-```{r}
-minstoretab = print(minstore[,8:13])
+minstore = zws_joined_lsoa_scr( )
 kable(minstoretab, caption = "\\label{tab:zws_scrsummary}Summary table for zero waste store scores")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 10)|>
   column_spec(1,width = "0.8in", bold = T) |>
@@ -1182,7 +1188,7 @@ kable(minstoretab, caption = "\\label{tab:zws_scrsummary}Summary table for zero 
   column_spec(6,width = "0.8in")
 ```
 
-The area that scored the highest overall can be seen in figure \ref{fig:maxstr_map}.
+CHANGE TO A TABLE The area that scored the highest overall can be seen in figure \ref{fig:maxstr_map}.
 
 ```{r maxstr_map, fig.cap = "Map showing the store with the highest value scorecard, and the variable averages for the location.", warning=FALSE}
 maxstoremap <- 
