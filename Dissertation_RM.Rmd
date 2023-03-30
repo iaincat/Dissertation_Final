@@ -768,6 +768,7 @@ lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
   bishyjoined = st_as_sf(bishyjoined)
   bishyjoined = as.data.frame(bishyjoined)
   bishyjoined <- st_transform(bishyjoined, crs = st_crs(3857))
+###################################################################################
 #  ggplot() +
 #    annotation_map_tile(zoomin = 0, type = "hotstyle") +
 #    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$store_location)) +
@@ -873,11 +874,7 @@ zwsiso <- readRDS("zwsiso.rds")
 ```
 
 ```{r zws_scr_loop}
-zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
-
-#############################################################################                                                                       
-#           Commented out to stop it running                                #
-############################################################################
+# zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
 
 # Loop through each store to find the pwcs in zwsiso$walktimegeometry
 # Find all the LSOAs related to those PWCs
@@ -885,100 +882,164 @@ zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
 # Add the scores and the joined LSOA geometry to the [i] row for that store
 
 # Load the data required
-#lsoa_pwc <- readRDS("lsoa_pwc.rds")
-# convert to CRS 3857
-#lsoa_pwc <- st_transform(lsoa_pwc, crs = st_crs(3857))
-#lsoas <- readRDS("lsoas.rds")
+lsoa_pwc <- readRDS("lsoa_pwc.rds")
+
+lsoas <- readRDS("lsoas.rds")
 # convert to sf
-#lsoas = st_as_sf(lsoas)
-# convert to CRS 3857
-#lsoas <- st_transform(lsoas, crs = st_crs(3857))
-#zws <- readRDS("zws.rds")
-#zws <- st_transform(zws, crs = st_crs(3857))
-#zwsiso <- readRDS("zwsiso.rds")
-#zwsiso <- st_transform(zwsiso, crs = st_crs(3857))
+
+lsoas = st_as_sf(lsoas)
+zwsiso <- readRDS("zwsiso.rds")
 
 # Create a dataframe to hold all the joined results
-#zws_joined_lsoa_scr <- data.frame(matrix(ncol = 16, nrow = 0))
+zws_joined_lsoa_scr <- data.frame(matrix(ncol = 16, nrow = 0))
 
 #initialise i
-#i = 0
-#i = i + 1
-#for (i in 1:nrow(zwsiso)) {
-  
+i = 0
+i = i + 1
+for (i in 1:nrow(zwsiso)) {
+
+a = zwsiso[i,]
   # Select the pwcs that appear in the isochrone for that (i) record in zwsiso
-  
-  # get all the pwcs that appear in the iso for that store
-#  a = lsoa_pwc[zwsiso[i,]$walktimegeometry,]
+
+###################################################################################
+# TEST PLOT
+# ggplot(a) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = zwsgeometry)) +
+#   geom_sf(aes(geometry = isogeometry), alpha = 0.1)
+#THIS WORKED
+###################################################################################
+
+# get all the pwcs that appear in the iso for that store
+a <- a  |>  rename_at('isogeometry', ~'geometry')
+a = st_transform(a$geometry, crs = st_crs(3857)) 
+
+# st_geometry(b) <- "geometry"
+b = lsoa_pwc[a,]
   
   # Check if (a) has 0 rows. If so, sack it off and move to the next record
-#  if(nrow(a) == 0) {
-#    next
-#  }
+ if(nrow(b) == 0) {
+   next
+ }
   
   # Convert a to a dataframe to manipulate it
-#  a = as.data.frame(a)
+  b = as.data.frame(b)
   
   # Get all the lsoas that relate to the pwcs just found
-#  b = lsoas[(lsoas$LSOA21CD %in% a$LSOA21CD),]
+  c = lsoas[(lsoas$LSOA21CD %in% b$LSOA21CD),]
   
   #convert b to a dataframe
-#  b = as.data.frame(b)
+  c = as.data.frame(c)
   
 ##### create a row in the b dataframe for the total for all lsoas in the area and the total mean of those totals
-  #r = nrow(b)
-#  b <- b |>
-#    bind_rows(summarise(b[9:14], across(where(is.numeric), mean),
-#                        across(where(is.character), ~'Total')))
+  c <- c |>
+   bind_rows(summarise(c[9:14], across(where(is.numeric), mean),
+                       across(where(is.character), ~'Total')))
   
   # Join the lsoas to a single shape so that a single line for this shape with the averages score can be used.
-  
+
   # convert b to sf format
-#  b = st_as_sf(b)
-  # convert b to the correct CRS
-#  b = st_transform(b, crs = st_crs(3857))
+  c = st_as_sf(c)
   
+###################################################################################
+# TEST PLOT
+# ggplot(c) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = c$lsoageometry), alpha = 0.1)
+#THIS WORKED
+################################################################################### 
   # Join the lsoas together
-#  joined_lsoas <- st_union(b$lsoageometry)
-  ## Create a new dataframe  for the joined data
-#  joined_lsoas_b = cbind(joined_lsoas, b[nrow(b),9:14])
-  # delete the blank geometry column
-#  joined_lsoas_b = subset(joined_lsoas_b, select = -c(lsoageometry))
-  # convert both to a dataframe
-#  b = as.data.frame(b)
-#  joined_lsoas_b = as.data.frame(joined_lsoas_b)
+ joined_lsoas <- st_union(c$lsoageometry)
   
+###################################################################################
+# TEST PLOT
+ # ggplot(joined_lsoas) +
+ #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+ #   geom_sf(aes(geometry = joined_lsoas), alpha = 0.1)
+#THIS WORKED
+###################################################################################
+
+  ## Create a new dataframe for the joined data
+  joined_lsoas = st_as_sf(joined_lsoas)
+###################################################################################
+# TEST PLOT
+# ggplot(joined_lsoas) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = joined_lsoas$x), alpha = 0.1)
+#THIS WORKED
+###################################################################################
   
+  # combine the joined lsoa data and the score data
+  joined_lsoas_c = cbind(joined_lsoas, c[nrow(c),9:14])
+  #remove the empty multipolyon column
+  joined_lsoas_c = joined_lsoas_c |> select(-one_of('lsoageometry'))
+  # rename the x column to "joinedlsoageom"
+  joined_lsoas_c <- joined_lsoas_c  |>  rename_at('x', ~'joinedlsoageom')
+
+###################################################################################
+# TEST PLOT
+# ggplot(joined_lsoas_c) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = joined_lsoas_c$joinedlsoageom), alpha = 0.1)
+#THIS WORKED
+###################################################################################
+
   # retrieve the store name from zwsiso
-#  d = zwsiso[i,]
-  #d$st_nam<-apply(d,1,paste,collapse=" - ")
-  #remove the unwanted column
-  #d = d |> select(-one_of('town'))
-  
-#  d = as.data.frame(d)
-  # Join the store name and the scores and the joined LSOA geometry and the walktime geometry
-#  e = cbind(d, joined_lsoas_b)
+  d = zwsiso[i,]
+
+   # Join the store name and the scores and the joined LSOA geometry and the walktime geometry
+ e = cbind(d, joined_lsoas_c)
+###################################################################################
+# TEST PLOT
+# ggplot(e) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = zwsgeometry)) +
+#   geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+#   geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+# THIS WORKED
+###################################################################################  
   # add this to a row in a new dataframe
-#  zws_joined_lsoa_scr <- rbind(zws_joined_lsoa_scr, e)
+  zws_joined_lsoa_scr <- rbind(zws_joined_lsoa_scr, e)
 
   
   # remove the temporary dataframes sf files etc 
-#  remove(r, a, b, d, e, joined_lsoas, joined_lsoas_b, i, zwsiso, zws)
+ remove(a, b, c, d, e, joined_lsoas, joined_lsoas_c)
 
-
+###################################################################################
+# TEST PLOT
+#ggplot(zws_joined_lsoa_scr) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = zwsgeometry)) +
+#   geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+#   geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+# THIS WORKED
+###################################################################################
   # Print (i) as a counter
-#  cat(i, "completed\r")
+  cat(i, "completed\r")
   # wait 1 second and move to the next iteration
-#  Sys.sleep(1)
-#}
+}
 # clean the zws_joined_lsoa_scr names and columns
-#zws_joined_lsoa_scr <- zws_joined_lsoa_scr  |>  rename_at('d', ~'st_nam')
-#zws_joined_lsoa_scr <- zws_joined_lsoa_scr  |>  rename_at('geometry', ~'zwsjlsoageometry')
-# Round the scores to the nearest whole number
-zws_joined_lsoa_scr <- zws_joined_lsoa_scr %>% mutate(across(c('lsoatotscr', 'carscr', 'dedscr', 'tenscr', 'occscr', 'pplscr'), round, 0))
 
-# save the retail centres joined lsoas data that contains the average scores for the individua variables and the total meanscore for the whole joined lsoas area.
-#saveRDS(obj = zws_joined_lsoa_scr, file = "zws_joined_lsoa_scr.rds")
+# Round the scores to the nearest whole number
+zws_joined_lsoa_scr = as.data.frame(zws_joined_lsoa_scr)
+zws_joined_lsoa_scr = st_as_sf(zws_joined_lsoa_scr)
+zws_joined_lsoa_scr <- zws_joined_lsoa_scr |>  mutate(across(c('lsoatotscr', 'carrank', 'dedrank', 'tenrank', 'occrank', 'pplrank'), round, 0))
+
+# reindex the data
+rownames(zws_joined_lsoa_scr) <- 1:nrow(zws_joined_lsoa_scr)
+
+###################################################################################
+# TEST PLOT
+# ggplot(zws_joined_lsoa_scr[93,]) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = zwsgeometry)) +
+#   geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+#   geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+# THIS WORKED
+###################################################################################
+
+# Save the zws_joined_lsoa_scr data
+saveRDS(obj = zws_joined_lsoa_scr, file = "zws_joined_lsoa_scr.rds")
 ```
 
 Of the original 140 stores, 133 were successfully processed. Those that were not, either did not produce isochrone calculations, with PWCs situated inside them, or did not have valid coordinate geometry data, as they were stores that closed prior to the study.
