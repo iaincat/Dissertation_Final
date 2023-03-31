@@ -68,10 +68,10 @@ library(gridExtra)
 library(psych)
 
 #API Key info - should only need loading once -  500
-#ors_api_key("5b3ce3597851110001cf62480f8858be0885487ca2a78900b689815b")
+# ors_api_key("5b3ce3597851110001cf62480f8858be0885487ca2a78900b689815b")
 
 #API Key info - should only need loading once -  2500
-#ors_api_key("5b3ce3597851110001cf624810789863e851418a86e0341fb278a772")
+# ors_api_key("5b3ce3597851110001cf624810789863e851418a86e0341fb278a772")
 ```
 
 \FloatBarrier
@@ -1355,8 +1355,475 @@ wrap_plots(A = minstoremap,
 ```
 
 ```{r}
-ggplot(minstore)+
-  geom_sf()
+# clear the environment
+rm(list=ls())
+```
+
+Using QGIS, the retail centre located within Scotland and Northern Ireland were removed as they do not sit within the study area. Centroids were applied to the remaining retail centres data so that 20 minute walktime isochrones could be calculated.
+
+```{r}
+############### Try to fix zws_joined_lsoa_scr.rds geometries #####################
+###################################################################################
+# Load zwsiso
+zwsdata <- readRDS("zws_joined_lsoa_scr.rds")
+a = as.data.frame(zwsdata)
+
+# Try to fix zws_joined_lsoa_scr.rds geometries
+a$index <- 1:nrow(a)
+a = a |> select(index, everything())
+
+b = a[,c(1,20)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+
+a$joinedlsoageom <- b$joinedlsoageom
+
+b = a[,c(1,19)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+
+a$isogeometry <- b$isogeometry
+
+b = a[,c(1,18)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+
+a$zwsgeometry <- b$zwsgeometry
+
+
+ggplot(a[92,]) +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1) +
+  geom_sf(aes(geometry = zwsgeometry))
+
+###################################################################################
+# FINAL TEST
+ggplot(a[92,]) +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(aes(geometry = zwsgeometry)) +
+  geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+
+zwsdata = a
+zwsdata = st_as_sf(zwsdata)
+
+ggplot(a[92,]) +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(aes(geometry = zwsgeometry)) +
+  geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+
+
+zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
+zws_joined_lsoa_scr = zwsdata
+zws_joined_lsoa_scr$zwsgeometry
+zws_joined_lsoa_scr$isogeometry
+zws_joined_lsoa_scr$joinedlsoageom
+
+ggplot(zws_joined_lsoa_scr[1,]) +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(aes(geometry = zwsgeometry)) +
+  geom_sf(aes(geometry = isogeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1)
+
+saveRDS(obj = zws_joined_lsoa_scr, file = "zws_joined_lsoa_scr.rds")
+```
+
+```{r rc_with_zws_prep}
+# Load the data required
+
+ # Load Retail Centres data
+ rc_results <- readRDS("rc_results.rds")
+ # create a dataframe to hold the RCID and geometry for the isochrone
+ rc = select(rc_results, 2, 10)
+ # remove rc_results
+ # remove(rc_results)
+ # Convert rc to a sf format
+ rc = st_as_sf(rc)
+
+# Load Lsoa data
+lsoas <- readRDS("lsoas.rds")
+lsoas = st_as_sf(lsoas)
+
+# Load Population Weighted Centroid data and zws results
+lsoa_pwc <- readRDS("lsoa_pwc.rds")
+lsoa_pwc
+
+zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
+
+# Find the retail centres that do not contain a store already
+# RCs WITH zws
+rc_with_zws = rc[zws_joined_lsoa_scr$zwsgeometry,]
+# RCs WITHOUT zws
+rc_no_zws = rc[!(rc$RC_ID  %in% rc_with_zws$RC_ID),]
+saveRDS(obj = rc_no_zws, file = "rc_no_zws.rds")
+
+################# Calclate the isochrones around the retail centres without zws
+# PREPARE THE RETAIL CENTRE DATA
+# Get all the data for the retail centres
+rc_no_zws = rc_no_zws |> select(-3)
+rc_results = as.data.frame(rc_results)
+rc_no_zws = as.data.frame(rc_no_zws)
+rc_no_zws = inner_join(rc_no_zws, rc_results, by="RC_ID")
+
+## Remove retail centres from retail_c that are not required
+### Remove retail centres that are not in England and Wales from retail_c
+rc_no_zws <- rc_no_zws[grep(c("Wales|England"), rc_no_zws$Country),]
+
+# Clean the columns up
+rc_no_zws = rc_no_zws |> select(-one_of('rcgeometry.x'))
+rc_no_zws <- rc_no_zws  |>  rename_at('rcgeometry.y', ~'rcgeometry')
+
+# Remove retail centres that are too large
+# Those zwstores that are located within a retail centre are mainly in :-
+# Town Centre
+# Small Local Centre
+# Local Centre
+# Market Town
+rc_no_zws <- rc_no_zws[grep(c("Town Centre|Small Local Centre|Local Centre|Market Town"), rc_no_zws$Classifica),]
+
+
+# Split he retail_c file in to chunks so that they can be processed and then re-combined
+
+# Create the 2 temporary dataframes
+rc_1 <- data.frame(matrix(ncol = 20, nrow = 0))
+rc_2 <- data.frame(matrix(ncol = 20, nrow = 0))
+rc_3 <- data.frame(matrix(ncol = 20, nrow = 0))
+rc_4 <- data.frame(matrix(ncol = 20, nrow = 0))
+rc_5 <- data.frame(matrix(ncol = 20, nrow = 0))
+
+# Move the relevant rows to the 5 new dataframes
+rc_1 <- rc_no_zws[rc_no_zws$Classifica == "Local Centre",]
+rc_2 <- rc_no_zws[rc_no_zws$Classifica == "Major Town Centre",]
+rc_3 <- rc_no_zws[rc_no_zws$Classifica == "Market Town",]
+rc_4 <- rc_no_zws[rc_no_zws$Classifica == "Small Local Centre",]
+rc_5 <- rc_no_zws[rc_no_zws$Classifica == "Town Centre",]
+
+rc_a <- rbind(rc_1, rc_3)
+rc_b <- rbind(rc_2, rc_4, rc_5)
+
+# remove the 5 temporary variables
+remove(rc_1, rc_2, rc_3, rc_4, rc_5)
+#remove(rc_a, rc_b)
+
+# Split the rc_b file in to 2 leaving rc_b and rc_c
+rc_c <- tail(rc_b, -2500)
+rc_b = rc_b[!(rc_b$RC_ID %in% rc_c$RC_ID),]
+
+###################################################################################
+# with prep done, remove unrequired dataframes etc
+remove(rc, rc_with_zws)
+###################################################################################
+# RC ISOCHRONE CALCULATION
+# create a loop to find the isochrones for all retail centre centroids (20 minute walk time again)
+remove(a)
+remove(isodf)
+remove(rciso)
+remove(coordinates)
+remove(ranges)
+remove(values)
+remove(rcwalktime20)
+remove(rca_results)
+#### Process rc_a
+rca_results <- data.frame(matrix(ncol = 18, nrow = 0))
+#############################################################################
+i = 0
+i = i + 1
+#############################################################################
+for(i in 1:nrow(rc_a)) {
+  # create a dataframe to hold the retail centres isochrone data for retail centres
+  rciso <- data.frame(matrix(ncol = 4, nrow = 0))
+  # create a df variable to hold the individual retail center row values from i
+  isodf = rc_a[i,]
+  # embed data in the output file rather than html streaming option
+  mapviewOptions(fgb = FALSE)
+  #############################################################################
+  # Get the coordinates of the store in the (df)
+  coordinates <- data.frame(isodf$rccentroidgeom)
+  #coordinates <- data.frame(lon = isodf$Lon, lat = isodf$Lat)
+  # convert coordinates in to an sf file
+  coordinates = st_as_sf(coordinates)
+  # convert retail centres sf file to CRS 4326
+  coordinates <- st_transform(coordinates, crs = st_crs(4326))
+  
+  # split the geometry in coordinates to x and y
+  # Convert coordinates back to a dataframe
+  coordinates <- as.data.frame(st_coordinates(coordinates))
+  # rename x and y to Lon and Lat 
+  coordinates <- coordinates  |>  rename_at('X', ~'Lon')
+  coordinates <- coordinates  |>  rename_at('Y', ~'Lat')
+  
+  #coordinates <- st_transform(coordinates, crs = st_crs(3857))
+  # Calculate a 20 minute walking time isochrone around the store
+  rcwalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
+                                 output = "sf", profile = ors_profile("walking"))
+  values <- levels(factor(rcwalktime20$value))
+  ranges <- split(rcwalktime20, values)
+  ranges <- ranges[rev(values)]
+  names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
+  
+  # # Convert the walktime20 isochrone to the correct CRS
+  # # USE THIS AS THE ISOCHRONE
+  # rcwalktime20 <- st_transform(rcwalktime20, crs = st_crs(4326))
+  
+  # rename the walktime20 geometry column
+  rcwalktime20 <- rcwalktime20  |>  rename_at('geometry', ~'rcwalktime')  
+
+###################################################################################
+# TEST PLOT RCWALKTIME
+  # ggplot(rcwalktime20) +
+  #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  #   geom_sf(aes(geometry = rcwalktime), alpha = 0.1)
+# This worked
+###################################################################################
+  
+  # Join the calculated rcwalktime20 data to the rciso data
+  #jointoretail_c <- cbind(retail_c, rcwalktime20)
+  # rcwalktime20 <- st_transform(rcwalktime20, crs = st_crs(3857))
+  rcwalktime20 <- cbind(isodf$RC_ID, rcwalktime20)
+  rciso = rciso <- rbind(rciso,  rcwalktime20)
+  
+  # Combine the iso results to the row that was used to make the calculation from the rc_a file
+  a <- cbind(isodf, rciso)
+  rca_results <- rbind(rca_results, a)
+  # remove temp dataframes etc
+  remove(a)
+  remove(isodf)
+  remove(rciso)
+  remove(coordinates)
+  remove(ranges)
+  remove(values)
+  remove(rcwalktime20)
+  # Print (i) as a counter
+  cat(i, "completed\r")
+  Sys.sleep(3)
+}
+# convert rciso to crs 4326
+#rciso <- st_transform(rciso, crs = st_crs(4326))
+# convert retail_c to crs 3857
+#rciso <- st_transform(rciso, crs = st_crs(3857))
+
+
+# Change the name of the centre column to make it identifiable
+# rca_results <- rca_results  |>  rename_at('center', ~'rcisocenter')
+
+# remove the temporary dataframes
+remove(i)
+# save the rc_results and the rc_(x) files as RDS files
+saveRDS(obj = rc_a, file = "rc_a.rds")
+saveRDS(obj = rca_results, file = "rca_results.rds")
+remove(i)
+###################################################################################
+# PROCESS THE RC_B FILE
+###################################################################################
+rcb_results <- data.frame(matrix(ncol = 18, nrow = 0))
+#############################################################################
+i = 0
+i = i + 1
+#############################################################################
+for(i in 1:nrow(rc_b)) {
+  # create a dataframe to hold the retail centres isochrone data for retail centres
+  rciso <- data.frame(matrix(ncol = 4, nrow = 0))
+  # create a df variable to hold the individual retail center row values from i
+  isodf = rc_b[i,]
+  # embed data in the output file rather than html streaming option
+  mapviewOptions(fgb = FALSE)
+  #############################################################################
+  # Get the coordinates of the store in the (df)
+  coordinates <- data.frame(isodf$rccentroidgeom)
+  #coordinates <- data.frame(lon = isodf$Lon, lat = isodf$Lat)
+  # convert coordinates in to an sf file
+  coordinates = st_as_sf(coordinates)
+  # convert retail centres sf file to CRS 4326
+  coordinates <- st_transform(coordinates, crs = st_crs(4326))
+  
+  # split the geometry in coordinates to x and y
+  # Convert coordinates back to a dataframe
+  coordinates <- as.data.frame(st_coordinates(coordinates))
+  # rename x and y to Lon and Lat 
+  coordinates <- coordinates  |>  rename_at('X', ~'Lon')
+  coordinates <- coordinates  |>  rename_at('Y', ~'Lat')
+  
+  #coordinates <- st_transform(coordinates, crs = st_crs(3857))
+  # Calculate a 20 minute walking time isochrone around the store
+  rcwalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
+                                 output = "sf", profile = ors_profile("walking"))
+  values <- levels(factor(rcwalktime20$value))
+  ranges <- split(rcwalktime20, values)
+  ranges <- ranges[rev(values)]
+  names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
+  
+  # # Convert the walktime20 isochrone to the correct CRS
+  # # USE THIS AS THE ISOCHRONE
+  # rcwalktime20 <- st_transform(rcwalktime20, crs = st_crs(4326))
+  
+  # rename the walktime20 geometry column
+  rcwalktime20 <- rcwalktime20  |>  rename_at('geometry', ~'rcwalktime')  
+
+###################################################################################
+# TEST PLOT RCWALKTIME
+  # ggplot(rcwalktime20) +
+  #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  #   geom_sf(aes(geometry = rcwalktime), alpha = 0.1)
+# This worked
+###################################################################################
+  
+  # Join the calculated rcwalktime20 data to the rciso data
+  #jointoretail_c <- cbind(retail_c, rcwalktime20)
+  # rcwalktime20 <- st_transform(rcwalktime20, crs = st_crs(3857))
+  rcwalktime20 <- cbind(isodf$RC_ID, rcwalktime20)
+  rciso = rciso <- rbind(rciso,  rcwalktime20)
+  
+  # Combine the iso results to the row that was used to make the calculation from the rc_a file
+  a <- cbind(isodf, rciso)
+  rcb_results <- rbind(rcb_results, a)
+  # remove temp dataframes etc
+  remove(a)
+  remove(isodf)
+  remove(rciso)
+  remove(coordinates)
+  remove(ranges)
+  remove(values)
+  remove(rcwalktime20)
+  # Print (i) as a counter
+  cat(i, "completed\r")
+  Sys.sleep(3)
+}
+
+saveRDS(obj = rc_b, file = "rc_b.rds")
+saveRDS(obj = rcb_results, file = "rcb_results.rds")
+remove(i)
+
+###################################################################################
+###################################################################################
+# PROCESS THE RC_C FILE
+###################################################################################
+rcc_results <- data.frame(matrix(ncol = 18, nrow = 0))
+#############################################################################
+i = 0
+i = i + 1
+#############################################################################
+for(i in 1:nrow(rc_c)) {
+  # create a dataframe to hold the retail centres isochrone data for retail centres
+  rciso <- data.frame(matrix(ncol = 4, nrow = 0))
+  # create a df variable to hold the individual retail center row values from i
+  isodf = rc_c[i,]
+  # embed data in the output file rather than html streaming option
+  mapviewOptions(fgb = FALSE)
+  #############################################################################
+  # Get the coordinates of the store in the (df)
+  coordinates <- data.frame(isodf$rccentroidgeom)
+  #coordinates <- data.frame(lon = isodf$Lon, lat = isodf$Lat)
+  # convert coordinates in to an sf file
+  coordinates = st_as_sf(coordinates)
+  # convert retail centres sf file to CRS 4326
+  coordinates <- st_transform(coordinates, crs = st_crs(4326))
+  
+  # split the geometry in coordinates to x and y
+  # Convert coordinates back to a dataframe
+  coordinates <- as.data.frame(st_coordinates(coordinates))
+  # rename x and y to Lon and Lat 
+  coordinates <- coordinates  |>  rename_at('X', ~'Lon')
+  coordinates <- coordinates  |>  rename_at('Y', ~'Lat')
+  
+  #coordinates <- st_transform(coordinates, crs = st_crs(3857))
+  # Calculate a 20 minute walking time isochrone around the store
+  rcwalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200, 
+                                 output = "sf", profile = ors_profile("walking"))
+  values <- levels(factor(rcwalktime20$value))
+  ranges <- split(rcwalktime20, values)
+  ranges <- ranges[rev(values)]
+  names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
+  
+  # # Convert the walktime20 isochrone to the correct CRS
+  # # USE THIS AS THE ISOCHRONE
+  # rcwalktime20 <- st_transform(rcwalktime20, crs = st_crs(4326))
+  
+  # rename the walktime20 geometry column
+  rcwalktime20 <- rcwalktime20  |>  rename_at('geometry', ~'rcwalktime')  
+
+###################################################################################
+# TEST PLOT RCWALKTIME
+  # ggplot(rcwalktime20) +
+  #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  #   geom_sf(aes(geometry = rcwalktime), alpha = 0.1)
+# This worked
+###################################################################################
+  
+  # Join the calculated rcwalktime20 data to the rciso data
+  #jointoretail_c <- cbind(retail_c, rcwalktime20)
+  # rcwalktime20 <- st_transform(rcwalktime20, crs = st_crs(3857))
+  rcwalktime20 <- cbind(isodf$RC_ID, rcwalktime20)
+  rciso = rciso <- rbind(rciso,  rcwalktime20)
+  
+  # Combine the iso results to the row that was used to make the calculation from the rc_a file
+  a <- cbind(isodf, rciso)
+  rcc_results <- rbind(rcc_results, a)
+  # remove temp dataframes etc
+  remove(a)
+  remove(isodf)
+  remove(rciso)
+  remove(coordinates)
+  remove(ranges)
+  remove(values)
+  remove(rcwalktime20)
+  # Print (i) as a counter
+  cat(i, "completed\r")
+  Sys.sleep(3)
+}
+
+saveRDS(obj = rc_c, file = "rc_c.rds")
+saveRDS(obj = rcc_results, file = "rcc_results.rds")
+remove(i)
+
+###################################################################################
+# Convert all the geometries to work properly
+
+
+
+##################################################################################
+ggplot(rca_results[1,]) +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(aes(geometry = rca_results$rcgeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = rca_results$walktimegeometry), alpha = 0.1) +
+  geom_sf(aes(geometry = rca_results$rcwalktime), alpha = 0.1)
+
+
+###################################################################################
+# Join the rca-rcc_results data in to one file
+rc <- cbind
+
+
+
+###################################################################################
+
+
+# Find all the PWCs that appear in any of the rc_isochrones
+pwc_in_rciso = lsoa_pwc[rc,]
+
+# find all the pwc_in_rciso related LSOAs
+lsoa_in_rciso = lsoas[(lsoas$LSOA21CD  %in% pwc_in_rciso$LSOA21CD),]
+
+# Keep any retail centres that contain a zws
+rc = st_transform(rc, crs = st_crs(3857))
+zws_results = st_transform(zws_results, crs = st_crs(3857))
+rc_with_zws = rc[zws_results$zwsgeometry,]
+#rc_no_zws = rc[!(rc$RC_ID  %in% rc_with_zws$RC_ID),]
+#remove(rc_no_zws)
+# Save the rc_no_zws data
+#saveRDS(obj = rc_with_zws, file = "rc_with_zws.rds")
+
+#zws_results = st_transform(zws_results, crs = st_crs(3857))
+#ggplot(data = zws_results[93,]) +
+#  annotation_map_tile(zoomin = 0, type = "osm") +
+#  geom_sf(aes(geometry = zws_results[93,]$walktimegeometry), alpha = 0.1)
+
+# Create a dataframe to hold all the joined results
+zws_joined_lsoa_scr_rc <- data.frame(matrix(ncol = 8, nrow = 0))
 ```
 
 # Bibliography
