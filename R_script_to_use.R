@@ -737,7 +737,8 @@ retail_c <- retail_c[grep(c("Town Centre|Small Local Centre|Local Centre|Market 
 
 table(retail_c$Classifica)
 
-# Split he retail_c file in to chunks so that they can be processed and then re-combined
+# Split the rc_no_zws file in to chunks so that they can be processed
+# and then re-combined
 
 # Create the 2 temporary dataframes
 rc_1 <- data.frame(matrix(ncol = 20, nrow = 0))
@@ -745,6 +746,7 @@ rc_2 <- data.frame(matrix(ncol = 20, nrow = 0))
 rc_3 <- data.frame(matrix(ncol = 20, nrow = 0))
 rc_4 <- data.frame(matrix(ncol = 20, nrow = 0))
 rc_5 <- data.frame(matrix(ncol = 20, nrow = 0))
+
 # Set the retail_c to a dataframe
 retail_c <- as.data.frame(retail_c)
 

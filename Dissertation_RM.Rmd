@@ -66,6 +66,8 @@ library(rgeos)
 library(readxl)
 library(gridExtra)
 library(psych)
+library(reshape2)
+library(sjmisc)
 
 #API Key info - should only need loading once -  500
 # ors_api_key("5b3ce3597851110001cf62480f8858be0885487ca2a78900b689815b")
@@ -1779,51 +1781,599 @@ for(i in 1:nrow(rc_c)) {
 saveRDS(obj = rc_c, file = "rc_c.rds")
 saveRDS(obj = rcc_results, file = "rcc_results.rds")
 remove(i)
+###################################################################################
+###################################################################################
+###################################################################################
+# Convert all the geometries to work properly
+# load rca_results
+rca_results <- readRDS("rca_results.rds")
+a = as.data.frame(rca_results)
+
+# Try to fix zws_joined_lsoa_scr.rds geometries
+a$index <- 1:nrow(a)
+a = a |> select(index, everything())
+
+b = a[,c(1,12)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rcgeometry = b$rcgeometry
+
+
+b = a[,c(1,13)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rccentroidgeom = b$rccentroidgeom
+
+b = a[,c(1,14)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$walktimegeometry = b$walktimegeometry
+
+b = a[,c(1,19)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rcwalktime = b$rcwalktime
+a = st_as_sf(a)
+##################################################################################
+# TEST PLOT a
+# ggplot(a[1,]) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = a[1,]$rcgeometry), colour = "black", alpha = 0.1) +
+#   geom_sf(aes(geometry = a[1,]$rcwalktime), alpha = 0.1, colour = "red") +
+#   geom_sf(aes(geometry = a[1,]$rccentroidgeom), colour = "blue")
+# THIS WORKED
+###################################################################################
+# Remove the unrequired columns from a
+a = a |> select(-one_of('index', 'fid', 'rcisocenter', 'isodf.RC_ID', 'value', 'walktimegeometry'))
+###################################################################################
+# Save a to rc_final_results
+rc_final_results <- a
 
 ###################################################################################
 # Convert all the geometries to work properly
+# load rcb_results
+rcb_results <- readRDS("rcb_results.rds")
+a = as.data.frame(rcb_results)
 
+# Try to fix zws_joined_lsoa_scr.rds geometries
+a$index <- 1:nrow(a)
+a = a |> select(index, everything())
+
+b = a[,c(1,12)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rcgeometry = b$rcgeometry
+
+
+b = a[,c(1,13)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rccentroidgeom = b$rccentroidgeom
+
+b = a[,c(1,14)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$walktimegeometry = b$walktimegeometry
+
+b = a[,c(1,19)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rcwalktime = b$rcwalktime
+a = st_as_sf(a)
+##################################################################################
+# TEST PLOT a
+# ggplot(a[2,]) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = a[1,]$rcgeometry), colour = "black", alpha = 0.1) +
+#   geom_sf(aes(geometry = a[1,]$rcwalktime), alpha = 0.1, colour = "red") +
+#   geom_sf(aes(geometry = a[1,]$rccentroidgeom), colour = "blue")
+# THIS WORKED
+###################################################################################
+# Remove the unrequired columns from a
+a = a |> select(-one_of('index', 'fid', 'rcisocenter', 'isodf.RC_ID', 'value', 'walktimegeometry'))
+###################################################################################
+# add the data to the final dataframe
+rc_final_results <- rbind(rc_final_results, a)
+###################################################################################
+# Convert all the geometries to work properly
+# load rcb_results
+rcc_results <- readRDS("rcc_results.rds")
+a = as.data.frame(rcc_results)
+
+# Try to fix zws_joined_lsoa_scr.rds geometries
+a$index <- 1:nrow(a)
+a = a |> select(index, everything())
+
+b = a[,c(1,20)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rcgeometry = b$rcgeometry
+
+b = a[,c(1,21)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rccentroidgeom = b$rccentroidgeom
+
+b = a[,c(1,26)]
+b = st_as_sf(b)
+b = st_transform(b, crs = st_crs(3857))
+a$rcwalktime = b$rcwalktime
 
 
 ##################################################################################
-ggplot(rca_results[1,]) +
-  annotation_map_tile(zoomin = 0, type = "hotstyle") +
-  geom_sf(aes(geometry = rca_results$rcgeometry), alpha = 0.1) +
-  geom_sf(aes(geometry = rca_results$walktimegeometry), alpha = 0.1) +
-  geom_sf(aes(geometry = rca_results$rcwalktime), alpha = 0.1)
-
-
+# TEST PLOT a
+# ggplot(a[1,]) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = a[1,]$rcgeometry), colour = "black", alpha = 0.1) +
+#   geom_sf(aes(geometry = a[1,]$rcwalktime), alpha = 0.1, colour = "red") +
+#   geom_sf(aes(geometry = a[1,]$rccentroidgeom), colour = "blue")
+# THIS WORKED
 ###################################################################################
-# Join the rca-rcc_results data in to one file
-rc <- cbind
-
-
-
+# Remove the unrequired columns from a
+a = a |> select(-one_of('index', 'fid', 'fid.1', 'RC_ID.1', 'RC_Name.1', 'Classifica.1', 'Country.1', 'Region_NM.1', 'H3_count.1', 'Retail_N.1', 'Area_km2.1', 'value', 'isodf.RC_ID'))
+# make sure the columns in a are in the same order as rc_final_results
+a <- a |> relocate(group_index, .before = rcgeometry)
+a <- st_as_sf(a)
 ###################################################################################
+# Fix the CRS of a
+# Try to fix zws_joined_lsoa_scr.rds geometries
+b = a[,c(1,10)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+a$rcgeometry = b$rcgeometry
+
+b = a[,c(1,11)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+b
+a$rccentroidgeom = b$rccentroidgeom
+
+b = a[,c(1,12)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+a$rcwalktime = b$rcwalktime
+a = st_as_sf(a)
+###################################################################################
+# remove(rc_final_results)
+rc_final_results <- rbind(rc_final_results, a)
+###################################################################################
+b = rc_final_results[,c(13)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+rc_final_results$rcwalktime = b$rcwalktime
+
+b = rc_final_results[,c(12)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+b
+rc_final_results$rccentroidgeom = b$rccentroidgeom
+
+b = rc_final_results[,c(11)]
+b = st_as_sf(b)
+b
+b = st_transform(b, crs = st_crs(3857))
+b
+rc_final_results$rcgeometry = b$rcgeometry
 
 
-# Find all the PWCs that appear in any of the rc_isochrones
-pwc_in_rciso = lsoa_pwc[rc,]
+##################################################################################
+# TEST PLOT rc_final_results
+ggplot(rc_final_results[2,]) +
+  annotation_map_tile(zoomin = -1, type = "hotstyle") +
+  geom_sf(aes(geometry = rcgeometry), colour = "black", alpha = 0.1) +
+  geom_sf(aes(geometry = rcwalktime), alpha = 0.1, colour = "red") +
+  geom_sf(aes(geometry = rccentroidgeom), colour = "blue")
+# THIS WORKED
+saveRDS(obj = rc_final_results, file = "rc_final_results.rds")
+###################################################################################
+###################################################################################
+# Remove unwanted dataframes and sf files
+remove(a, b, c, rc_a, rc_b, rc_c, rc_results, rca_results, rcb_results, rcc_results)
+###################################################################################
+```
 
-# find all the pwc_in_rciso related LSOAs
-lsoa_in_rciso = lsoas[(lsoas$LSOA21CD  %in% pwc_in_rciso$LSOA21CD),]
+```{r}
+##################################################################################
 
-# Keep any retail centres that contain a zws
-rc = st_transform(rc, crs = st_crs(3857))
-zws_results = st_transform(zws_results, crs = st_crs(3857))
-rc_with_zws = rc[zws_results$zwsgeometry,]
-#rc_no_zws = rc[!(rc$RC_ID  %in% rc_with_zws$RC_ID),]
-#remove(rc_no_zws)
-# Save the rc_no_zws data
-#saveRDS(obj = rc_with_zws, file = "rc_with_zws.rds")
+#                          START HERE
+                                    
+##################################################################################
+remove(i, rc_joined_lsoa_scr)
+# Load the data required
+#lsoa_pwc <- readRDS("lsoa_pwc.rds")
+#lsoas <- readRDS("lsoas.rds")
+# convert to sf
+#lsoa_pwc = st_as_sf(lsoa_pwc)
+#lsoas = st_as_sf(lsoas)
 
-#zws_results = st_transform(zws_results, crs = st_crs(3857))
-#ggplot(data = zws_results[93,]) +
-#  annotation_map_tile(zoomin = 0, type = "osm") +
-#  geom_sf(aes(geometry = zws_results[93,]$walktimegeometry), alpha = 0.1)
+# # Find all the PWCs that appear in any of the rc_isochrones
+#pwc_in_rciso = lsoa_pwc[rc_final_results$rcwalktime,]
+#
+## # find all the pwc_in_rciso related LSOAs
+#lsoa_in_rciso = lsoas[(lsoas$LSOA21CD  %in% pwc_in_rciso$LSOA21CD),]
 
 # Create a dataframe to hold all the joined results
-zws_joined_lsoa_scr_rc <- data.frame(matrix(ncol = 8, nrow = 0))
+rc_joined_lsoa_scr <- data.frame(matrix(ncol = 19, nrow = 0))
+
+#initialise i
+i = 0
+i = i + 1
+for (i in 1:nrow(rc_iso_results)) {
+
+  a = rc_iso_results[i,]
+  # Select the pwcs that appear in the isochrone for that (i) record in zwsiso
+
+###################################################################################
+# TEST PLOT
+# ggplot(a) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = a$rcgeometry), alpha = 0.1, colour = "blue") +
+#   geom_sf(aes(geometry = a$rcwalktime), alpha = 0.1, colour = "red")
+#THIS WORKED
+###################################################################################
+
+# get all the pwcs that appear in the iso for that store
+# a <- a  |>  rename_at('isogeometry', ~'geometry')
+# a = st_transform(a$geometry, crs = st_crs(3857)) 
+
+# st_geometry(b) <- "geometry"
+b = lsoa_pwc[a$rcwalktime,]
+  
+  # Check if (a) has 0 rows. If so, sack it off and move to the next record
+ if(nrow(b) == 0) {
+   cat(i, "..errored\r")
+   next
+ }
+  
+  # Convert a to a dataframe to manipulate it
+  b = as.data.frame(b)
+  
+  # Get all the lsoas that relate to the pwcs just found
+  c = lsoas[(lsoas$LSOA21CD %in% b$LSOA21CD),]
+  
+  #convert b to a dataframe
+  c = as.data.frame(c)
+  
+##### create a row in the b dataframe for the total for all lsoas in the area and the total mean of those totals
+  c <- c |>
+   bind_rows(summarise(c[9:14], across(where(is.numeric), mean),
+                       across(where(is.character), ~'Total')))
+  
+  # Join the lsoas to a single shape so that a single line for this shape with the averages score can be used.
+
+  # convert c to sf format
+  c = st_as_sf(c)
+  
+###################################################################################
+# TEST PLOT
+# ggplot(c) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = c$lsoageometry), alpha = 0.1)
+#THIS WORKED
+################################################################################### 
+  # Join the lsoas together
+  joined_lsoas <- st_union(c$lsoageometry)
+  
+###################################################################################
+# TEST PLOT
+ # ggplot(joined_lsoas) +
+ #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+ #   geom_sf(aes(geometry = joined_lsoas), alpha = 0.1, colour = "black")
+#THIS WORKED
+###################################################################################
+  # Convert joined_lsoas to sf
+  joined_lsoas = st_as_sf(joined_lsoas)
+###################################################################################
+# TEST PLOT
+# ggplot(joined_lsoas) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = joined_lsoas$x), alpha = 0.1, colour = "blue")
+#THIS WORKED
+###################################################################################
+  
+  # combine the joined lsoa data and the score data
+  joined_lsoas_c = cbind(joined_lsoas, c[nrow(c),9:14])
+  #remove the empty multipolyon column
+  joined_lsoas_c = joined_lsoas_c |> select(-one_of('lsoageometry'))
+  # rename the x column to "joinedlsoageom"
+  joined_lsoas_c <- joined_lsoas_c  |>  rename_at('x', ~'joinedlsoageom')
+
+###################################################################################
+# TEST PLOT
+  # ggplot(joined_lsoas_c) +
+  #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  #   geom_sf(aes(geometry = joined_lsoas_c$joinedlsoageom), alpha = 0.1, colou = "red")
+#THIS WORKED
+###################################################################################
+
+  # retrieve the retail center ID from rc_final_results
+  d = rc_iso_results[i,]
+
+  # Join the retail center data, the scores, the joined LSOA geometry and the walktime geometry
+  e = cbind(d, joined_lsoas_c)
+###################################################################################
+# TEST PLOT
+# ggplot(e) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = rcgeometry), colour = "green") +
+#   geom_sf(aes(geometry = rccentroidgeom), alpha = 0.1, colour = "black") +
+#   geom_sf(aes(geometry = rcwalktime), alpha = 0.1, colour = "red") +
+#   geom_sf(aes(geometry = joinedlsoageom), alpha = 0.1, colour = "blue")
+# THIS WORKED
+###################################################################################  
+  # add this to a row in a new dataframe
+  rc_joined_lsoa_scr <- rbind(rc_joined_lsoa_scr, e)
+
+  # remove the temporary dataframes sf files etc 
+  remove(a, b, c, d, e, joined_lsoas, joined_lsoas_c)
+
+
+  # Print (i) as a counter
+  cat(i, "completed\r")
+}
+# clean the zws_joined_lsoa_scr names and columns
+# Round the scores to the nearest whole number
+# zws_joined_lsoa_scr = as.data.frame(zws_joined_lsoa_scr)
+# zws_joined_lsoa_scr = st_as_sf(zws_joined_lsoa_scr)
+# zws_joined_lsoa_scr <- zws_joined_lsoa_scr |>  mutate(across(c('lsoatotscr', 'carrank', 'dedrank', 'tenrank', 'occrank', 'pplrank'), round, 0))
+# 
+# # reindex the data
+# rownames(zws_joined_lsoa_scr) <- 1:nrow(zws_joined_lsoa_scr)
+
+
+###################################################################################
+# # Convert all the geometries
+# b = rc_joined_lsoa_scr[,c(1,16)]
+# b = st_as_sf(b)
+# b
+# b = st_transform(b, crs = st_crs(4326))
+# b
+# rc_joined_lsoa_scr$rcgeometry = b$rcgeometry
+# 
+# ###################################################################################
+# # TEST PLOT
+# ggplot(rc_joined_lsoa_scr[1,]) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = rcgeometry), alpha = 0.1)
+# # THIS WORKED
+# ###################################################################################
+# 
+# remove(b)
+# b = rc_joined_lsoa_scr[,c(1,17)]
+# # remove rcgeometry
+# b = as.data.frame(b)
+# b = b |> select(-one_of('rcgeometry'))
+# b = st_as_sf(b)
+# b
+# b = st_transform(b, crs = st_crs(4326))
+# b
+# rc_joined_lsoa_scr$rccentroidgeom = b$rccentroidgeom
+# 
+# remove(b)
+# b = rc_joined_lsoa_scr[,c(1,18)]
+# # remove rcgeometry
+# b = as.data.frame(b)
+# b = b |> select(-one_of('rcgeometry'))
+# b = st_as_sf(b)
+# b
+# b = st_transform(b, crs = st_crs(3857))
+# rc_joined_lsoa_scr$rcwalktime = b$rcwalktime
+# 
+# remove(b) 
+# b = rc_joined_lsoa_scr[,c(1,19)]
+# # remove rcgeometry
+# b = as.data.frame(b)
+# b = b |> select(-one_of('rcgeometry'))
+# b = st_as_sf(b)
+# b
+# b = st_transform(b, crs = st_crs(3857))
+# rc_joined_lsoa_scr$joinedlsoageom = b$joinedlsoageom
+# 
+# ###################################################################################
+# # TEST PLOT
+#rc_joined_lsoa_scr <- st_as_sf(rc_joined_lsoa_scr)
+#ggplot(rc_joined_lsoa_scr) +
+#  annotation_map_tile(zoomin = -1, type = "hotstyle") +
+#  geom_sf(aes(geometry = rc_joined_lsoa_scr$joinedlsoageom), alpha = 0.1) +
+#  geom_sf(aes(geometry = rc_joined_lsoa_scr$rcgeometry), colour = "black", alpha = 0.1) +
+#  geom_sf(aes(geometry = rc_joined_lsoa_scr$rcwalktime), colour = "blue", alpha = 0.1) 
+  # geom_sf(aes(geometry = rc_joined_lsoa_scr$rccentroidgeom, colour = "purple"))
+# # THIS WORKED
+# ###################################################################################
+
+saveRDS(obj = rc_joined_lsoa_scr, file = "rc_joined_lsoa_scr.rds")
+```
+
+```{r}
+# reindex he rc_joined_lsoa_scr data
+rownames(rc_joined_lsoa_scr) <- 1:nrow(rc_joined_lsoa_scr)
+###################################################################################
+# TEST PLOT
+rc_joined_lsoa_scr <- readRDS("rc_joined_lsoa_scr.rds")
+# i = 0
+# i = i + 1
+# a = rc_joined_lsoa_scr[i,]
+# a
+# st_geometry(a) <- "rcwalktime"
+# a
+# st_geometry(a) <- "joinedlsoageom"
+# a
+ggplot(rc_joined_lsoa_scr[1,]) +
+  annotation_map_tile(zoomin = -1, type = "hotstyle") +
+  geom_sf(aes(geometry = rccentroidgeom), colour = "black") +
+  geom_sf(aes(geometry = rcgeometry), colour = "brown", alpha = 0.1) +
+  geom_sf(aes(geometry = rcwalktime), alpha = 0.1, colour = "blue") +
+  geom_sf(aes(geometry = joinedlsoageom, fill = lsoatotscr), alpha = 0.1, colour = "red")
+# THIS WORKED
+###################################################################################
+```
+
+```{r}
+###################################################################################
+# All rc_total scores
+
+rc1 <- ggplot(rc_joined_lsoa_scr, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+
+rc2 <- ggplot(rc_joined_lsoa_scr, aes(x=carrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rc3 <- ggplot(rc_joined_lsoa_scr, aes(x=dedrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rc4 <- ggplot(rc_joined_lsoa_scr, aes(x=pplrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rc5 <- ggplot(rc_joined_lsoa_scr, aes(x=tenrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rc6 <- ggplot(rc_joined_lsoa_scr, aes(x=occrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+plot_list1 <- list(rc1, rc2, rc3, rc4, rc5, rc6)
+
+do.call("grid.arrange", c(plot_list1, ncol = 3))
+```
+
+```{r}
+# Find the average total score for the zero waste stores
+zws_ave = round(mean(zws_joined_lsoa_scr$lsoatotscr))
+
+# Find the retail centres that match the average score for the zws's - Possibly Use the average (+ or - 0), an arbitrary range (i.e + or - 3), or the interquartile range of zws total scores
+# remove(rc_range_results)
+###################################################################################
+# Using the average
+identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (zws_ave) & rc_joined_lsoa_scr$lsoatotscr <= (zws_ave)
+
+rc_eq_zws_ave <- subset(rc_joined_lsoa_scr, identify_rows)
+
+rca1 <- ggplot(rc_in_zws_ave, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+
+rca2 <- ggplot(rc_in_zws_ave, aes(x=carrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rca3 <- ggplot(rc_in_zws_ave, aes(x=dedrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rca4 <- ggplot(rc_in_zws_ave, aes(x=pplrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rca5 <- ggplot(rc_in_zws_ave, aes(x=tenrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rca6 <- ggplot(rc_in_zws_ave, aes(x=occrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+plot_list2 <- list(rca1, rca2, rca3, rca4, rca5, rca6)
+
+do.call("grid.arrange", c(plot_list2, ncol = 3))
+```
+
+```{r}
+###################################################################################
+# Using the range + or - 3
+identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (zws_ave-3) & rc_joined_lsoa_scr$lsoatotscr <= (zws_ave+3)
+
+rc_in_zws_ave_rng <- subset(rc_joined_lsoa_scr, identify_rows)
+
+rcr1 <- ggplot(rc_in_zws_ave_rng, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+
+rcr2 <- ggplot(rc_in_zws_ave_rng, aes(x=carrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcr3 <- ggplot(rc_in_zws_ave_rng, aes(x=dedrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcr4 <- ggplot(rc_in_zws_ave_rng, aes(x=pplrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcr5 <- ggplot(rc_in_zws_ave_rng, aes(x=tenrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcr6 <- ggplot(rc_in_zws_ave_rng, aes(x=occrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+plot_list3 <- list(rcr1, rcr2, rcr3, rcr4, rcr5, rcr6)
+
+do.call("grid.arrange", c(plot_list3, ncol = 3))
+```
+
+```{r}
+###################################################################################
+# Using the interquartile range
+# Find the 1st and 3rd Quartiles of the zws results
+a <- data.frame(unclass(summary(zws_joined_lsoa_scr$lsoatotscr)), check.names = F)
+# rotate the dataframe
+a = a |> rotate_df()
+
+identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (a$`1st Qu.`) & rc_joined_lsoa_scr$lsoatotscr <= (a$`3rd Qu.`)
+
+rc_in_zws_iqr <- subset(rc_joined_lsoa_scr, identify_rows)
+
+rcq1 <- ggplot(rc_in_zws_iqr, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+
+rcq2 <- ggplot(rc_in_zws_iqr, aes(x=carrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcq3 <- ggplot(rc_in_zws_iqr, aes(x=dedrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcq4 <- ggplot(rc_in_zws_iqr, aes(x=pplrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcq5 <- ggplot(rc_in_zws_iqr, aes(x=tenrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcq6 <- ggplot(rc_in_zws_iqr, aes(x=occrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+plot_list4 <- list(rcq1, rcq2, rcq3, rcq4, rcq5, rcq6)
+
+do.call("grid.arrange", c(plot_list4, ncol = 3))
+```
+
+```{r}
+###################################################################################
+# Using the range min-max
+identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (min(zws_joined_lsoa_scr$lsoatotscr)) & rc_joined_lsoa_scr$lsoatotscr <= (max(zws_joined_lsoa_scr$lsoatotscr))
+
+rc_in_zws_mm <- subset(rc_joined_lsoa_scr, identify_rows)
+
+rcm1 <- ggplot(rc_in_zws_mm, aes(x=lsoatotscr)) + 
+  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+
+rcm2 <- ggplot(rc_in_zws_mm, aes(x=carrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcm3 <- ggplot(rc_in_zws_mm, aes(x=dedrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcm4 <- ggplot(rc_in_zws_mm, aes(x=pplrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcm5 <- ggplot(rc_in_zws_mm, aes(x=tenrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+rcm6 <- ggplot(rc_in_zws_mm, aes(x=occrank)) + 
+  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+plot_list5 <- list(rcm1, rcm2, rcm3, rcm4, rcm5, rcm6)
+
+do.call("grid.arrange", c(plot_list5, ncol = 3))
+```
+
+```{r}
+rc_iso_results = rc_final_results
+remove(rc_final_results)
+saveRDS(obj = rc_iso_results, file = "rc_iso_results.rds")
 ```
 
 # Bibliography
