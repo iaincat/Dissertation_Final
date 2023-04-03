@@ -40,3 +40,6 @@ zws_results_test.rds
 zwsiso.rds
 zwsmap.RData
 rosm.cache
+rc_joined_lsoa_scr.rds
+rc_final_results.rds
+rc_iso_results.rds
