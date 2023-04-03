@@ -68,6 +68,8 @@ library(gridExtra)
 library(psych)
 library(reshape2)
 library(sjmisc)
+library(spatstat)
+library(raster)
 
 #API Key info - should only need loading once -  500
 # ors_api_key("5b3ce3597851110001cf62480f8858be0885487ca2a78900b689815b")
@@ -198,7 +200,7 @@ Single Car per household
 
 ## Method
 
-In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics surrounding the locations of the stores in the study are of England and Wales. This included the creation of a scorecard based on the selected demographic variables for comparative purposes. This was then used to identify similar areas of the study area in which similar stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical representation, a visual landscape of ethical consumption will be built up. This will lead to the justification of the choices in data used, methodological approach and evaluation of results.
+In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics that surround the locations of the stores in the study area. This included the creation of a scorecard for each location, based on the selected demographic variables. The scorecards were then used to identify similar locations of the study area in which stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical representation, a landscape of ethical consumption will be built up and visualised. This analysis will feed in to the discussion of the rationale behind the choices of variable used in the data, the methodological approach and evaluation of results.
 
 #### Zero Waste Store Location Data
 
@@ -230,10 +232,10 @@ Boundary data [@opengeographyportala] was downloaded for the study area from the
 # Load lsoas and pwc RDS files
 lsoas <- readRDS("lsoas.rds")
 
-# remove the scores from the lsoa data
-lsoas = lsoas |> select(-one_of('occscr', 'tenscr', 'carscr', 'pplscr', 'dedscr'))
+# # remove the scores from the lsoa data
+# lsoas = lsoas |> select(-one_of('occrank', 'tenrank', 'carrank', 'pplrank', 'dedrank'))
 
-kable(lsoas[1:4,c(2,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
+kable(lsoas[1:4,c(1,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 ```
 
