@@ -235,20 +235,20 @@ lsoas <- readRDS("lsoas.rds")
 # # remove the scores from the lsoa data
 # lsoas = lsoas |> select(-one_of('occrank', 'tenrank', 'carrank', 'pplrank', 'dedrank'))
 
-kable(lsoas[1:4,c(1,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
+kable(lsoas[1:5,c(1,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 ```
 
 #### LSOA area scale population weighted centroids
 
-Population Weighted Centroids (PWCs) [@opengeographyportal2022] was retrieved for the study area at the LSOA scale which again related to the same boundary data previously mentioned. This was required in order to process the correct LSOA's that related to the future catchment area isochrone calculations, and capture only those weighted populations that sit within the catchment areas.
+Population Weighted Centroids (PWCs) [@opengeographyportal2022] was retrieved for the study area at the LSOA scale which again related to the same boundary data previously mentioned. This was required in order to process the correct LSOA's that related to the future catchment area isochrone calculations, and capture only those weighted populations that sit within the catchment areas. See table \ref{tab:lsoa_pwcs} for example data.
 
 ```{r pwc_data}
 # Create a dataframe to summarise the LSOA Boundary and PWC data
 # Load lsoas and pwc RDS files
 lsoa_pwc <- readRDS("lsoa_pwc.rds")
 
-kable(lsoa_pwc[1:10,c(2:4)], caption = "\\label{tab:lsoa_pwcs}LSOA population weighted centroid data")|>
+kable(lsoa_pwc[1:5,c(2,4)], caption = "\\label{tab:lsoa_pwcs}LSOA population weighted centroid data")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 ```
 
@@ -396,9 +396,11 @@ kable(occscr[0:4,], caption = "\\label{tab:occscr}Total LSOA scores for higher r
 
 Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales so that once analysis of all current zero waste store locations was completed, potential areas that lack the supply of this type of retail could be identified. The retail centre data was processed through QGIS to identify the geometric centroid of each, which was added to the file.
 
+ADD A RETAIL CENTRES TABLE HERE
+
 #### Combining score data and calculating totals
 
-The scores for each individual variable were allocated to the matching LSOA in the LSOA data. A total score for each LSOA was then calculated to a separate column and the data saved. These scores would then be available when analysing the current store locations and the potential un-supplied retail centres.
+The scores for each individual variable were allocated to the matching LSOA in the LSOA data. A total score for each LSOA was then calculated. These scores would then be available when analysing the current store locations and the potential un-supplied retail centres.
 
 ```{r score_prep}
 # Load the results of the following code to save processing and memory when knitting
@@ -452,18 +454,29 @@ Once the underlying LSOA and demographic data had been cleaned and prepared, a s
 
 ```{r bishy_load}
 # Load bishy store boundary shapefile
-bishy <- read_sf("bishy.shp")
+bishy <- readRDS("bishy.rds")
 
 # Convert this to the correct 3857 CRS
 # bishy = st_transform(bishy, crs = st_crs(3857))
 
 # rename the geometry column
-bishy <- bishy  |>  rename_at('geometry', ~'store_location')
+# bishy <- bishy  |>  rename_at('geometry', ~'store_location')
 
-kable(bishy[,], caption = "\\label{tab:bishytab}Test store data for the Bishy Weigh store in York, England")|>
+kable(st_drop_geometry(bishy[,1:7]), caption = "\\label{tab:bishytab}Test store data for the Bishy Weigh store in York, England")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T)
 ```
+
+ADD WRITING HERE
+
+```{r}
+ggplot(bishy) +
+  annotation_map_tile(zoomin = -1, type = "hotstyle") +
+  geom_sf(colour = "red", aes(geometry = bishystorepoint, fill = st_nam)) +
+  guides(fill = guide_legend(title = "Test Store Name"))
+```
+
+#### Calculating the isochrone
 
 Using the OpenRouteService [@openrouteservice], a 20 minute walking time isochrone was calculated around the test store to define the catchment area. This distance/time was chosen partly due to the environmentally beneficial nature of this mode, and partly due to the \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*COMPLETE THIS \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 
@@ -526,7 +539,43 @@ ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
   theme_bw()
 ```
 
-After confirming that the isochrone calculation and store location data produced the desired results the PWCs data was clipped to contain only those that fell within the isochrone catchment area.
+After confirming that the isochrone calculation and store location data produced the desired results the PWCs data was clipped to contain only those that fell within the isochrone catchment area \ref{fig:ypwc_clip}
+
+```{r ypwc_clip, fig.cap="Population Weighted Centoids within the isochrone sourrounding The Bishy Weigh store in York"}
+lsoas = readRDS("lsoas.rds")
+lsoas = st_as_sf(lsoas)
+ywalktime20 = readRDS("ywalktime20.rds")
+###################################################################################
+# Test plot an LSOA
+# ggplot(lsoas[1,]) +
+#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#   geom_sf(aes(geometry = lsoageometry))
+###################################################################################
+# lsoas <- lsoas  |>  rename_at('lsoageometry', ~'geometry')
+lsoa_pwc = readRDS("lsoa_pwc.rds")
+# lsoa_pwc = st_as_sf(lsoa_pwc)
+# lsoa_pwc <- lsoa_pwc  |>  rename_at('pwcgeometry', ~'geometry')
+ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
+# lsoas <- st_transform(lsoas, crs = st_crs(4326))
+# lsoa_pwc <- st_transform(lsoa_pwc, crs = st_crs(4326))
+
+# clip the PWCs to only show those inside the 20 minute walk time
+pwc_clip = lsoa_pwc[ywalktime20$geometry,]
+###################################################################################
+# Test plot an LSOA
+ggplot() +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  # geom_sf(data = lsoa_clip, aes(geometry = lsoageometry), alpha = 0.1) +
+  geom_sf(data = pwc_clip, aes(geometry = pwcgeometry, shape = "")) +
+  guides(shape = guide_legend(title = "Population Weighted Centroids")) +
+  geom_sf(data = bishy, aes(geometry = bishystorepoint, colour = st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  geom_sf(data = ywalktime20, aes(geometry = geometry, alpha = "")) +
+  guides(alpha = guide_legend(title = "Catchment Area"))
+##################################################################################
+```
+
+Figure \ref{fig:pwcs_lsoas_york_map} shows how once the PWCs and corresponding LSOAs for the catchment area were identified and mapped to visualise the results and confirm the accuracy of the procedure.
 
 ```{r york_pwc_clipping}
 lsoas = readRDS("lsoas.rds")
@@ -553,15 +602,18 @@ pwc_clip = lsoa_pwc[ywalktime20$geometry,]
 # pwc_clip <- st_transform(pwc_clip, crs = st_crs(3857))
 lsoa_clip = lsoas[pwc_clip,]
 
-# ###################################################################################
-# # Test plot an LSOA
-# ggplot() +
-#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
-#   geom_sf(data = lsoa_clip, aes(geometry = lsoageometry), alpha = 0.1) +
-#   geom_sf(data = pwc_clip, aes(geometry = pwcgeometry)) +
-#   geom_sf(data = bishy, aes(geometry = store_location), colour = "red") +
-#   geom_sf(data = ywalktime20, aes(geometry = geometry ), alpha = 0.1)
 ###################################################################################
+# Test plot an LSOA
+ggplot() +
+  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+  geom_sf(data = lsoa_clip, aes(geometry = lsoageometry, alpha = "")) +
+  guides(alpha = guide_legend(title = "LSOAs")) +
+  geom_sf(data = pwc_clip, aes(geometry = pwcgeometry, shape = "")) +
+  guides(shape = guide_legend(title = "Population Weighted Centroids")) +
+  geom_sf(data = bishy, aes(geometry = bishystorepoint, colour = st_nam)) +
+  guides(colour = guide_legend(title = "Store Name")) +
+  geom_sf(data = ywalktime20, aes(geometry = geometry ), alpha = 0.1)
+##################################################################################
 ```
 
 Figure \ref{fig:pwcs_lsoas_york_map} shows how once the PWCs and corresponding LSOAs for the catchment area were identified and mapped to visualise the results and confirm the accuracy of the procedure.
@@ -595,9 +647,11 @@ ggplot(ywalktime20, aes(colour = "20 minutes walk time")) +
 
 The test store catchment are contained 18 population weighted centroids. The corresponding LSOAs were selected from the LSOA data and the scores for each variable mapped.
 
+Figure \ref{fig:bishycar_map} shows the individual LSOA scores for households that have single vehicle access and evidence that no individual scores were above 10.
+
 ```{r bishycar_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the carscr variable, which relates to % of households with access to a single vehicle."}
 #lsoa_clip <- as.data.frame(lsoa_clip)
-bishycarmap <- lsoa_clip = st_as_sf(lsoa_clip)
+# bishycarmap <- lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
@@ -615,15 +669,15 @@ ggplot(lsoa_clip) +
   theme_bw()
 ```
 
+Figure \ref{fig:ydedscr_map} shows the individual LSOA scores for individuals that have been educated to degree level or above and shows that no individual scores were above 10.
+
 ```{r ydedscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the dedscr variable, which relates to % of population that is degree educated and above."}
-#lsoa_clip <- as.data.frame(lsoa_clip)
-lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = dedscr)) +
+  geom_sf(aes(fill = dedrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
-  guides(fill = guide_legend(title = "Education to degree\nlevel or above", reverse = TRUE)) +
+  guides(fill = guide_legend(title = "Degree Educated", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
   guides(colour = guide_legend(title = "Store Name")) +
   
@@ -633,15 +687,18 @@ ggplot(lsoa_clip) +
                          pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
                          style = north_arrow_minimal) +
   theme_bw()
+
 ```
+
+Figure \ref{fig:yoccscr_map} shows the individual LSOA scores for individuals with the occupation types of managers, directors, senior officials, and professional occupations and also shows that no individual scores were above 10.
 
 ```{r yoccscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the occscr variable, which relates to the populations with the highest occupation types."}
 #lsoa_clip <- as.data.frame(lsoa_clip)
-lsoa_clip = st_as_sf(lsoa_clip)
+# lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = occscr)) +
+  geom_sf(aes(fill = occrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Highest occupation\ntypes", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -655,13 +712,15 @@ ggplot(lsoa_clip) +
   theme_bw()
 ```
 
+Figure \ref{fig:ypplscr_map} shows the individual LSOA scores for households that consist of two people with no children, and again shows that no individual scores were above 10.
+
 ```{r ypplscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the pplscr variable, which relates to % of households that contain 2 people with no children."}
 #lsoa_clip <- as.data.frame(lsoa_clip)
-lsoa_clip = st_as_sf(lsoa_clip)
+# lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = pplscr)) +
+  geom_sf(aes(fill = pplrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Households with 2\npeople & 0 children", reverse = TRUE)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -675,13 +734,15 @@ ggplot(lsoa_clip) +
   theme_bw()
 ```
 
+Figure \ref{fig:ytenscr_map} shows the individual LSOA scores for households that either own their homes outright, or have purchased under a mortgage or loan, and also, again, shows that no individual scores were above 10.
+
 ```{r ytenscr_map, warning=FALSE, fig.cap="Map showing individual LSOA scores for the tenscr variable, which relates to % of households that either own outright or mortgage their home."}
 #lsoa_clip <- as.data.frame(lsoa_clip)
-lsoa_clip = st_as_sf(lsoa_clip)
+# lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(fill = tenscr)) +
+  geom_sf(aes(fill = tenrank)) +
   scale_fill_viridis_c(breaks=seq(0,10,by=1), alpha = 0.7) +
   guides(fill = guide_legend(title = "Households\nthat own or\nmortgage their home", reverse = TRUE, ncol = 2)) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
@@ -694,9 +755,11 @@ ggplot(lsoa_clip) +
   theme_bw()
 ```
 
+Figure \ref{fig:ytotscr_map} shows the total scores for each individual LSOA and shows that these totals do not sum to a value above 50.
+
 ```{r ytotscr_map, warning=FALSE, fig.cap="Map showing the total score for the 5 variables for each individual LSOA."}
 #lsoa_clip <- as.data.frame(lsoa_clip)
-lsoa_clip = st_as_sf(lsoa_clip)
+# lsoa_clip = st_as_sf(lsoa_clip)
 ggplot(lsoa_clip) +
     # Add the basemap tile 
 #  annotation_map_tile(zoomin = 0, type = "osm") +
@@ -733,9 +796,8 @@ lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
 
 ###################################################################################
 # Test Plot
-#plot(st_union(lsoa_clip_tot$lsoageometry))
-#  joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
-#  joined_lsoas <- st_union()
+plot(st_union(lsoa_clip_tot$lsoageometry))
+ joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
 # THIS WORKED
 ###################################################################################
 # Test Plot
@@ -762,22 +824,24 @@ lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
  #    geom_sf(aes(geometry = bishy$store_location))
 # THIS WORKED
 ##################################################################################
-#  joined_lsoas = st_as_sf(joined_lsoas)
-#  bishyjoined = cbind(bishy, round(ft[,1:6], digits = 0))
-#  bishyjoined = cbind(bishyjoined, joined_lsoas)
-#  bishyjoined <- bishyjoined  |>  rename_at('x', ~'joined_lsoas')
+ joined_lsoas = st_as_sf(joined_lsoas)
+ bishyjoined = cbind(bishy, round(ft[,1:6], digits = 0))
+ bishyjoined = cbind(bishyjoined, joined_lsoas)
+ bishyjoined <- bishyjoined  |>  rename_at('x', ~'joined_lsoas')
   
 ##################################################################################
 # Test plot
   bishyjoined = st_as_sf(bishyjoined)
-  bishyjoined = as.data.frame(bishyjoined)
   bishyjoined <- st_transform(bishyjoined, crs = st_crs(3857))
 ###################################################################################
-#  ggplot() +
-#    annotation_map_tile(zoomin = 0, type = "hotstyle") +
-#    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$store_location)) +
-#   geom_sf(data = ywalktime20, aes(geometry = ywalktime20$geometry), alpha = 0.1) #+
-#    geom_sf(data = bishyjoined, aes(geometry = bishyjoined$joined_lsoas), alpha = 0.1)
+ ggplot(bishyjoined) +
+    annotation_map_tile(zoomin = 0, type = "hotstyle") +
+    geom_sf(aes(geometry = bishyisochrone, alpha = ""), colour = "blue") +
+    guides(alpha = guide_legend(title = "20 minute walk time")) +
+    geom_sf(aes(geometry = joinedlsoageometry, fill = lsoatotscr), alpha = 0.2) +
+    guides(fill = guide_legend(title = "Joined LSOA\nTotal Score")) +
+    geom_sf(aes(geometry = bishystorepoint,  colour = "")) +
+    guides(colour = guide_legend(title = bishyjoined$st_nam))
 # THIS WORKED
 ##################################################################################
 saveRDS(obj = bishyjoined, file = "bishyjoined.rds")
@@ -2370,12 +2434,6 @@ rcm6 <- ggplot(rc_in_zws_mm, aes(x=occrank)) +
 plot_list5 <- list(rcm1, rcm2, rcm3, rcm4, rcm5, rcm6)
 
 do.call("grid.arrange", c(plot_list5, ncol = 3))
-```
-
-```{r}
-rc_iso_results = rc_final_results
-remove(rc_final_results)
-saveRDS(obj = rc_iso_results, file = "rc_iso_results.rds")
 ```
 
 # Bibliography
