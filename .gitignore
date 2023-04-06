@@ -43,3 +43,4 @@ rosm.cache
 rc_joined_lsoa_scr.rds
 rc_final_results.rds
 rc_iso_results.rds
+zws_ave.rds
