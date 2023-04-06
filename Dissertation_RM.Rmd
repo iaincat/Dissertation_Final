@@ -2140,19 +2140,17 @@ kable(t(a), caption = "\\label{tab:zws_scores_summary}Scorecard summary table fo
 remove(zws_joined_lsoa_scr, a)
 ```
 
-Figure \ref{fig:corr_plot} shows the correlation between the variables and shows that all the variables have a positive relationship with total score (*lsoatotscr*) to varying extents. For example, the degree educated variable (*dedrank*), and occupation variable (*occrank*), both have a more positive linear relationship with the total score, that (*carrank*), for example.
+Figure \ref{fig:corr_plot} shows the correlation between the individual variables and the total scores. This visualises the positive relationship between them and the total score (*lsoatotscr*) to varying strengths. For example, the degree educated (*dedrank*), occupation (*occrank*) and home-ownership (occrank) variables all have a more positive linear relationship with the total score, than the vehicle access (*carrank*) and household composition (pplrank) variables. Those variables that seemed to display a more negative relationship were between the *pplrank* and *dedrank* which may suggest areas that contain older couples than younger single households. Areas that have more interesting relationships were highlighted by the relationship between the *tenrank* and *dedrank* variables. This relationship suggests that areas with higher *dedrank* scores and low *tenrank* scores were areas with younger populations that have a degree education level, but have not managed to get on the housing ladder for example.
 
 ```{r corr_plot, fig.cap="Plot showing correlations between total scores and the 5 variables "}
 zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
-a = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[,12:17]))
+a = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[,c(17,12:16)]))
 cor_plot <- plot(a, cex = 0.3, 
      col = grey(0.145,alpha=0.5), upper.panel=panel.smooth)
-remove(a, zws_joined_lsoa_scr)
+remove(a, zws_joined_lsoa_scr, cor_plot)
 ```
 
 The smallest variation in the range of scores was seen in the *pplrank* variable, which ranged from 2 to 6, with a mean of 4. The largest variation between the ranges of scores was seen in the *tenrank* variable (*home-ownership*). This varied from 1 through to 9, with a mean of 5.9.
-
-IS IT WORTH DOING A STANDARD REGRESSION ON THE RESULTS?
 
 The distribution of the total scores shown in figure all_zws_hist are fairly even, with a slight positive skew. This is showing that there were significant numbers of stores that scored less than and more than 80, but scores were concentrated around a similar score throughout. On an individual variable level for each area, around half of the households had access to a single car.
 
