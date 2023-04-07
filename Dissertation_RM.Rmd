@@ -1996,7 +1996,7 @@ remove(zwh_plot_list)
 # identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (zws_ave) & rc_joined_lsoa_scr$lsoatotscr <= (zws_ave)
 # # get the rows identified as matching the zws mean score
 # rc_eq_zws_ave <- subset(rc_joined_lsoa_scr, identify_rows)
-# 
+
 # ###################################################################################
 # # Plot all the retail centres 
 # ggplot(rc_eq_zws_ave) +
@@ -2210,7 +2210,7 @@ cor_plot <- plot(a_cor, cex = 0.3,
 remove(a_cor, zws_joined_lsoa_scr, cor_plot)
 ```
 
-To be able to see clearly, how the zero waste store data scores were distributed, they were plotted as histograms. As figure \ref{fig:zws_scores_hist} shows, the *lsoatotscr* (total scores) were distributed normally between around 15 and 30.
+To be able to see clearly, how the zero waste store data scores were distributed, they were plotted as histograms. As figure \ref{fig:zws_scores_hist} shows, the *lsoatotscr* (total scores) were distributed normally between around 15 and 30 with a slight left skew. Both *pplrank* and *dedrank* show slight skewing to the right
 
 The smallest variation in the range of scores was seen in the *pplrank* variable, which ranged from 2 to 6, with a mean of 4. The largest variation between the ranges of scores was seen in the *tenrank* variable (*home-ownership*). This varied from 1 through to 9, with a mean of 5.9.
 
