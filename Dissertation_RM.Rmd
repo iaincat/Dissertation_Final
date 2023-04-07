@@ -101,15 +101,15 @@ library(ggthemes)
 
 \newpage
 
-## Abstract
+# Abstract
 
 WRITE THE ABSTRACT HERE
 
-## Introduction
+# Introduction
 
 WRITE THE INTROCUDTION HERE
 
-## Literature Review
+# Literature Review
 
 This section will review the literature on some of the most relevant and important methods of store location planning that are employed in the retail sector. Each will be discussed and critiqued for appropriateness for use in this study. A review of studies that focus on environmentally conscious consumption behaviours and associated demographic profiles will be carried out. This will provide the justification for the decisions taken around the choices of data that will be used in the chosen method for this piece of work.
 
@@ -223,7 +223,7 @@ Single Car per household
 
 In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics that surround the locations of the stores in the study area. This included the creation of a scorecard for each location, based on the selected demographic variables. The scorecards were then used to identify similar locations of the study area in which stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical representation, a landscape of ethical consumption will be built up and visualised. This analysis will feed in to the discussion of the rationale behind the choices of variable used in the data, the methodological approach taken and an evaluation of the results.
 
-#### Zero Waste Store Location Data
+### Zero Waste Store Location Data
 
 Location data for the stores to be used was retrieved using the metadata of the The Zero Waste Network [@thezerowastenetwork] (ZWN) website. This was, by comparison to other similar website's and directories, the most comprehensive listing found. These data were cleaned through Google searches to identify and remove any stores that were irrelevant to the study, such as incorrectly listed stores, wholesalers, and mobile refill vehicles, and also to highlight any that had closed since being listed. Of the initial 172 stores, 135 remained. Table \ref{tab:zws} shows the first 10 records of this cleaned data. To ensure that the remaining stores sat within the study area a plot of all the locations was made and can be seen in figure \ref{zwstores}.
 
@@ -238,7 +238,7 @@ kable(zws[1:10,], caption = "\\label{tab:zws}Zero-waste stores data")|>
 
 ![Map of all Zero Waste Stores in Study Area. \label{zwstores}](Images/zwsmap.png){width="400"}
 
-#### Demographic data
+### Demographic data
 
 Nomisweb provided the latest Office for National Statistics, 2021 census data [\@nomis], at the LSOA scale. LSOA area codes were included to provide linked identifiers for GIS processing. The variables were found under the following identifiers,
 
@@ -382,7 +382,7 @@ $$
 
 These rankings were then multiplied up by 10 and rounded to the nearest integer to provide a final score for each individual LSOA for each variable between 0 and 10 inclusive.
 
-#### LSOA Area Scale Boundary Data
+### LSOA Area Scale Boundary Data
 
 Boundary data was downloaded for the study area from the Open Geography Portal [@opengeographyportala]. This related to the latest 2021 boundaries at the LSOA scale and includes the LSOA identifier and the attached geometries.
 
@@ -399,7 +399,7 @@ kable(lsoas[1:5,c(1,3,9)], caption = "\\label{tab:lsoas}LSOA boundary data")|>
 remove(lsoas)
 ```
 
-#### Combining score data and calculating totals
+### Combining score data and calculating totals
 
 The scores for each individual variable were allocated to the matching LSOA in the LSOA data. A total score for each LSOA was then calculated. The resulting dataset (see \ref{tab:lsoa_scores} for examples), was inspected to provide assurance that the process had resulted in individual scores ranged from 0 and 10 only, and total scores were within a 0 to 50 range. These scores would then be available when analysing the current store locations and the potential un-supplied retail centres.
 
@@ -455,7 +455,7 @@ kable(st_drop_geometry(lsoas[1:5,c(1,3,9:14)]), caption = "\\label{tab:lsoa_scor
 remove(lsoas)
 ```
 
-#### LSOA area scale population weighted centroids
+### LSOA area scale population weighted centroids
 
 Population Weighted Centroids (PWC) [\@opengeographyportal2022] data was retrieved at the LSOA scale. This data was required because once the stores and retail center isochrones had been calculated, those isochrones that contained a PWC would be filtered and used to calculate the scorecard for each location. PWC data can be seen in table \ref{tab:lsoa_pwcs}.
 
@@ -469,9 +469,9 @@ kable(lsoa_pwc[1:5,c(2,4)], caption = "\\label{tab:lsoa_pwcs}LSOA population wei
 remove(lsoa_pwc)
 ```
 
-#### Retail Centres
+### Retail Centres
 
-Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales, so that once analysis of all current zero waste store locations had been completed, potential retail centres that lack the supply of this type of store could be identified. The retail centre data was processed through QGIS to identify the geometric centroid of each, which was then added to the file and saved as seen in \ref{tab:rc_data}.
+Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales, so that once analysis of all current zero waste store locations had been completed, potential retail centres that lack the supply of this type of store could be identified. The retail centre data was processed through QGIS to identify the geometric centroid of each, which was then added to the file and saved as seen in table \ref{tab:rc_data}.
 
 ```{r retail_centre_data}
 # Create a dataframe to summarise the LSOA Boundary and PWC data
@@ -490,7 +490,7 @@ remove(retail_c)
 
 #### 
 
-#### Creating a test scorecard using a known store location
+### Creating a test scorecard using a known store location
 
 To test and refine the methods that will be used to process the full dataset of zero waste stores, a single test store was selected. This consisted of a store that was known and was located in a known area, which allowed for the method to be corrected due to erroneous or anomalous results.
 
@@ -521,7 +521,7 @@ ggplot(bishy) +
 remove(bishy)
 ```
 
-#### Calculating the isochrone
+### Calculating the isochrone
 
 Using the OpenRouteService [@openrouteservice], a 20 minute walking time isochrone was calculated around the test store to define the catchment area. This distance/time was chosen partly due to the individual health benefits of walking [@tschentscher2013; @sari2010], and partly to fit in with the concept of a chrono-urbanism and temporally accessible city design such as the currently popular 15 and 20 minute city. The benefits of this concept include decreasing vehicle pollution and can help towards achieving the goal of net-zero amongst others [@ogorman2021; @moreno2021].
 
@@ -589,29 +589,32 @@ remove(ywalktime20, bishy)
 After confirming that the isochrone calculation and store location data produced the desired results, the PWC data was clipped so that a set of data was produced that contained only those PWC that fell within the isochrone. This decision was made to ensure that only population centres and, importantly, the corresponding LSOA(s) that fell within the catchment area were included. If this was not taken in to consideration, the resulting scorecards could be open to possible inaccuracy. For example, the scorecards could be calculated using LSOA(s) that had a proportion within the isochrone, but with PWC situated further than 20 minutes from the store and outside of the isochrone, resulting in scores that include populations that have a walktime that is greater than 20 minutes. These results were then mapped to check method accuracy and can be seen in figure \ref{fig:bishy_pwc_clipped}.
 
 ```{r ypwc_clip, warning=FALSE}
-pwc_clip <- readRDS("pwc_clip.rds")
+# pwc_clip <- readRDS("pwc_clip.rds")
+
 # bishy <- readRDS("bishy.rds")
 # ywalktime20 <- readRDS("ywalktime20.rds")
 # lsoas = readRDS("lsoas.rds")
 # lsoas = st_as_sf(lsoas)
 # ywalktime20 = readRDS("ywalktime20.rds")
-###################################################################################
-# Test plot an LSOA
-# ggplot(lsoas[1,]) +
-#   annotation_map_tile(zoomin = 0, type = "hotstyle") +
-#   geom_sf(aes(geometry = lsoageometry))
-###################################################################################
+# ###################################################################################
+# # Test plot an LSOA
+# # ggplot(lsoas[1,]) +
+# #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
+# #   geom_sf(aes(geometry = lsoageometry))
+# ###################################################################################
 # lsoas <- lsoas  |>  rename_at('lsoageometry', ~'geometry')
-#lsoa_pwc = readRDS("lsoa_pwc.rds")
+# lsoa_pwc = readRDS("lsoa_pwc.rds")
 # lsoa_pwc = st_as_sf(lsoa_pwc)
 # lsoa_pwc <- lsoa_pwc  |>  rename_at('pwcgeometry', ~'geometry')
-#ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
-# lsoas <- st_transform(lsoas, crs = st_crs(4326))
-# lsoa_pwc <- st_transform(lsoa_pwc, crs = st_crs(4326))
-
-# clip the PWCs to only show those inside the 20 minute walk time
-#pwc_clip = lsoa_pwc[ywalktime20$geometry,]
-#saveRDS(object = pwc_clip, file = "pwc_clip.rds")
+# ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
+# lsoas = st_as_sf(lsoas)
+# lsoas <- st_transform(lsoas, crs = st_crs(3857))
+# lsoa_pwc = st_as_sf(lsoa_pwc)
+# lsoa_pwc <- st_transform(lsoa_pwc, crs = st_crs(3857))
+# 
+# # clip the PWCs to only show those inside the 20 minute walk time
+# pwc_clip = lsoa_pwc[ywalktime20$geometry,]
+# saveRDS(object = pwc_clip, file = "pwc_clip.rds")
 ###################################################################################
 # Test plot an LSOA
 # ggplot() +
@@ -625,6 +628,8 @@ pwc_clip <- readRDS("pwc_clip.rds")
 #   guides(alpha = guide_legend(title = "Catchment Area")) +
 #   theme_void()
 ##################################################################################
+##################################################################################
+# remove(bishy, lsoa_clip, lsoa_pwc, lsoas, pwc_clip, ywalktime20)
 ```
 
 ```{r bishy_pwc_clipped, fig.cap="Population Weighted Centoids within the isochrone sourrounding The Bishy Weigh store in York"}
@@ -634,7 +639,7 @@ ywalktime20 <- readRDS("ywalktime20.rds")
 ggplot() +
   annotation_map_tile(zoomin = -1, type = "hotstyle") +
   # geom_sf(data = lsoa_clip, aes(geometry = lsoageometry), alpha = 0.1) +
-  geom_sf(data = pwc_clip, aes(geometry = pwcgeometry, shape = "")) +
+  geom_sf(data = pwc_clip, aes(geometry = geometry, shape = "")) +
   guides(shape = guide_legend(title = "Population Weighted Centroids")) +
   geom_sf(data = bishy, aes(geometry = bishystorepoint, colour = st_nam)) +
   guides(colour = guide_legend(title = "Store Name")) +
@@ -806,7 +811,7 @@ ggplot(lsoa_clip) +
   geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
   guides(colour = guide_legend(title = "Store Name")) +
   theme_void()
-remove(lsoa_clip, bishy)
+remove(lsoa_clip, bishy, ypplscr_map)
 ```
 
 \FloatBarrier
@@ -844,13 +849,72 @@ ggplot(lsoa_clip) +
 remove(lsoa_clip, bishy)
 ```
 
+\FloatBarrier
+
 Once the individual variables scores for the test store had each been checked for validity, a final total mean score for the area as a whole was calculated by, for each variable, summing the total scores and dividing this by the number of LSOA in the area. Mean scores for each of the five variables was also calculated for future reference. This method was used to maintain equivalence across the subsequent store and retail catchment areas, and allow comparison between the scorecard results of each. This method was followed because some stores may have greater or fewer LSOA within the catchment area, rendering them isolated in terms of data without comparison.
 
 ```{r}
-# Create a new variable to hold the totals for the final joined data and convert to a data.frame # # CRS should be 3857 # lsoa_clip_tot = as.data.frame(lsoa_clip) #  # ##### create a row in the lsoa_clip_tot dataframe for the total MEAN for all lsoas in the area and the total of those totals #   lsoa_clip_tot <- lsoa_clip_tot |> #     bind_rows(summarise(lsoa_clip_tot[,9:14], across(where(is.numeric), mean), across(where(is.character), ~'Total'))) # lsoa_clip_tot = st_as_sf(lsoa_clip_tot) #  # # Join the lsoas to a single shape - USE THIS "JOINED_LSOAS" AS THE FINAL LSOA SHAPE # # gglpot() + # #   annotation_map_tile(zoomin = 0, type = "hotstyle") + # #   geom_sf(aes(geometry = lsoa_clip_tot$lsoageometry)) #  # ################################################################################### # # Test Plot # # plot(st_union(lsoa_clip_tot$lsoageometry)) # #  joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry) # # THIS WORKED # ################################################################################### # # Test Plot # # ggplot(joined_lsoas) + # #     annotation_map_tile(zoomin = 0, type = "hotstyle") + # #     geom_sf() # # THIS WORKED # ##################################################################################   # # Create a temp df "FT" to hold the totals for the whole joined LSOAs for each variable #   ft <- data.frame(matrix(ncol = 6, nrow = 0)) #   lsoa_clip_tot = as.data.frame(lsoa_clip_tot) #   ft = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14] #   lsoa_clip_tot = st_as_sf(lsoa_clip_tot) #  #   # sum the individual variables for the whole lsoa_clip_tot and add the result to the bottom of lsoa_clip_tot #    bishy = st_as_sf(bishy) #    joined_lsoas = st_as_sf(joined_lsoas) #    joined_lsoas <- st_transform(joined_lsoas, crs = st_crs(3857)) # ################################################################################### # # Test Plot Bishy #  # ggplot(bishy) + #  #    annotation_map_tile(zoomin = 0, type = "hotstyle") + #  #    geom_sf(aes(geometry = joined_lsoas$x)) + #  #    geom_sf(aes(geometry = bishy$store_location)) # # THIS WORKED # ################################################################################## #  joined_lsoas = st_as_sf(joined_lsoas) #  bishyjoined = cbind(bishy, round(ft[,1:6], digits = 0)) #  bishyjoined = cbind(bishyjoined, joined_lsoas) #  bishyjoined <- bishyjoined  |>  rename_at('x', ~'joined_lsoas') #    # ################################################################################## # # Test plot #   bishyjoined = st_as_sf(bishyjoined) #   bishyjoined <- st_transform(bishyjoined, crs = st_crs(3857)) # ################################################################################### #  # ggplot(bishyjoined) + #  #    annotation_map_tile(zoomin = 0, type = "hotstyle") + #  #    geom_sf(aes(geometry = bishyisochrone, alpha = ""), colour = "blue") + #  #    guides(alpha = guide_legend(title = "20 minute walk time")) + #  #    geom_sf(aes(geometry = joinedlsoageometry, fill = lsoatotscr), alpha = 0.2) + #  #    guides(fill = guide_legend(title = "Joined LSOA\nTotal Score")) + #  #    geom_sf(aes(geometry = bishystorepoint,  colour = "")) + #  #    guides(colour = guide_legend(title = bishyjoined$st_nam)) # # THIS WORKED # ################################################################################## # saveRDS(obj = bishyjoined, file = "bishyjoined.rds") ################################################################################## bishyjoined <- readRDS("bishyjoined.rds")
+# Create a new variable to hold the totals for the final joined data and convert to a data.frame # # CRS should be 3857 # 
+#lsoa_clip_tot = as.data.frame(lsoa_clip)
+
+# create a row in the lsoa_clip_tot dataframe for the total MEAN for all lsoas in the area and the total of those totals #   
+#lsoa_clip_tot <- lsoa_clip_tot |>      
+#  bind_rows(summarise(lsoa_clip_tot[,9:14], across(where(is.numeric), mean), #across(where(is.character), ~'Total')))
+#lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
+
+# Join the lsoas to a single shape - USE THIS "JOINED_LSOAS" AS THE FINAL LSOA SHAPE
+#gglpot() +
+#  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#  geom_sf(aes(geometry = lsoa_clip_tot$lsoageometry))
+
+# Test Plot
+#plot(st_union(lsoa_clip_tot$lsoageometry))
+#joined_lsoas <- st_union(lsoa_clip_tot$lsoageometry)
+
+# Create a temp df "FT" to hold the totals for the whole joined LSOAs for each variable
+#ft <- data.frame(matrix(ncol = 6, nrow = 0))
+#lsoa_clip_tot = as.data.frame(lsoa_clip_tot)
+#ft = lsoa_clip_tot[nrow(lsoa_clip_tot),9:14]
+#lsoa_clip_tot = st_as_sf(lsoa_clip_tot)
+
+# sum the individual variables for the whole lsoa_clip_tot and add the result to the bottom of lsoa_clip_tot
+#bishy = st_as_sf(bishy)
+#joined_lsoas = st_as_sf(joined_lsoas)
+#joined_lsoas <- st_transform(joined_lsoas, crs = st_crs(3857))
+
+
+# Test Plot Bishy
+#ggplot(bishy) +
+#  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#  geom_sf(aes(geometry = joined_lsoas$x)) +
+#  geom_sf(aes(geometry = bishy$store_location))
+# THIS WORKED 
+###################################################################################
+
+#joined_lsoas = st_as_sf(joined_lsoas)
+#bishyjoined = cbind(bishy, round(ft[,1:6], digits = 0))
+#bishyjoined = cbind(bishyjoined, joined_lsoas)
+#bishyjoined <- bishyjoined  |>  rename_at('x', ~'joined_lsoas')
+
+################################################################################## # # Test plot
+#bishyjoined = st_as_sf(bishyjoined)
+#bishyjoined <- st_transform(bishyjoined, crs = st_crs(3857))
+
+#ggplot(bishyjoined) +
+#  annotation_map_tile(zoomin = 0, type = "hotstyle") +
+#  geom_sf(aes(geometry = bishyisochrone, alpha = ""), colour = "blue") +
+#  guides(alpha = guide_legend(title = "20 minute walk time")) +
+#  geom_sf(aes(geometry = joinedlsoageometry, fill = lsoatotscr), alpha = 0.2) +
+#  guides(fill = guide_legend(title = "Joined LSOA\nTotal Score")) +
+#  geom_sf(aes(geometry = bishystorepoint,  colour = "")) +
+#  guides(colour = guide_legend(title = bishyjoined$st_nam))
+# THIS WORKED
+###################################################################################
+#saveRDS(obj = bishyjoined, file = "bishyjoined.rds")
+#bishyjoined <- readRDS("bishyjoined.rds")
 ```
 
-#### Processing all stores
+### Processing all stores
 
 Once the test store data had been processed and mapped to ensure validity, the data for all 140 zero waste stores, including the test store, were processed in full using the same processing steps as the test store, and the results were combined with the location data in the zero waste store data for analysis.
 
@@ -1124,37 +1188,41 @@ Of the original 145 stores, 129 were successfully processed. Those that were not
 
 The results for the remaining 129 stores were analysed to calculate the mean scores of the 5 variables. The total mean score was then calculated to give the final scorecard result. These scorecards were then used to analyse the locations that currently contain a store, and to identify the most suitable potential retail centre that was not already supplied by a zero waste store.
 
-```{r zw_scrs_hists}
-# nrow(zws_joined_lsoa_scr)
-# individual variable scores for the retail centres that score a total that matches the mean store total score
-# zwh1 <- ggplot(zws_joined_lsoa_scr, aes(x=lsoatotscr)) + 
-#   geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zwh2 <- ggplot(zws_joined_lsoa_scr, aes(x=tenrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zwh3 <- ggplot(zws_joined_lsoa_scr, aes(x=pplrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zwh4 <- ggplot(zws_joined_lsoa_scr, aes(x=occrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zwh5 <- ggplot(zws_joined_lsoa_scr, aes(x=dedrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zwh6 <- ggplot(zws_joined_lsoa_scr, aes(x=carrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# # Add the histograpms to a plot list
-# zwh_plot_list <- list(zwh1, zwh2, zwh3, zwh4, zwh5, zwh6)
-# saveRDS(object = zwh_plot_list, file = "zwh_plot_list.rds")
+\FloatBarrier
+
+```{r zw_scrs_hists, fig.cap="Histograms showing individual variable scores for the zero waste stores that score a total that matches the mean store total score."}
+#zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
+#nrow(zws_joined_lsoa_scr)
+
+#zwh1 <- ggplot(zws_joined_lsoa_scr, aes(x=lsoatotscr)) +
+#  geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+
+#zwh2 <- ggplot(zws_joined_lsoa_scr, aes(x=tenrank)) +
+#  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+#zwh3 <- ggplot(zws_joined_lsoa_scr, aes(x=pplrank)) +
+#  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+#zwh4 <- ggplot(zws_joined_lsoa_scr, aes(x=occrank)) +
+#  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+#zwh5 <- ggplot(zws_joined_lsoa_scr, aes(x=dedrank)) +
+#  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+#zwh6 <- ggplot(zws_joined_lsoa_scr, aes(x=carrank)) +
+#  geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+
+# Add the histograpms to a plot list
+#zwh_plot_list <- list(zwh1, zwh2, zwh3, zwh4, zwh5, zwh6)
+#saveRDS(object = zwh_plot_list, file = "zwh_plot_list.rds")
+# remove(zwh1, zwh2, zwh3, zwh4, zwh5, zwh6)
 # Plot them together in a grid
 zwh_plot_list <- readRDS("zwh_plot_list.rds")
 do.call("grid.arrange", c(zwh_plot_list, ncol = 3))
 remove(zwh_plot_list)
 ```
 
-OR WOULD THIS BE THE HIGHEST SCORES THAT SHOULD BE USED?!
+\FloatBarrier
 
 ```{r}
 # rc_final_results <- readRDS("rc_final_results.rds")
@@ -1648,7 +1716,7 @@ OR WOULD THIS BE THE HIGHEST SCORES THAT SHOULD BE USED?!
 # saveRDS(obj = rc_no_zws, file = "rc_no_zws.rds")
 ```
 
-```{r eval = F}
+```{r }
 # ################# Prepare the retail centres data without a zws in them
 # # PREPARE THE RETAIL CENTRE DATA
 # # Get all the data for the retail centres
@@ -1706,7 +1774,7 @@ OR WOULD THIS BE THE HIGHEST SCORES THAT SHOULD BE USED?!
 # remove(rc, rc_with_zws)
 ```
 
-```{r eval = F}
+```{r }
 # rc_joined_lsoa_scr <- readRDS("rc_joined_lsoa_scr.rds")
 ##################################################################################
 
@@ -1920,7 +1988,7 @@ OR WOULD THIS BE THE HIGHEST SCORES THAT SHOULD BE USED?!
 # # saveRDS(obj = rc_joined_lsoa_scr, file = "rc_joined_lsoa_scr.rds")
 ```
 
-```{r eval = F}
+```{r}
 # # Find the mean total score for the zero waste stores
 # zws_ave = round(mean(zws_joined_lsoa_scr$lsoatotscr))
 # 
@@ -1936,104 +2004,80 @@ OR WOULD THIS BE THE HIGHEST SCORES THAT SHOULD BE USED?!
 #   geom_sf(aes(geometry = joinedlsoageom), colour = "red")
 ```
 
-```{r all_rc_hists}
-###################################################################################
-# All rc_total scores
+\FloatBarrier
+
+```{r all_rc_hists, fig.cap="Histograms showing distributions for individual variable scores for all retail centres."}
+# ###################################################################################
+# # All rc_total scores
 # rc_joined_lsoa_scr <- readRDS("rc_joined_lsoa_scr.rds")
-# rc_hist1 <- ggplot(rc_joined_lsoa_scr, aes(x=lsoatotscr)) + 
+# rc_hist1 <- ggplot(rc_joined_lsoa_scr, aes(x=lsoatotscr)) +
 #   geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rc_hist2 <- ggplot(rc_joined_lsoa_scr, aes(x=tenrank)) + 
+# rc_hist2 <- ggplot(rc_joined_lsoa_scr, aes(x=tenrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rc_hist3 <- ggplot(rc_joined_lsoa_scr, aes(x=pplrank)) + 
+# rc_hist3 <- ggplot(rc_joined_lsoa_scr, aes(x=pplrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rc_hist4 <- ggplot(rc_joined_lsoa_scr, aes(x=occrank)) + 
+# rc_hist4 <- ggplot(rc_joined_lsoa_scr, aes(x=occrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rc_hist5 <- ggplot(rc_joined_lsoa_scr, aes(x=dedrank)) + 
+# rc_hist5 <- ggplot(rc_joined_lsoa_scr, aes(x=dedrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rc_hist6 <- ggplot(rc_joined_lsoa_scr, aes(x=carrank)) + 
+# rc_hist6 <- ggplot(rc_joined_lsoa_scr, aes(x=carrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
 # plot_list_rchist <- list(rc_hist1, rc_hist2, rc_hist3, rc_hist4, rc_hist5, rc_hist6)
 # saveRDS(object = plot_list_rchist, file = "plot_list_rchist.rds")
-
+# remove(rc_hist1, rc_hist2, rc_hist3, rc_hist4, rc_hist5, rc_hist6)
 plot_list_rchist <- readRDS("plot_list_rchist.rds")
 do.call("grid.arrange", c(plot_list_rchist, ncol = 3))
 remove(plot_list_rchist)
 ```
 
-```{r zwmeanrc_hists}
+```{r zwmeanrc_hists, fig.cap="Histograms showing total and individual variable scores for the retail centres that score a total which matches the mean store total score."}
+
+# # Find the retail centres where the totalscore is equal to the zws average total score
+# # rc_joined_lsoa_scr <- readRDS("rc_joined_lsoa_scr.rds")
+# # rc_eq_zws_ave = rc_joined_lsoa_scr[rc_joined_lsoa_scr$lsoatotscr == zws_ave, ]
+# # 
 # # saveRDS(obj = rc_eq_zws_ave, file = "rc_eq_zws_ave.rds")
 # rc_eq_zws_ave <- readRDS("rc_eq_zws_ave.rds")
-# #nrow(rc_eq_zws_ave)
-# # individual variable scores for the retail centres that score a total that matches the mean store total score
-# zrc1 <- ggplot(rc_eq_zws_ave, aes(x=lsoatotscr)) + 
-#   geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zrc2 <- ggplot(rc_eq_zws_ave, aes(x=tenrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zrc3 <- ggplot(rc_eq_zws_ave, aes(x=pplrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zrc4 <- ggplot(rc_eq_zws_ave, aes(x=occrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zrc5 <- ggplot(rc_eq_zws_ave, aes(x=dedrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# zrc6 <- ggplot(rc_eq_zws_ave, aes(x=carrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# # Add the histograpms to a plot list
-# zrc_plot_list <- list(zrc1, zrc2, zrc3, zrc4, zrc5, zrc6)
-# saveRDS(object = zrc_plot_list, file = "zrc_plot_list.rds")
-# Plot them together in a grid
+# # nrow(rc_eq_zws_ave)
+# # # individual variable scores for the retail centres that score a total that matches the mean store total score
+#  zrc1 <- ggplot(rc_eq_zws_ave, aes(x=lsoatotscr)) + 
+#    geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
+#  
+#  zrc2 <- ggplot(rc_eq_zws_ave, aes(x=tenrank)) + 
+#    geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+#  
+#  zrc3 <- ggplot(rc_eq_zws_ave, aes(x=pplrank)) + 
+#    geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+#  
+#  zrc4 <- ggplot(rc_eq_zws_ave, aes(x=occrank)) + 
+#    geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+#  
+#  zrc5 <- ggplot(rc_eq_zws_ave, aes(x=dedrank)) + 
+#    geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+#  
+#  zrc6 <- ggplot(rc_eq_zws_ave, aes(x=carrank)) + 
+#    geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
+#  
+#  # Add the histograpms to a plot list
+#  zrc_plot_list <- list(zrc1, zrc2, zrc3, zrc4, zrc5, zrc6)
+#  saveRDS(object = zrc_plot_list, file = "zrc_plot_list.rds")
+ # remove(zrc1, zrc2, zrc3, zrc4, zrc5, zrc6)
+ # Plot them together in a grid
 zrc_plot_list <- readRDS("zrc_plot_list.rds")
 do.call("grid.arrange", c(zrc_plot_list, ncol = 3))
 remove(zrc_plot_list)
 ```
 
-```{r rc_zw_meanrange_hists}
-# # saveRDS(obj = zws_ave, file = "zws_ave.rds")
-# zws_ave <-  readRDS("zws_ave.rds")
-# ###################################################################################
-# # Using the range + or - 3
-# identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (zws_ave-3) & rc_joined_lsoa_scr$lsoatotscr <= (zws_ave+3)
-# 
-# rc_in_zws_ave_rng <- subset(rc_joined_lsoa_scr, identify_rows)
-# 
-# rcr1 <- ggplot(rc_in_zws_ave_rng, aes(x=lsoatotscr)) + 
-#   geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# rcr2 <- ggplot(rc_in_zws_ave_rng, aes(x=tenrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# rcr3 <- ggplot(rc_in_zws_ave_rng, aes(x=pplrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# rcr4 <- ggplot(rc_in_zws_ave_rng, aes(x=occrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# rcr5 <- ggplot(rc_in_zws_ave_rng, aes(x=dedrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# rcr6 <- ggplot(rc_in_zws_ave_rng, aes(x=carrank)) + 
-#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
-# 
-# rcr_plot_list <- list(rcr1, rcr2, rcr3, rcr4, rcr5, rcr6)
-# saveRDS(object = rcr_plot_list, file = "rcr_plot_list.rds")
+\FloatBarrier
 
-rcr_plot_list <- readRDS("rcr_plot_list.rds")
-do.call("grid.arrange", c(rcr_plot_list, ncol = 3))
-remove(rcr_plot_list)
-```
-
-```{r rc_iqr_hists}
+```{r rc_iqr_hists, fig.cap="Histograms showing individual variable scores for the retail centres that score a total that falls within the interquartile range of the zero waste stores total scores."}
+# rc_joined_lsoa_scr <- readRDS("rc_joined_lsoa_scr.rds")
 # ###################################################################################
 # # Using the interquartile range
 # # Find the 1st and 3rd Quartiles of the zws results
@@ -2045,66 +2089,74 @@ remove(rcr_plot_list)
 # 
 # rc_in_zws_iqr <- subset(rc_joined_lsoa_scr, identify_rows)
 # 
-# rcq1 <- ggplot(rc_in_zws_iqr, aes(x=lsoatotscr)) + 
+# rcq1 <- ggplot(rc_in_zws_iqr, aes(x=lsoatotscr)) +
 #   geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcq2 <- ggplot(rc_in_zws_iqr, aes(x=tenrank)) + 
+# rcq2 <- ggplot(rc_in_zws_iqr, aes(x=tenrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcq3 <- ggplot(rc_in_zws_iqr, aes(x=pplrank)) + 
+# rcq3 <- ggplot(rc_in_zws_iqr, aes(x=pplrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcq4 <- ggplot(rc_in_zws_iqr, aes(x=occrank)) + 
+# rcq4 <- ggplot(rc_in_zws_iqr, aes(x=occrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcq5 <- ggplot(rc_in_zws_iqr, aes(x=dedrank)) + 
+# rcq5 <- ggplot(rc_in_zws_iqr, aes(x=dedrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcq6 <- ggplot(rc_in_zws_iqr, aes(x=carrank)) + 
+# rcq6 <- ggplot(rc_in_zws_iqr, aes(x=carrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
 # plot_list_iqr <- list(rcq1, rcq2, rcq3, rcq4, rcq5, rcq6)
 # saveRDS(object = plot_list_iqr, file = "plot_list_iqr.rds")
+# remove(rcq1, rcq2, rcq3, rcq4, rcq5, rcq6)
 plot_list_iqr <- readRDS("plot_list_iqr.rds")
 do.call("grid.arrange", c(plot_list_iqr, ncol = 3))
 remove(plot_list_iqr)
 ```
 
-```{r rc_minmax_hists}
+\FloatBarrier
+
+```{r rc_minmax_hists, fig.cap="Histograms showing individual variable scores for the retail centres that score a total that falls within the minimum and maximum score range for the zero waste stores."}
+
+rc_joined_lsoa_scr <- readRDS("rc_joined_lsoa_scr.rds")
 # ###################################################################################
 # # Using the range min-max
 # identify_rows <- rc_joined_lsoa_scr$lsoatotscr >= (min(zws_joined_lsoa_scr$lsoatotscr)) & rc_joined_lsoa_scr$lsoatotscr <= (max(zws_joined_lsoa_scr$lsoatotscr))
 # 
 # rc_in_zws_mm <- subset(rc_joined_lsoa_scr, identify_rows)
 # 
-# rcm1 <- ggplot(rc_in_zws_mm, aes(x=lsoatotscr)) + 
+# rcm1 <- ggplot(rc_in_zws_mm, aes(x=lsoatotscr)) +
 #   geom_histogram(breaks = seq(0, 50, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcm2 <- ggplot(rc_in_zws_mm, aes(x=tenrank)) + 
+# rcm2 <- ggplot(rc_in_zws_mm, aes(x=tenrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcm3 <- ggplot(rc_in_zws_mm, aes(x=pplrank)) + 
+# rcm3 <- ggplot(rc_in_zws_mm, aes(x=pplrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcm4 <- ggplot(rc_in_zws_mm, aes(x=occrank)) + 
+# rcm4 <- ggplot(rc_in_zws_mm, aes(x=occrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcm5 <- ggplot(rc_in_zws_mm, aes(x=dedrank)) + 
+# rcm5 <- ggplot(rc_in_zws_mm, aes(x=dedrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
-# rcm6 <- ggplot(rc_in_zws_mm, aes(x=carrank)) + 
+# rcm6 <- ggplot(rc_in_zws_mm, aes(x=carrank)) +
 #   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")
 # 
 # plot_list_minmax <- list(rcm1, rcm2, rcm3, rcm4, rcm5, rcm6)
 # saveRDS(object = plot_list_minmax, file = "plot_list_minmax.rds")
+# remove(rcm1, rcm2, rcm3, rcm4, rcm5, rcm6)
 plot_list_minmax <- readRDS("plot_list_minmax.rds")
 do.call("grid.arrange", c(plot_list_minmax, ncol = 3))
 remove(plot_list_minmax)
 ```
 
+\FloatBarrier
+
 \newpage
 
-## Results
+# Results
 
 This section will analyse the results of the initial scorecard calculations for the locations containing zero waste stores. It will discuss the demographic composition of the 20 minute walking time catchment areas around the stores, and how the resulting scores may help to understand what makes these locations most suitable for this sector of retail.
 
@@ -2114,7 +2166,7 @@ Once the scorecards for the 129 stores had been calculated, a summary was produc
 
 ```{r all_zws_scr_table}
 zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
-a = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[1:10, c(2, 12:17)]))
+a = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[1:5, c(2, 12:17)]))
 kable(a, caption = "\\label{tab:allzwsscrtable}Scorecard table for first 10 zero waste stores")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T, font_size = 12) |>
@@ -2141,16 +2193,16 @@ a = as.data.frame(t(a))
 a <- a  |>  rename_at('1', ~'Total no. stores')
 a = as.data.frame(t(a))
 
-kable(t(a), caption = "\\label{tab:zws_scores_summary}Scorecard summary table for all zero waste stores.")|>
+kable(t(a), caption = "\\label{tab:zws_scrsummary}Scorecard summary table for all zero waste stores.")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T, font_size = 12)
 
 remove(zws_joined_lsoa_scr, a)
 ```
 
-Figure \ref{fig:corr_plot} shows the correlation between the individual variables and the total scores. This visualises the positive relationship between them and the total score (*lsoatotscr*) to varying strengths. For example, the degree educated (*dedrank*), occupation (*occrank*) and home-ownership (occrank) variables all have a more positive linear relationship with the total score, than the vehicle access (*carrank*) and household composition (pplrank) variables. Those variables that seemed to display a more negative relationship were between the *pplrank* and *dedrank* which may suggest areas that contain older couples than younger single households. Areas that have more interesting relationships were highlighted by the relationship between the *tenrank* and, *dedrank* and *occrank* variables. This relationship suggests that areas with higher *dedrank* and *occrank* scores and low *tenrank* scores were areas with younger professional populations that have a degree education level, but have not managed to get on the housing ladder for example.
+Figure \ref{fig:corr_plot} shows the correlation between the individual variables and the total scores. This visualises the varying strength of the positive relationship between the variables and the total score (*lsoatotscr*). For example, the degree educated (*dedrank*), occupation (*occrank*) and home-ownership (*occrank*) variables all have a more positive linear relationship with the total score, than the vehicle access (*carrank*) and household composition (pplrank) variables. Those variables that seemed to display a more negative relationship were between the *pplrank* and *dedrank* which may suggest areas that contain older couples than younger single households. Areas that have more interesting relationships were highlighted by the relationship between the *tenrank* and, *dedrank* and *occrank* variables. This relationship suggests that areas with higher *dedrank* and *occrank* scores and low *tenrank* scores were areas with younger professional populations that have a degree education level, but have not managed to get on the housing ladder for example.
 
-```{r corr_plot, fig.cap="Plot showing correlations between total scores and the 5 variables"}
+```{r corr_plot, fig.cap="Plot showing correlations between total scores and the 5 variables for the stores data."}
 zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
 a_cor = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[,c(17,12:16)]))
 cor_plot <- plot(a_cor, cex = 0.3,
@@ -2158,7 +2210,7 @@ cor_plot <- plot(a_cor, cex = 0.3,
 remove(a_cor, zws_joined_lsoa_scr, cor_plot)
 ```
 
-To be able to see clearly, how the zero waste store data scores were distributed, they were plotted as histograms. As figure \fig{fig:zws_scores_hist} shows, the *lsoatotscr* (total scores) were distributed normally between around 15 and 30.
+To be able to see clearly, how the zero waste store data scores were distributed, they were plotted as histograms. As figure \ref{fig:zws_scores_hist} shows, the *lsoatotscr* (total scores) were distributed normally between around 15 and 30.
 
 The smallest variation in the range of scores was seen in the *pplrank* variable, which ranged from 2 to 6, with a mean of 4. The largest variation between the ranges of scores was seen in the *tenrank* variable (*home-ownership*). This varied from 1 through to 9, with a mean of 5.9.
 
@@ -2222,14 +2274,18 @@ A more varied distribution than the other variables was seen for home-ownership 
 
 FIX THIS
 
-Figure fig:min_store_map shows the store that scored the lowest of the 129, with a score of ??. As can be seen in the breakdown of the individual variables average scores, this area scored very low on all factors. This would at first glance suggest that it is not in the best location, however, the area it serves is highly residential
+Figure TABLE & MAP shows the store that scored the lowest of the 129, with a score of ??. As can be seen in the breakdown of the individual variables average scores, this area scored very low on all factors. This would at first glance suggest that it is not in the best location, however, the area it serves is highly residential
 
-```{r}
-# minstore = zws_joined_lsoa_scr[which.min(zws_joined_lsoa_scr$lsoatotscr), ]
-# saveRDS(object = minstore, file = "minstore.rds")
+```{r minstr_tab}
 zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
 minstore <- readRDS("minstore.rds")
-kable(st_drop_geometry(zws_joined_lsoa_scr[1:5,c(2,3,12:17)]), caption = "\\label{tab:zws_scrsummary}Summary table for 5 zero waste store scores")|>
+# minstore = zws_joined_lsoa_scr[which.min(zws_joined_lsoa_scr$lsoatotscr), ]
+# saveRDS(object = minstore, file = "minstore.rds")
+minstore =  as.data.frame(minstore[,c(2,3,12:17)])
+minstore = st_as_sf(minstore)
+minstore = st_drop_geometry(minstore)
+
+kable(minstore, row.names = F, caption = "\\label{tab:minstore_tab}Summary table for zero waste store with lowest score.")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 10)|>
   column_spec(1,width = "0.8in", bold = T) |>
   column_spec(2,width = "0.8in") |>
@@ -2240,12 +2296,108 @@ kable(st_drop_geometry(zws_joined_lsoa_scr[1:5,c(2,3,12:17)]), caption = "\\labe
 remove(zws_joined_lsoa_scr, minstore)
 ```
 
+```{r minstr_map, fig.cap="Map showing the store with the lowest value scorecard, and the variable averages for the location.", warning=FALSE}
+
+minstore <- readRDS("minstore.rds")
+minstoremap <- ggplot(minstore) +
+  annotation_map_tile(zoomin = -1, type = "osm") +
+  geom_sf(aes(geometry = isogeometry, alpha = ""), colour = "red") +
+  guides(alpha = guide_legend(title = "Catchment Area",reverse = TRUE)) +
+  geom_sf(aes(geometry = joinedlsoageom, fill = lsoatotscr), alpha = 0.2) +
+  guides(fill = guide_legend(title = "LSOA Score", reverse = TRUE)) +
+  geom_sf(aes(geometry = zwsgeometry, colour = "")) +
+  guides(colour = guide_legend(title = str_wrap(minstore$st_nam, width = 15), reverse = TRUE)) +
+  # North arrow and scale bar
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr", 
+                         which_north = "true", 
+                         pad_x = unit(0.1, "in"), 
+                         pad_y = unit(0.1, "in"),
+                         style = north_arrow_minimal) +
+  theme_void()
+
+minvarhead <- 
+  ggplot(minstore) + 
+  geom_text(aes(label = paste("Variable Averages"),
+                x = 1,
+                y = 1)) +
+      theme_void()
+
+mincarscr <-
+  ggplot(minstore) +
+  geom_text(aes(label = paste("carrank \n", round(carrank, 2)),
+                x = 1,
+                y = 1)) +
+        theme_void()
+
+mindedscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("dedrank \n", round(dedrank, 2)),
+                x = 1,
+                y = 1)) +
+      theme_void()
+
+minoccscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("occrank \n", round(occrank, 2)),
+                x = 1,
+                y = 1)) + 
+        theme_void()
+
+minpplscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("pplrank \n", round(pplrank, 2)),
+                x = 1,
+                y = 1)) + 
+        theme_void()
+
+mintenscr <- 
+  ggplot(minstore) +
+  geom_text(aes(label = paste("tenrank \n", round(tenrank, 2)),
+                x = 1,
+                y = 1)) +
+    theme_void()
+
+layout <- '
+AAAAA####
+AAAAABBBB
+AAAAACCCC
+AAAAADDEE
+AAAAAFFGG
+AAAAA####
+'
+
+wrap_plots(A = minstoremap,
+           B = minvarhead,
+           C = mincarscr,
+           D = mindedscr,
+           E = minoccscr,
+           F = minpplscr,
+           G = mintenscr,
+           design = layout)
+remove(minstore, minstoremap, minvarhead, mincarscr, mindedscr, minoccscr, minpplscr, mintenscr, layout)
+```
+
 CHANGE TO A TABLE The area that scored the highest overall can be seen in figure \ref{fig:maxstr_map}.
 
-```{r}
+```{r maxstr_tab}
+zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
+maxstore <- readRDS("maxstore.rds")
 # maxstore = zws_joined_lsoa_scr[which.max(zws_joined_lsoa_scr$lsoatotscr), ]
 # saveRDS(object = maxstore, file = "maxstore.rds")
-# maxstore <- readRDS("maxstore.rds")
+maxstore =  as.data.frame(maxstore[,c(2,3,12:17)])
+maxstore = st_as_sf(maxstore)
+maxstore = st_drop_geometry(maxstore)
+
+kable(maxstore, row.names = F, caption = "\\label{tab:maxstore_tab}Summary table for zero waste store with highest score.")|>
+  kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 10)|>
+  column_spec(1,width = "0.8in", bold = T) |>
+  column_spec(2,width = "0.8in") |>
+  column_spec(3,width = "0.8in") |>
+  column_spec(4,width = "0.8in") |>
+  column_spec(5,width = "0.8in") |>
+  column_spec(6,width = "0.8in")
+remove(zws_joined_lsoa_scr, maxstore)
 ```
 
 ```{r maxstr_map, fig.cap = "Map showing the store with the highest value scorecard, and the variable averages for the location.", warning=FALSE}
@@ -2327,92 +2479,10 @@ wrap_plots(A = maxstoremap,
            F = maxpplscr,
            G = maxtenscr,
            design = layout)
-remove(maxstore)
+remove(maxstore, maxstoremap, maxvarhead, maxcarscr, maxdedscr, maxoccscr, maxpplscr, maxtenscr, layout)
 ```
 
 This could highlight that the people score variable is less significant than it had first seemed. Given that the distribution was very narrow and the areas with the overall lowest and highest scores, for this variable scored 2 and 4 respectively.
-
-```{r minstr_map, fig.cap="Map showing the store with the lowest value scorecard, and the variable averages for the location.", warning=FALSE}
-
-minstore <- readRDS("minstore.rds")
-minstoremap <- ggplot(minstore) +
-  annotation_map_tile(zoomin = 0, type = "osm") +
-  geom_sf(aes(geometry = isogeometry, alpha = ""), colour = "blue") +
-  guides(alpha = guide_legend(title = "Catchment Area",reverse = TRUE)) +
-  geom_sf(aes(geometry = joinedlsoageom, fill = lsoatotscr), alpha = 0.2) +
-  guides(fill = guide_legend(title = "LSOA Score", reverse = TRUE)) +
-  geom_sf(aes(geometry = zwsgeometry, colour = "")) +
-  guides(colour = guide_legend(title = str_wrap(minstore$st_nam, width = 15), reverse = TRUE)) +
-  # North arrow and scale bar
-  annotation_scale(location = "br") +
-  annotation_north_arrow(location = "tr", 
-                         which_north = "true", 
-                         pad_x = unit(0.1, "in"), 
-                         pad_y = unit(0.1, "in"),
-                         style = north_arrow_minimal) +
-  theme_void()
-
-minvarhead <- 
-  ggplot(minstore) + 
-  geom_text(aes(label = paste("Variable Averages"),
-                x = 1,
-                y = 1)) +
-      theme_void()
-
-mincarscr <-
-  ggplot(minstore) +
-  geom_text(aes(label = paste("carrank \n", round(carrank, 2)),
-                x = 1,
-                y = 1)) +
-        theme_void()
-
-mindedscr <- 
-  ggplot(minstore) +
-  geom_text(aes(label = paste("dedrank \n", round(dedrank, 2)),
-                x = 1,
-                y = 1)) +
-      theme_void()
-
-minoccscr <- 
-  ggplot(minstore) +
-  geom_text(aes(label = paste("occrank \n", round(occrank, 2)),
-                x = 1,
-                y = 1)) + 
-        theme_void()
-
-minpplscr <- 
-  ggplot(minstore) +
-  geom_text(aes(label = paste("pplrank \n", round(pplrank, 2)),
-                x = 1,
-                y = 1)) + 
-        theme_void()
-
-mintenscr <- 
-  ggplot(minstore) +
-  geom_text(aes(label = paste("tenrank \n", round(tenrank, 2)),
-                x = 1,
-                y = 1)) +
-    theme_void()
-
-layout <- '
-AAAAA####
-AAAAABBBB
-AAAAACCCC
-AAAAADDEE
-AAAAAFFGG
-AAAAA####
-'
-
-wrap_plots(A = minstoremap,
-           B = minvarhead,
-           C = mincarscr,
-           D = mindedscr,
-           E = minoccscr,
-           F = minpplscr,
-           G = mintenscr,
-           design = layout)
-remove(minstore)
-```
 
 ```{r}
 ############### Try to fix zws_joined_lsoa_scr.rds geometries #####################
@@ -2513,18 +2583,24 @@ remove(minstore)
 # #   geom_sf(aes(geometry = rcwalktime), alpha = 0.1, colour = "blue") +
 # #   geom_sf(aes(geometry = joinedlsoageom, fill = lsoatotscr), alpha = 0.1, colour = "red")
 # # THIS WORKED
-# ###################################################################################
+# #################################################################################
 ```
 
-## Discussion
+\newpage
+
+# Discussion
 
 WRITE THE DISCUSSION HERE
 
 do some writing
 
+\newpage
+
 ## Conclusions
 
 WRITE THE CONCLUSIONS HERE
+
+\newpage
 
 # Bibliography
 
