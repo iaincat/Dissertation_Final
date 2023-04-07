@@ -101,6 +101,14 @@ library(ggthemes)
 
 \newpage
 
+## Abstract
+
+WRITE THE ABSTRACT HERE
+
+## Introduction
+
+WRITE THE INTROCUDTION HERE
+
 ## Literature Review
 
 This section will review the literature on some of the most relevant and important methods of store location planning that are employed in the retail sector. Each will be discussed and critiqued for appropriateness for use in this study. A review of studies that focus on environmentally conscious consumption behaviours and associated demographic profiles will be carried out. This will provide the justification for the decisions taken around the choices of data that will be used in the chosen method for this piece of work.
@@ -179,9 +187,7 @@ Defining the catchment area for a store is highly important aspect of retail loc
 
 Once various locations have been identified, a choice must be made. There are numerous methods for choosing a location of a store, and these can range from the more simple to highly complex. The simpler, cheaper and traditional approach, where experience tells the planner where to locate a store has not entirely been replaced by the more complex methods such as checklists or scorecards [@hernandez2000].
 
-Checklists involve the scoring of a number of chosen variables that positively influence store performance. The variables are rated according to a points system which when combined, can be used to compare other potential locations [@hernandez2000]. This is part of an analogue method of location analysis, in which, once the demographic and retail centre classification variables to be used for the scorecard have been identified, each catchment area can be classified. It is apparent that this technique can be used to investigate the similarities and differences between each location, thus providing a picture of the customer base for a particular type of shop (in this case; zero-waste stores).
-
-Although this method is good at providing a rating of different locations and allows comparisons to be made, it is unable to estimate revenue [@birkin2017].
+Checklists involve the scoring of a number of chosen variables that positively influence store performance. The variables are rated according to a points system which when combined, can be used to compare other potential locations [@hernandez2000]. This is part of an analogue method of location analysis, in which, once the demographic and retail centre classification variables to be used for the scorecard have been identified, each catchment area can be classified. It is apparent that this technique can be used to investigate the similarities and differences between each location, providing a picture of the customer base for a particular type of shop (in this case; zero-waste stores). Although this method is good at providing a rating of different locations based on potential customers, and allows comparisons between locations to be made, it is unable to estimate revenue [@birkin2017]. This study is not seeking to estimate the success or failure of a store on predicted or current revenue data due to it being unavailable.
 
 Multi-variate regression methods are more complex still, and require a great deal of (good quality) data, computing power, and expertise. Decisions are based upon statistically significant results [@hernandez2000]. These methods are good at benchmarking sales forecasting, for example, and mainly used for future development for specific products, or new stores. The same restrictive factors such as computing power are also prevalent in methods such as cluster and factor analysis, where a retailers portfolio can be clustered in to types of offering and used to create a blueprint for strategic change, such as creating discount lines to be sold in cheaper stores based in lower income demographic areas.
 
@@ -193,15 +199,13 @@ It has been suggested that statistical modelling such as regression analysis and
 
 \newpage
 
-# Methods
+# Methodology
 
 Education data - This was cleaned so that only those with degree or above education levels were shown. Each lsoa was then given a % of the population for that lsoa, and this % was given a score out from 0-10. [@papaoikonomou2011]
 
 Occupation data [@bassi2023]
 
 Time [@park2018]
-
-####################### 
 
 Mean age of 55
 
@@ -215,7 +219,7 @@ Single Car per household
 
 2 ppl per household - increased spending available
 
-# Methodology
+# 
 
 In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics that surround the locations of the stores in the study area. This included the creation of a scorecard for each location, based on the selected demographic variables. The scorecards were then used to identify similar locations of the study area in which stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical representation, a landscape of ethical consumption will be built up and visualised. This analysis will feed in to the discussion of the rationale behind the choices of variable used in the data, the methodological approach taken and an evaluation of the results.
 
@@ -240,19 +244,19 @@ Nomisweb provided the latest Office for National Statistics, 2021 census data [\
 
 TS003 - Household composition
 
-This dataset included those households that were classified as either, married single family households with no children, or, cohabiting couple families with no children. See Table \ref{tab:pplscr}.
+This dataset included those households that were classified as either, married, single family households, with no children, or, cohabiting couple households with no children. See Table \ref{tab:pplscr}.
 
 ```{r 2ppl_data}
 pplscr <- readRDS("pplscr.rds")
 # # Create a table for the Household composition data 
-# # Load the 2ppl data
+# Load the 2ppl data
 # pplscr <- read.csv("2ppl.csv")
 # 
 # # remove the country row
 # pplscr = pplscr[-c(33756), ]
 # 
-# # # clean the unrequired columns
-# # pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Score'))
+# # clean the unrequired columns
+# pplscr = pplscr |> select(-one_of('Total..All.households', 'X.', 'Single.family.household..Married.or.civil.partnership.couple..No.children', 'X..1', 'Single.family.household..Cohabiting.couple.family..No.children', 'X..2', 'tot_.', 'Score'))
 # 
 # pplscr <- pplscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 
@@ -262,7 +266,7 @@ kable(pplscr[0:4,1:6], caption = "\\label{tab:pplscr}Total LSOA scores for house
   column_spec(1,width = "0.8in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
-
+remove(pplscr)
 # saveRDS(object = pplscr, file = "pplscr.rds")
 ```
 
@@ -271,17 +275,17 @@ TS045 - Car or van availability
 This dataset included only those households that were reported as having access to a single vehicle only. See Table \ref{tab:carscr}.
 
 ```{r car_table}
-carscr <- readRDS("carscr")
+carscr <- readRDS("carscr.rds")
 
-# Load the vehicle access data
-#carscr <- read.csv("1car.csv")
-# clean the unrequired columns and rename them for ease of use
+# # Load the vehicle access data
+# carscr <- read.csv("1car.csv")
+# # clean the unrequired columns and rename them for ease of use
 # carscr = carscr |> select(-one_of('Total..All.households', 'X1.car.or.van.in.household', 'score_calc', 'X.'))
-#carscr <- carscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-#carscr <- carscr  |>  rename_at('score', ~'carscr')
-#carscr <- carscr  |>  rename_at('mnemonic', ~'LSOA21CD')
-#
-#saveRDS(object = carscr, file = "carscr.rds")
+# carscr <- carscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+# carscr <- carscr  |>  rename_at('score', ~'carscr')
+# carscr <- carscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+# #
+# saveRDS(object = carscr, file = "carscr.rds")
 
 kable(carscr[0:4,1:4], caption = "\\label{tab:carscr}Total LSOA scores for single vehicle access data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
@@ -289,6 +293,7 @@ kable(carscr[0:4,1:4], caption = "\\label{tab:carscr}Total LSOA scores for singl
   column_spec(1,width = "0.8in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
+remove(carscr)
 ```
 
 TS054 - Tenure - Home Ownership
@@ -302,7 +307,7 @@ tenscr <- readRDS("tenscr.rds")
 #tenscr <- read.csv("tenure.csv")
 
 # clean the unrequired columns and rename them for ease of use
-# tenscr = tenscr |> select(-one_of('Total..All.households',  'score_calc', 'X.', 'Owned..Owns.outright', 'Owned..Owns.with.a.mortgage.or.loan', 'sum'))
+# tenscr = tenscr |> select(-one_of('Total..All.households',  'score_calc', 'X.', #'Owned..Owns.outright', 'Owned..Owns.with.a.mortgage.or.loan', 'sum'))
 # tenscr <- tenscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
 # tenscr <- tenscr  |>  rename_at('score', ~'tenscr')
 # tenscr <- tenscr  |>  rename_at('mnemonic', ~'LSOA21CD')
@@ -314,6 +319,7 @@ kable(tenscr[0:4,1:5], caption = "\\label{tab:tenscr}Total LSOA scores for home 
   column_spec(1,width = "0.8in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
+remove(tenscr)
 ```
 
 TS067 - Highest level of qualification - degree educated
@@ -322,16 +328,16 @@ Education level data was only included those people that have degree level educa
 
 ```{r deg_ed_table}
 dedscr <- readRDS("dedscr.rds")
-# Load the degree educated data
-# dedscr <- read.csv("degree_educated.csv")
-
-# clean the unrequired columns and rename them for ease of use
-# dedscr = dedscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over', 'degree_educated', 'X.', 'MinMax'))
-# dedscr <- dedscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-# dedscr <- dedscr  |>  rename_at('score', ~'dedscr')
-# dedscr <- dedscr  |>  rename_at('mnemonic', ~'LSOA21CD')
-
-# saveRDS(object = dedscr, file = "dedscr.rds")
+# # Load the degree educated data
+#  dedscr <- read.csv("degree_educated.csv")
+# # 
+# # # clean the unrequired columns and rename them for ease of use
+#  dedscr = dedscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over', 'degree_educated', 'X.', 'MinMax'))
+#  dedscr <- dedscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+#  dedscr <- dedscr  |>  rename_at('score', ~'dedscr')
+#  dedscr <- dedscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+#  
+#  saveRDS(object = dedscr, file = "dedscr.rds")
 
 kable(dedscr[0:4,1:4], caption = "\\label{tab:dedscr}Total LSOA scores for degree education level or above data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
@@ -339,6 +345,7 @@ kable(dedscr[0:4,1:4], caption = "\\label{tab:dedscr}Total LSOA scores for degre
   column_spec(1,width = "0.8in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
+remove(dedscr)
 ```
 
 TS063 - Occupation
@@ -347,16 +354,16 @@ Occupation data included those people whose occupations were classified as manag
 
 ```{r occ_data}
 occscr <- readRDS("occscr.rds")
-# Load the occupation data
+# # Load the occupation data
 # occscr <- read.csv("occ.csv")
-
-# clean the unrequired columns and rename them for ease of use
-# occscr = occscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over.in.employment.the.week.before.the.census', 'X.', 'X1..Managers..directors.and.senior.officials', 'X..1', 'X2..Professional.occupations', 'X..2', 'high_earners.', 'calc'))
-# occscr <- occscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
-# occscr <- occscr  |>  rename_at('score', ~'occscr')
-# occscr <- occscr  |>  rename_at('mnemonic', ~'LSOA21CD')
-
-# saveRDS(object = occscr, file = "occscr.rds")
+# 
+# # clean the unrequired columns and rename them for ease of use
+#  occscr = occscr |> select(-one_of('Total..All.usual.residents.aged.16.years.and.over.in.employment.the.week.before.the.census', 'X.', 'X1..Managers..directors.and.senior.officials', 'X..1', 'X2..Professional.occupations', 'X..2', 'high_earners.', 'calc'))
+#  occscr <- occscr  |>  rename_at('X2021.super.output.area...lower.layer', ~'Area')
+#  occscr <- occscr  |>  rename_at('score', ~'occscr')
+#  occscr <- occscr  |>  rename_at('mnemonic', ~'LSOA21CD')
+# 
+#  saveRDS(object = occscr, file = "occscr.rds")
 
 kable(occscr[0:4,1:9], caption = "\\label{tab:occscr}Total LSOA scores for higher rated occupations for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
@@ -364,6 +371,7 @@ kable(occscr[0:4,1:9], caption = "\\label{tab:occscr}Total LSOA scores for highe
   column_spec(1,width = "0.8in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
+remove(occscr)
 ```
 
 Using excel to process the .csv files, the percentages were calculated from reported total households or individual populations for each of the 5 variables, and each was standardised using the scaling method in which each LSOA data point for each variable was scored / ranked from 0 to 1 using the following formula:-
@@ -2102,7 +2110,7 @@ This section will analyse the results of the initial scorecard calculations for 
 
 ### Zero Waste Scorecard
 
-Once the 133 stores had been scorecarded, a summary was produced. All scores were calculated as means, based on the number of LSOAs that appeared within the isochrone catchment area for each location. For example, the first record in table \ref{tab:allzwsscrtable} shows that the mean for each variable (carrank, dedrank, occrank, pplrank, and tenrank) were 6, 3, 4, 4 and 7 respectively, while the lsoatotalscr mean was 80. Calculating the results in this way, provides comparability across all stores for both the individual variables and the total score.
+Once the scorecards for the 129 stores had been calculated, a summary was produced. All scores were calculated as means, based on the number of LSOAs that appeared within the isochrone catchment area for each location. For example, the first record in table \ref{tab:allzwsscrtable} shows that the mean for each variable (carrank, dedrank, occrank, pplrank, and tenrank) were 6, 3, 4, 5 and 7 respectively, while the lsoatotalscr mean was 26. By calculating the results in this way, it provided comparability across all stores for both the individual variables and the total score.
 
 ```{r all_zws_scr_table}
 zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
@@ -2145,7 +2153,7 @@ Figure \ref{fig:corr_plot} shows the correlation between the individual variable
 ```{r corr_plot, fig.cap="Plot showing correlations between total scores and the 5 variables"}
 zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
 a_cor = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[,c(17,12:16)]))
-cor_plot <- plot(a_cor, cex = 0.3, 
+cor_plot <- plot(a_cor, cex = 0.3,
      col = grey(0.145,alpha=0.5), upper.panel=panel.smooth)
 remove(a_cor, zws_joined_lsoa_scr, cor_plot)
 ```
@@ -2507,6 +2515,16 @@ remove(minstore)
 # # THIS WORKED
 # ###################################################################################
 ```
+
+## Discussion
+
+WRITE THE DISCUSSION HERE
+
+do some writing
+
+## Conclusions
+
+WRITE THE CONCLUSIONS HERE
 
 # Bibliography
 
