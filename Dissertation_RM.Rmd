@@ -3249,7 +3249,7 @@ remove(a, i, z, rc_with_zws, retail_c, b, all_rcs)
 # SPLIT THE ALL_RCS FILE IN TO 3 (2500, 2500, 1423)
 # rca <- all_rcs[1:2500,]
 # saveRDS(object = rca, file = "rca.rds")
-<<<<<<< HEAD
+
 
 # rcb <- all_rcs[2501:5000,]
 # saveRDS(object = rcb, file = "rcb.rds")
@@ -3263,14 +3263,14 @@ remove(a, i, z, rc_with_zws, retail_c, b, all_rcs)
 # rcaa <- rca[500:2500,]
 # saveRDS(object = rcaa, file = "rcaa.rds")
 
-=======
+
 # rcb <- all_rcs[2501:5000,]
 # saveRDS(object = rcb, file = "rcb.rds")
 # rcc <- all_rcs[5001:6423,]
 # saveRDS(object = rcc, file = "rcc.rds")
 # remove(all_rcs, rca, rcb, rcc)
 rca <- readRDS("rca.rds")
->>>>>>> 7643739ec729c1fa999a8256bb10a87a6cb3d9e8
+
 
 # rc_final_results <- readRDS("rc_final_results.rds")
 
@@ -3649,15 +3649,13 @@ rca <- readRDS("rca.rds")
 
 ```{r rca_isocalc}
 ###################################################################################
-<<<<<<< HEAD
 # # RCAA ISOCHRONE CALCULATION
 # # create a loop to find the isochrones for all retail centre centroids (20 minute walk time again)
 # remove(i, isodf, rca_results, rciso, coordinates)
 
-=======
 # # RC ISOCHRONE CALCULATION
 # # create a loop to find the isochrones for all retail centre centroids (20 minute walk time again)
->>>>>>> 7643739ec729c1fa999a8256bb10a87a6cb3d9e8
+
 remove(a)
 remove(isodf)
 remove(rciso)
@@ -3667,13 +3665,7 @@ remove(values)
 remove(rcwalktime20)
 remove(rca_results)
 remove(i)
-<<<<<<< HEAD
 
-# #### Process rcaa
-=======
-remove(rca)
-# #### Process rc_a
->>>>>>> 7643739ec729c1fa999a8256bb10a87a6cb3d9e8
 rca_results <- data.frame(matrix(ncol = 18, nrow = 0))
 # 
 # #############################################################################
@@ -3743,7 +3735,6 @@ for(i in 1:nrow(rca)) {
   Sys.sleep(3)
 }
 remove(i)
-<<<<<<< HEAD
 # rca_results = 1:499 inclusive (499)
 # saveRDS(object = rca_results, file = "rca_results.rds")
 # rca_results = 500:2500 inclusive (2001)
@@ -4067,9 +4058,6 @@ remove(i)
 
 # rcc_results = (1423)
 saveRDS(object = rcc_results, file = "rcc_results.rds")
-=======
-saveRDS(object = rca_results, file = "rca_results.rds")
->>>>>>> 7643739ec729c1fa999a8256bb10a87a6cb3d9e8
 ```
 
 \newpage
