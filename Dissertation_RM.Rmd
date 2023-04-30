@@ -2805,13 +2805,7 @@ Firstly, the isochrones were calculated as before.
 # # remove(rccc)
 ```
 
-The population weighted centroids were then identified so that the LSOAs could be identified from them. Scorecards were then able to be calculated for each retail centre. Once the retail centre data was processed they were narrowed down to identify those that would be the best potential location for new zero waste stores. This was done by narrowing down the retail centre options through the production and analysis of the distributed scores based on various metrics.
-
-1.  Those retail centres that scored a total that was the same as the mean of the stores total were located, and histograms of each variable and total score were created.
-2.  Using those RCs that scored a total that fell within the minimum and maximum store total score range the distributions were visualised and investigated again through the use of a summary table distribution histograms.
-3.  Retail centres were narrowed down to include only those that had a total score that was within the interquartile range of the stores total scores.
-4.  Further filtering of the RCs was then done through identifying only those that scored a total that was the same as the mean for the stores total mean score (24).
-5.  Finally, the final set of potential RCs were identified using the 5 variables and the total score of the stores data. Those RC variables that scored an average within +-1 of the same variable in the stores data were identified and only those that scored the same as the store mean score (24) for the total score were identified.
+Once isochrones had been calculated for all retail centres, those that contained a store were filtered out, leaving only those centres without a store located within them.
 
 ```{r rc_with_zws_prep}
 # # Load the data required
@@ -2901,6 +2895,14 @@ The population weighted centroids were then identified so that the LSOAs could b
 # # with prep done, remove unrequired dataframes etc
 # remove(rc, rc_with_zws)
 ```
+
+The population weighted centroids were then identified so that the LSOAs could be identified from them. Scorecards were then able to be calculated for each retail centre. Once the retail centre data was processed they were narrowed down to identify those that would be the best potential location for new zero waste stores. This was done by narrowing down the retail centre options through the production and analysis of the distributed scores based on various metrics.
+
+1.  Those retail centres that scored a total that was the same as the mean of the stores total were located, and histograms of each variable and total score were created.
+2.  Using those RCs that scored a total that fell within the minimum and maximum store total score range the distributions were visualised and investigated again through the use of a summary table distribution histograms.
+3.  Retail centres were narrowed down to include only those that had a total score that was within the interquartile range of the stores total scores.
+4.  Further filtering of the RCs was then done through identifying only those that scored a total that was the same as the mean for the stores total mean score (24).
+5.  Finally, the final set of potential RCs were identified using the 5 variables and the total score of the stores data. Those RC variables that scored an average within +-1 of the same variable in the stores data were identified and only those that scored the same as the store mean score (24) for the total score were identified.
 
 ```{r rc_scores}
 # # # remove(joined_rc_results, rc_joined_lsoa_scr, rcs)
