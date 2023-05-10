@@ -1,5 +1,5 @@
 ---
-title: "An Investigation Into The Use Of Socio-Demographics For The Location Optimisation Of 'Zero-Waste' Shops In England & Wales"
+title: "An Investigation Into The Use Of Socio-Demographics For The Location Analysis Of 'Zero-Waste' Shops In England & Wales"
 #author: "Student id: 201578497"
 geometry: "left=1.2cm,right=1.2cm,top=1.5cm,bottom=1.5cm"
 output:
@@ -102,16 +102,6 @@ ors_api_key("5b3ce3597851110001cf624810789863e851418a86e0341fb278a772")
 
 \newpage
 
-\tableofcontents
-
-\listoffigures
-
-\listoftables
-
-------------------------------------------------------------------------
-
-\newpage
-
 # Acknowledgements
 
 Thanks everyone
@@ -124,23 +114,61 @@ Thanks everyone
 
 WRITE THE ABSTRACT HERE
 
+------------------------------------------------------------------------
+
+\newpage
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
 \newpage
 
 # Introduction
 
-WRITE THE INTROCUDTION HERE
+## Research Questions
+
+This research will investigate the importance of demographics in relation to environmentally conscious consumerism, and how far these socio-demographic characteristics may be used in the analysis of zero waste stores in terms of optimal locations.
+
+-   Can socio-demographic data (age, homeownership, vehicle access, occupation type (used as a proxy variable for income), and education level, be used to help in the understanding of the location of zero-waste stores?
+-   Can the variables used in this study be used to provide evidence of the likely customer base of the stores in the catchment areas?
+-   Are these variables able to be used to find gaps in potential market provision?
+
+## Aims
+
+There has been extensive research that concentrates on the importance of household waste, packaging, or the concept of zero-waste in general, and packaging in general, including its role in places such as zero-waste stores and supermarkets such as ([@scharpenberg2021]; [@sastre2022]; [@mollaloGISbased2020]). Demographic analysis is also a widely studied area in the social sciences and in retail more specifically. It's use by both of these areas of research, and in relation to the potential links between environmentally conscious behaviour and environmentally ethical store locations however, at the time of writing, is lacking, in that there are zero research studies relating to the locations of zero waste shops, and the possible associated demographics. This indicates an important gap in both retail (consumer and provider), and more generally, social, and behavioural, knowledge.
+
+This study aims to...
+
+-   Provide evidence of a customer base for this sector of retail, based on the demographic analysis of a defined catchment area
+-   Provide the most likely optimal retail centre locations for new stores based on a demographic analysis
+
+## Objectives
+
+To meet the aim of the study, the following objectives should be completed: -
+
+-   Create a scorecard for each area that is currently served by a zero waste store
+-   Ascertain distributions of socio-demographics of the areas around the stores
+-   Investigate any similarities in the retail centre configuration / geography of these locations
+-   Analyse similarities in the non-serviced locations for potential new stores
+-   Identify limitations of the study in terms of variables used
+-   Propose further research and improvements to methodology
+
+The objectives will be met through gathering data from various sources such as the Consumer Data Research Centre (CDRC), Office for National Statistics (ONS), Open Street Map (OSM), and Nomisweb. Patterns of similarity of the chosen variables may help to highlight those factors that have the potential to allow an accurate picture of the surrounding areas of known existing zero-waste stores to be built up. By drawing upon the literature around the analogue method for location allocation, and the methods for creating composite indicators, a scorecard will be produced. This will provide the basis for analysis of the areas containing stores, which will provide the ability for evidence based analysis of locations that are not currently serviced by a store, and whether there are any locations that display good potential customer base.
 
 \newpage
 
 # Literature Review
 
-This section will review the literature on some of the most relevant and important methods of store location planning that are employed in the retail sector. Each will be discussed and critiqued for appropriateness for use in this study. A review of studies that focus on environmentally conscious consumption behaviours and associated demographic profiles will be carried out. This will provide the justification for the decisions taken around the choices of data that will be used in the chosen method for this piece of work.
+This section will review the literature on the most relevant and important methods of store location planning that are employed by the retail sector. Each will be discussed and critiqued for appropriateness for use in this study. A review of studies that focus on environmentally conscious (EC) consumption behaviours and associated demographic profiles will be carried out. This will provide the justification for the decisions taken around the choices of data variables that will be used in the chosen method for this piece of work.
 
-Municipal waste, as a general concept, and in particular packaging waste, and the way in which we all as consumers can tackle the associated issues with the latter will be discussed. Firstly, a brief history of waste will be described for context, including some of the problems that are associated with production and consumerism. Secondly, the review will move on to a critique of the research in relation to zero-waste lifestyles and the changes in attitudes and practices towards environmentally conscious consumption. Insight in to the growth of zero-waste shops and the related product solutions that are linked to these, which help move retail towards zero-waste consumer practices will be addressed. The picture will move towards a focus on how these solutions are being practised in England and Wales.
+Municipal waste, as a general concept; in particular packaging waste, and the way in which we all as consumers can tackle the associated issues with the latter will be discussed. Firstly, a brief history of waste will be described for context, including some of the problems that are associated with production and consumerism. Secondly, the review will move on to research in relation to zero-waste lifestyles and the changes in attitudes and practices towards EC consumption. Insight in to the growth of zero-waste shops and the related product solutions that are linked to these, which help move retail towards zero-waste consumer practices will be addressed. The focus will then move towards how these solutions are being practised in England and Wales.
 
 ### Zero Waste Concept: Then & Now
 
-Prior to industrialization, society produced very little waste [@mauch2022]. People would feed livestock with leftover food, repair broken items, and household goods such as furniture would be handed down to the next generation. With the advent of industrial capitalism in the mid-nineteenth century, production was designed to maintain itself, and old products discarded when a new, or better product when one is made available. This is the defining feature of consumerism [@graeber2011]. After World War II the world inevitably saw a huge rise in waste of all kinds due to mass-production and mass-consumerism. As Figure \ref{globalwaste} shows, the amount of waste generated globally in 1965 was around 635 million tonnes (mt) increasing to 1999 mt in 2015, and is projected to rise to 3539 mt by 2050 [@chen2020].
+Prior to industrialization, society produced very little waste [@mauch2022]. People would feed livestock with leftover food, repair broken items, and household goods such as furniture would be handed down to the next generation. With the advent of industrial capitalism in the mid-nineteenth century, production was designed to maintain itself, and old products discarded when a new, or better product is made available. This is the defining feature of consumerism [@graeber2011]. After World War II the world inevitably saw a huge rise in waste of all kinds due to mass-production and mass-consumerism. As Figure \ref{globalwaste} shows, the amount of waste generated globally in 1965 was around 635 million tonnes (mt) increasing to 1999 mt in 2015, and is projected to rise to 3539 mt by 2050 [@chen2020]. This trajectory is clearly a problem that is becoming increasingly urgent to address.
 
 \FloatBarrier
 
@@ -148,11 +176,11 @@ Prior to industrialization, society produced very little waste [@mauch2022]. Peo
 
 \FloatBarrier
 
-The term "zero waste" was coined in 1973 by Paul Palmer [@zaman2015] in relation to the reusable "clean" chemical waste being produced in Silicone Valley. He started selling these chemicals back to the industry with the principal strategy that everything should be reused rather than used once and discarded [@mauch2022]. The term evolved over the following years and today, there seems to be no consensus on the definition as such [@pietzsch2017]. Zero-waste as a term that now encompasses the theory, practice, and learning of governments through to individuals, and is a catch-all term for the response to the perceived crisis of waste and the failure to manage it [@hannon2018].
+The term "zero waste" was coined in 1973 by Paul Palmer [@zaman2015] in relation to the reusable "clean" chemical waste being produced in Silicone Valley. He started selling these 'wate' chemicals back to the industry with the principal strategy that everything should be reused rather than used once and discarded [@mauch2022]. The term evolved over the following years and today, there now seems to be no consensus on the definition as such [@pietzsch2017]. Zero-waste as a term, now encompasses the theory, practice, and learning of governments through to individuals, and is a catch-all term for the response to the perceived crisis of waste and the failure to manage it [@hannon2018].
 
-In England in 2002 for example, it was estimated that producers accounted for 91% of national waste [@murray2002]. Within the area of manufacturing and production for example, zero-waste as a concept is an effective way to help minimise solid waste, and through redesign, resource life cycles enable products to be reused [@song2015].
+In England in 2002 for example, it was estimated that producers accounted for 91% of national waste [@murray2002]. Within the manufacturing and production sector for example, zero-waste as a concept is an effective way to help minimise solid waste, and through redesign, resource life cycles enable products to be reused [@song2015].
 
-From a consumer perspective, food waste reduction has become one of the biggest areas of concern for zero waste research [@zhang2022]. Around one third of all the food bought is thrown away in England [@murray2002], and environmental deterioration that is caused by this non-sustainable consumption impedes sustainable development [@chekima2016; @badowska2019]. Food waste is linked to packaging. Food retail uses the highest amount of plastics and is the reason why packaging makes up the largest constituent of plastic waste [@sastre2022]. Figure \ref{globalplastic} shows that global plastic production in 2015 was just under 350 mt with over 35% of all plastic produced being used for packaging (see figure \ref{plasticuses}).
+From a consumer perspective, food waste reduction has become one of the biggest areas of concern for zero waste research [@zhang2022]. Around one third of all the food bought is thrown away in England [@murray2002], and environmental deterioration that is caused by this non-sustainable consumption impedes sustainable development [@chekima2016; @badowska2019]. Food waste is intinsically linked to packaging. Food retail uses the highest amount of plastics and is the reason why packaging makes up the largest constituent of plastic waste [@sastre2022]. Figure \ref{globalplastic} shows that global plastic production in 2015 was just under 350 mt with over 35% of all plastic produced being used for packaging (see figure \ref{plasticuses}).
 
 \FloatBarrier
 
@@ -172,59 +200,59 @@ Figure \ref{ancum_plastic} shows that around 10 mt of plastics that are produced
 
 The problem of waste in food retail can partly be addressed through product design, where packaging can be produced to have as little impact on the environment as possible. The idea of minimising environmental damage from packaging and it's relationship with sustainability has indeed seen a large increase in research and literature [@sastre2022], and in the UK there have even been trials of changes to packaging free retail in some of the larger supermarket chains.
 
-In 2019, Waitrose launched a trial in its Oxford store where it dedicated a section of the store to a new refill station, where cleaning materials, wine, and dried goods such as rice were made available to customers that wanted to use their own reusable containers. By testing this method of shopping in store, they were able to gauge how much appetite there was for a different type of shopping experience [@smithers2019]. by doing this they have shown how significant the role of the consumer is in how food retail operates. and the problem of food waste and how a move to sustainable consumerism can be achieved. Due to the success of the trial of Waitrose "Unpacked", they introduced the refill options to three other stores, and as interest and demand grows, they hope to offer the "Unpacked" option in more stores and online over time [@waitrose&partners].
+In 2019, Waitrose launched a trial in its Oxford store where it dedicated a section of the floor-space to a new refill station, where cleaning materials, wine, and dried goods such as rice were made available to customers that wanted to use their own reusable containers. By testing this method of shopping in-store, they were able to gauge how much appetite there was for a different type of shopping experience [@smithers2019]. They have in turn shown how significant the role of the consumer is in how food retail operates. and the problem of food waste and how a move to sustainable consumerism can be achieved. Due to the success of the trial of Waitrose 'Unpacked', they introduced the refill options to three other stores, and as interest and demand grows, they hope to offer the 'Unpacked' option in more stores and online over time [@waitrose&partners].
 
-### Zero Waste Shops
+### Zero Waste Shops (supply)
 
-Zero-waste shops are shops that are dedicated to eliminating all unnecessary waste from the retail consumer experience [@watson2020]. They do this with practices that eliminate plastic packaging by displaying products in bulk where they can, and customers bring their own containers for items, or use paper bags for supplied by the store. They also aim to send all food that expires to food-banks or community kitchens, further eliminating waste in this way. Bulk purchasing of saleable products is another goal, which minimises transport waste products such as CO~2~. Another important aim for zero-waste shops is to stock products with known origins from suppliers with similar priorities that are as local as possible [@believeearth2017].
+Zero-waste shops are shops that are dedicated to eliminating all unnecessary waste from the retail consumer experience [@watson2020]. They do this with practices that eliminate plastic packaging by displaying products in bulk where they can, and customers bring their own containers for items, or use paper bags supplied by the store. They also aim to send all food that expires to food-banks or community kitchens, further eliminating waste. Bulk purchasing of saleable products is another goal, which minimises transport waste products such as CO~2~ and NO~x~ pollution. Another important aim for zero-waste shops is to stock products with known origins from suppliers with similar priorities that are as local as possible [@believeearth2017].
 
-Zero-waste shops, using these practices, can help in the building of a sense of community. They are often small neighbourhood stores that have been started though crowd-funding or another local campaign [@greenpeaceusa2019]. This allows for the community around them to be involved from the start and provides a sense of investment in the success of the store.
+Zero-waste shops, using these practices, can help in the building of a sense of community. They are often small neighbourhood stores that have been started though crowd-funding or another local campaign [@greenpeaceusa2019]. This allows for the community around them to be involved from the start and provides a sense of investment in the success of the future of the store.
 
-However, as the demand for sustainable retail rises, the competition for customers will increase, and as Waitrose have already stated, the larger stores will be able to offer more choice than perhaps the smaller dedicated local stores can. This may mean that product choice in the larger retailers will be greater, but as described above, there is more to environmentally conscious retail than simply packaging and the elimination of plastic. The larger retailers will also have to consider the ethical choices made by consumers in relation to the environmental impacts of supply chains, and the related support for local producers.
+However, as the demand for sustainable retail rises, the competition for customers will increase, and as Waitrose have already stated, the larger stores will be able to offer more choice than perhaps the smaller dedicated local stores are able to do. This may mean that product choice in the larger retailers will be greater, but as described above, there is more to EV retail than simply packaging and the elimination of plastic. The larger retailers will also have to consider the ethical choices made by consumers in relation to the environmental impacts of supply chains, and the related support for local producers and other businesses.
 
-### The customer
+### The customer (demand)
 
-Because the community tends to provide the customers for these shops, an important question to answer, is one that asks who these customers are likely to be. A survey to identify the levels of environmental awareness in consumers was carried out in Slovakia. It targeted the age groups between 1965-1980 (*gen' x*) and 1981-1996 (*gen' y*), due to their greater purchasing power over other groups. They found that amongst the *gen' y* group, 39% were likely to use zero-waste stores often as opposed to 10% of the *gen' x* group [@holotova2020]. This suggests that age is an important variable when analysing the demographics of the customer base of zero-waste stores. @diamantopoulos2003 highlights the weakness in using socio-demographics to try to define a 'green consumer', as environmental 'awareness' is not fully understood through gender, age and education etc. However, there are a large number of studies including [@sang2015; @bekhet2011; @yuan2013; @zhao2014], who have all found that environmentally conscious 'behaviours' are strongly associated with demographic characteristics such as age, education, occupation type, and income to name a few. AGE SHOULD ONT BE A VARIABLE AND SHOULD BE TESTED AFTER RESULTS HAVE BEEN SHOWN. THIS CAN HIGHLIGHT THE IMPORTANCE OF AGE RATHER THAN ARBITRARILY CHOOSING AN AGE A A VARIABLE TO INCLUDE IN THE SCORECARD.
+Because the local community tends to provide the customers ro demand for these shops, an important question to answer is one that asks who these customers are likely to be. There are conflicting results from various studies that contradict the demographic characteristics that were found to influence and drive EC behaviour in terms of retail decisions. For example, a survey to identify the levels of environmental awareness in consumers was carried out in Slovakia. It targeted the age groups between 1965-1980 (*gen' x*) and 1981-1996 (*gen' y*), due to these groups greater purchasing power over other groups. They found that amongst the *gen' y* group, 39% were likely to use zero-waste stores often as opposed to 10% of the *gen' x* group [@holotova2020]. This suggests that age is an important variable when analysing the demographics of the customer base of zero-waste stores. @diamantopoulos2003 highlights the weakness in using socio-demographics to try to define a 'green consumer', as 'environmental awareness' is not fully understood through gender, age and education etc. However, there are a large number of studies including [@sang2015; @bekhet2011; @yuan2013; and @zhao2014], who have all found contradictory evidence that EC 'behaviours' are strongly associated with demographic characteristics such as age, education, occupation type, and income to name a few.
 
 ### Store planning
 
 **Geodemographics**
 
-1)  I think it is too general. Be specific in how this can relate to customers for this type of retail
+In order to analyse the potential of a location, retailers need to know the market demand that exists. To do this, they use, amongst other data, geodemographic classifications that have been aggregated from census and other sources. Data are aggregated in to small areas such as post-code, or the Output Area Classification [@birkin2017]. Potential customers must be identified from the data and in the case of the zero-waste store, EC or green consumer behaviours and characteristics are essential in understanding the demand.
 
-In order to analyse the potential of a location, retailers need to know the market demand that exists. To do this, they use, amongst other data, geodemographic classifications that have been aggregated from census and other sources. Data are aggregated in to small areas such as post-code, or the Output Area Classification [@birkin2017]. Potential customers must be identified from the data and in the case of the zero-waste store, environmentally conscious or green consumer behaviours and characteristics are essential to understand the demand.
+The census provides a snapshot of the age ranges, ethnicities, population density, household compositions, housing type and socio-economic make-up and employment classifications for example, in each area. This data can in turn be used to target specific groups based on the demand for a particular service.
 
-Around 86% of the UK population is classed as urban and as with cities across the globe, population growth is expected to see over 90% of the worlds population living in cities, and the waste that is produced in them also grow [@statista]. This hints at the need to look at the demographic make-up of urban populations rather than rural communities.
+Around 86% of the UK population is classed as urban and as with many cities across the globe, population growth is expected to result in over 90% of the worlds population living in cities, with the waste that is produced in them also growing [@statista]. It is known that urban populations are more likely to be highly educated, and gain higher incomes [@wensing2023a], therefore adults that have a high education level must be considered as potential ethical consumers in the first instance [@paul2016; @chekima2016]. Gender and age are also indicators of EC consumerism. @gilg2005 found that 65% of committed environmental behaviours in relation to consumerism were attributed to females in the study, with the mean age being 55 years, but in the UK, 18-24 was the age at which females are especially likely to consume ethically.
 
-The environmental context is complex to understand, therefore adults that have a high education level must be considered as potential ethical consumers in the first instance [@paul2016; @chekima2016]. It is known that urban populations are more likely to be highly educated, and gain higher incomes [@wensing2023a]. Gender and age are also indicators of environmentally conscious consumerism. @gilg2005 found that 65% of committed environmental behaviours in relation to consumerism were attributed to females in the study, and the mean age was 55 years. **HAS THIS CHANGED - GOTTEN YOUNGER RECENTLY??** However, in the UK 18-24 is the age at which females especially are likely to consume ethically.
-
-The UK urban population population is
-
-These provide a snapshot of the age ranges, ethnicities, population density, household compositions, housing type and socio-economic make-up and employment classifications for example, in each area, which can in turn be used to target specific groups based on the market for a particular service. A problem with the averaging of characteristics in this way is known as the ecological fallacy [@openshaw1984]. This is essentially when an averaged characteristic of an area is applied to the individual scale, which potentially ignores or fails to recognise finer detail in demographic make-up of an area. For example, an area may be calculated to be wealthy, but within that region there may be a pocket of poverty that is aggregated out and vital support for this population may be missed.
+One problem with the averaging of such characteristics, to gauge demand for example, is known as the ecological fallacy [@openshaw1984]. This is essentially when an averaged characteristic of an area is applied to the individual scale, which potentially ignores or fails to recognise finer detail in demographic make-up of an area. For example, an area may be calculated to be wealthy on aggregate, but within that region there may be a pocket of poverty that missed, resulting in that population being ignored when planning social and financial support, thus increasing the inequalities that may exist.
 
 **Catchment Area**
 
-Defining the catchment area for a store is highly important aspect of retail location analysis. To do this, a possible solution would be to draw an arbitrary boundary around the store location and include the population within that boundary as potential custom [@hernandez2000]. A more realistic catchment area definition would be to estimate how far a customer will travel, either by foot, car, or by public transport, to a store location. A boundary that is 20 minutes walk to the store location could be used for example, and would take in to account terrain and route layout in terms of accessibility. Using a buffer and overlay system available in GIS can build an accurate picture of an area through the addition or removal of features. For example, a discount retailer looking for a new store location may filter out customers from a higher income class in an area leaving lower income populations in the analysis data [@birkin2017]. It may also provide a better picture of the residential make-up of an area, by allowing for non-residential areas to be accounted for, thus providing a more accurate picture of the demographics of an area, and therefore potential custom. This can be used in conjunction with a network analysis, in which accessibility can be further investigated. This entails a more comprehensive analysis of road networks to deduce the travel times to the providers of a service [@birkin2017].
+Defining the catchment area for a store is a highly important aspect of retail location analysis. To do this, a possible solution is to draw an arbitrary boundary around the store location and include the population within that boundary as potential custom [@hernandez2000]. A more realistic catchment area definition would be to estimate how far a customer will travel, either by foot, car, or by public transport, to a store location. An isochrone defines the boundary that is the limit of distance accessibility within a time using a specified mode of locomotion from a specified point. A 20 minutes walk time to a store location could be used for example, and would take in to account terrain and route layout [@openrouteservicea].
+
+Using a buffer and overlay system available in Geographial Information System software can also build an accurate picture of an area through the addition or removal of features. For example, a discount retailer looking for a new store location may filter out customers from a higher income class in an area leaving lower income populations in the analysis data [@birkin2017]. It may also provide a better picture of the residential make-up of an area, by allowing for non-residential areas to be accounted for. This can be used in conjunction with a network analysis, in which accessibility can be further investigated which entails a more comprehensive analysis of road networks to deduce the travel times to the providers of a service [@birkin2017].
 
 **Location Choice**
 
 Once various locations have been identified, a choice must be made. There are numerous methods for choosing a location of a store, and these can range from the more simple to highly complex. The simpler, cheaper and traditional approach, where experience tells the planner where to locate a store has not entirely been replaced by the more complex methods such as checklists or scorecards [@hernandez2000].
 
-Checklists involve the scoring of a number of chosen variables that positively influence store performance. The variables are rated according to a points system which when combined, can be used to compare other potential locations [@hernandez2000]. This is part of an analogue method of location analysis, in which, once the demographic and retail centre classification variables to be used for the scorecard have been identified, each catchment area can be classified. It is apparent that this technique can be used to investigate the similarities and differences between each location, providing a picture of the customer base for a particular type of shop (in this case; zero-waste stores). Although this method is good at providing a rating of different locations based on potential customers, and allows comparisons between locations to be made, it is unable to estimate revenue [@birkin2017]. This study is not seeking to estimate the success or failure of a store on predicted or current revenue data due to it being unavailable.
+Checklists involve the scoring of a number of chosen variables that positively influence store performance. The variables are rated according to a points system which when combined, can be used to compare other potential locations [@hernandez2000]. This is part of an analogue method of location analysis, in which, once the demographic and retail centre classification variables to be used for the scorecard have been identified, each catchment area can be classified. It is apparent that this technique can be used to investigate the similarities and differences between each location, providing a picture of the customer base for a particular type of shop (in this case; zero-waste stores). Although this method is good at providing a rating of different locations based on potential customers, and allows comparisons between locations to be made, it is unable to estimate revenue [@birkin2017]. This study is not seeking to estimate the success or failure of a store on predicted or current revenue data due to this data being unavailable.
 
 Multi-variate regression methods are more complex still, and require a great deal of (good quality) data, computing power, and expertise. Decisions are based upon statistically significant results [@hernandez2000]. These methods are good at benchmarking sales forecasting, for example, and mainly used for future development for specific products, or new stores. The same restrictive factors such as computing power are also prevalent in methods such as cluster and factor analysis, where a retailers portfolio can be clustered in to types of offering and used to create a blueprint for strategic change, such as creating discount lines to be sold in cheaper stores based in lower income demographic areas.
 
-Gravity modelling, Spatial Interaction Models (SIMs), and neural network methods are even more complex and expensive to facilitate, in terms of expertise, computing and data. SIMs generally rely on the availability of data such as flows of revenue for example [@birkin1999]. They show the relationships between the flow of consumers and revenue, and are used in the analysis of a new store, or a competitor opening in a location, and the effect it will have on existing provision. [@hernandez2000]. Neural networks are essentially a scaled up version of this and are used to forecast performance related to a large number of new sites
+Gravity modelling, Spatial Interaction Models (SIMs), and neural network methods are even more complex and expensive to facilitate, in terms of expertise, computing and data. SIMs generally rely on the availability of data such as flows of revenue for example [@birkin1999]. They show the relationships between the flow of consumers and revenue, and are used in the analysis of a new store, or a competitor opening in a location, and the effect it will have on existing provision and revenue. [@hernandez2000]. Neural networks are essentially a scaled up version of this and are used to forecast performance related to a large number of new sites.
+
+It has been suggested that statistical modelling such as regression analysis and Spatial interaction Modelling based on the link between flows of money are useful tools for retail location analysis and site planning [@wood2007; @birkin2017; @hernandez2000], however, access to sales data is highly restricted and hard to access for resource limited studies.
 
 ### Conclusion
 
-It has been suggested that statistical modelling such as regression analysis and Spatial interaction Modelling based on the link between flows of money are useful tools for retail location analysis and site planning [@wood2007; @birkin2017; @hernandez2000], however, access to sales data will is restricted and hard to access for resource limited studies. Buffer and overlay techniques take in to account non-residential areas, travel time, and mode of transport, and can be applied to define appropriate catchment areas. Using carefully chosen demographic features, a scorecard or rating system can be applied to these catchment areas which can then replicate the analogue method, in which comparison can be made between the stores and their surrounding demographics related to environmental consumer behaviour. This information can then be extended to look for similar retail centres or demographically similar areas, in which one would expect to find a similar store.
+Waste in general, but specifically plastic waste has become an increasingly important problem for society and the health of planet. Packaging of food and other household items is one of the main contributors to plastic waste, so it is vital that the aim is to reduce this burden as much as possible. The severe (none at the time of writing) lack of research in to the problem of where zero waste stores are ideally located means that the aims of this study are an important addition to the literature and knowledge of sustainable retail. The study will attempt to find out whether socio-demographic characteristics can signify potential customer bases for these stores, and therefore help to define the best locations for them. Using carefully chosen demographic features, a scorecard or rating system wll be applied to the calculated catchment areas, which in turn will allow comparisons to be made between the stores and their surrounding demographics based upon EC consumer behaviour. This information can then be extended to look for applicable potential retail centres with demographically similar areas, in which one would expect to find a similar store.
 
 \newpage
 
 # Methodology
 
-In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics that surround the locations of the stores in the study area. This included the creation of a scorecard for each location, based on the selected demographic variables. The scorecards were then used to identify similar locations of the study area in which stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical representation, a landscape of ethical consumption will be built up and visualised. This analysis will feed in to the discussion of the rationale behind the choices of variable used in the data, the methodological approach taken and an evaluation of the results.
+In order to achieve the objectives set out in the previous section, a quantitative approach was taken to determining the demographics that surround the locations of the stores in the study area. This included the creation of a scorecard for each location, based on the selected demographic variables. The scorecards were then used to identify similar locations of the study area in which stores could be expected to be found. By incorporating statistical and geospatial techniques to the analysis of the data, and presenting the results of the study through geographical and statistical representation, a landscape of ethical consumption will be built up and visualised. This analysis will feed in to the discussion of the rationale behind the choices of variable used in the data, the methodological approach taken and an evaluation of the results.
 
 ### Zero Waste Store Location Data
 
@@ -235,8 +263,9 @@ Location data for the stores to be used was retrieved using the metadata of the 
 # Load zws RDS file
 zws <- readRDS("zws.rds")
 # Display a table of the first 10 records
-kable(zws[1:10,], caption = "\\label{tab:zws}Zero-waste stores data")|>
+kable(zws[1:10,], caption = "\\label{tab:zws}Selected zero-waste stores data")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
+remove(zws)
 ```
 
 These data were cleaned through Google searches to identify and remove any stores that were irrelevant to the study, such as incorrectly listed stores, wholesalers, and mobile refill vehicles, and also to highlight any that had closed since being listed. Of the initial 172 stores, 135 remained. To ensure that the remaining stores had correct coordinate data and sat within the study area, a plot of all the locations was made and can be seen in figure \ref{zwstores}.
@@ -245,7 +274,7 @@ These data were cleaned through Google searches to identify and remove any store
 
 ### LSOA Area Scale Boundary Data
 
-Lower Super Output Area (LSOA) data was downloaded for the study area from the Open Geography Portal [@opengeographyportala]. This related to the latest 2021 boundaries at the LSOA scale and includes the LSOA identifier and the attached geometries. LSOA scale data was chosen so that the number of households or individual populations within each area were to be small enough to allow for more accuracy in when comparing the demographic composition of an area. Output areas (OA) scale data provides a more granular scale that LSOA scale data, however, at the time of data extraction, all the chosen demographic variables were not available at the OA level, so LSOA scale data was to provide consistency across the variables.
+Lower Super Output Area (LSOA) data was downloaded for the study area from the Open Geography Portal [@opengeographyportala]. This related to the latest 2021 boundaries at the LSOA scale and includes the LSOA identifier and the attached geometries. LSOA scale data was chosen so that the number of households or individual populations within each area were small enough to allow for a good level of accuracy when comparing the demographic composition of an area. Output areas (OA) scale data provides a more granular scale that LSOA scale data, however, at the time of data extraction, all the chosen demographic variables were not available at the OA level, so LSOA scale data was to provide consistency across the variables.
 
 ```{r lsoa_table}
 # Create a dataframe to summarise the LSOA Boundary and PWC data
@@ -266,14 +295,14 @@ Nomisweb provided the latest Office for National Statistics, 2021 census data, a
 
 TS003 - Household composition
 
-This dataset included those households that were classified as either, married single family households with no children, or, cohabiting couple households with no children. See Table \ref{tab:pplscr}. Household composition amongst committed environmentalist in the study by @gilg2005 was smaller, with two people households accounting for 40%. Household composition suggesting greater income because firstly, they had sufficient means to obtain a mortgage, or had completed paying off their mortgage, and due to the fact that there were no children in the make-up of the household, indicated a certain level of disposable income. Behaviourally, as @tonglet2004 points to, cohabiting couples that share values, can be more likely to encourage environmentally conscious behaviours and more ethical decisions.
+This dataset included those households that were classified as either, married single family households with no children, or, cohabiting couple households with no children. See Table \ref{tab:pplscr}. Household composition amongst committed environmentalist in the results of the study by @gilg2005 was smaller, with two person households accounting for 40%. This household composition suggested greater income levels because firstly, they had sufficient means to combine to either obtain a mortgage or rent, and due to the fact that there were no children in the make-up of the household, indicated a higher level of disposable income. Behaviourally, as @tonglet2004 points to, cohabiting couples that share values, can be more likely to encourage EC behaviours and more ethical decisions.
 
 ```{r 2ppl_data, echo=FALSE}
 pplscr <- readRDS("pplscr.rds")
+# pplscr <- pplscr[order(pplscr$mnemonic),]
 # # Create a table for the Household composition data 
 # Load the 2ppl data
 # pplscr <- read.csv("2ppl.csv")
-# 
 # # remove the country row
 # pplscr = pplscr[-c(33756), ]
 # pplscr = as.data.frame(pplscr)
@@ -285,12 +314,12 @@ pplscr <- readRDS("pplscr.rds")
 # pplscr <- pplscr |> dplyr::rename_at('X2021.super.output.area...lower.layer', ~'Area')
 # pplscr <- pplscr |> dplyr::rename_at('score', ~'pplscr')
 # pplscr <- pplscr  |> dplyr::rename_at('Single.family.household..All.aged.66.years.and.over', ~'2ppl >66yrs')
+# saveRDS(object = pplscr, file = "pplscr.rds")
 
-
-kable(pplscr[0:4,c(1,2,4,3,5)], caption = "\\label{tab:pplscr}Total LSOA scores for household composition data for England and Wales")|>
+kable(pplscr[1:5,c(1,2,3,7)], row.names = F, caption = "\\label{tab:pplscr}Total LSOA scores for household composition data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
-  column_spec(1,width = "0.8in") |>
+  column_spec(1,width = "1in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
 remove(pplscr)
@@ -299,10 +328,11 @@ remove(pplscr)
 
 TS045 - Car or van availability
 
-This dataset included only those households that were reported as having access to a single vehicle only. See Table \ref{tab:carscr}. Vehicle availability was chosen due the balance that is required between environmentally conscious choices and behaviours that are made. Simply put; even the most environmentally conscious consumer has to travel, and sustainable behaviour is influenced by both the reasons why travel is required, and the transportation environment. Employment is a major factor related to reasons for travel and public transport is not the most convenient and efficient mode. Many people balance these neccessary travel requirements with environmental concerns and self-limit their impacts on the environment by minimising their own vehicle access [@taube2018]. This is also supported by the study in to sustainable lifestyles and green consumption by @gilg2005. In this they found that in each of the survey respondent clusters, more than 50%, limited themselves to a single vehicle.
+This dataset included those households that were reported as having access to a single vehicle only. See Table \ref{tab:carscr}. Vehicle availability was chosen due the balance that is required between EC choices and behaviours that are made. Simply put; even the most EC consumer has to travel, and sustainable behaviour is influenced by both the reasons why travel is required, and the transportation environment. Employment is a major factor related to reasons for travel and public transport is not the most convenient and efficient mode. Many people balance these necessary travel requirements with environmental concerns and self-limit their impacts on the environment by minimising their own vehicle access [@taube2018]. This is also supported by the study in to sustainable lifestyles and green consumption by @gilg2005. In this they found that in each of the survey respondent clusters, more than 50%, limited themselves to a single vehicle.
 
 ```{r car_table, echo=FALSE}
 carscr <- readRDS("carscr.rds")
+# carscr <- carscr[order(carscr$LSOA21CD), ]
 # 
 # # # Load the vehicle access data
 # # carscr <- read.csv("1car.csv")
@@ -315,10 +345,10 @@ carscr <- readRDS("carscr.rds")
 # carscr <- carscr  |>  dplyr::rename_at('X1.car.or.van.in.household', ~'hhld_vehicles')
 # saveRDS(object = carscr, file = "carscr.rds")
 
-kable(carscr[0:4,1:5], caption = "\\label{tab:carscr}Total LSOA scores for single vehicle access data for England and Wales")|>
+kable(carscr[0:5,1:4], row.names = F, caption = "\\label{tab:carscr}Total LSOA scores for single vehicle access data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
-  column_spec(1,width = "0.8in") |>
+  column_spec(1,width = "1in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
 remove(carscr)
@@ -326,11 +356,11 @@ remove(carscr)
 
 TS054 - Tenure - Home Ownership
 
-This variable included those households that were reported as having either owning their own homes outright, or under a mortgage. See Table \ref{tab:tenscr}. Tenure, and home ownership was identified as highly likely, amongst those participants that were classified as the most commitetd to sustainable consumption [@gilg2005]. The variable aids to implicate those that can afford their own homes so links to provide a part proxy for the unavailable earnings data.
+This variable included those households that were reported as having either owning their own homes outright, or under a mortgage. See Table \ref{tab:tenscr}. Tenure, and home ownership was identified as highly likely, amongst those participants that were classified as the most committed to sustainable consumption [@gilg2005]. The variable aids the implication that those who can afford their own homes provides a link to a partial proxy for the unavailable earnings data.
 
 ```{r tenure_table, echo=FALSE}
 tenscr <- readRDS("tenscr.rds")
-# 
+# tenscr <- tenscr[order(tenscr$LSOA21CD),]
 # # Load the tenure data
 # #tenscr <- read.csv("tenure.csv")
 # 
@@ -346,7 +376,7 @@ tenscr <- readRDS("tenscr.rds")
 # 
 # saveRDS(object = tenscr, file = "tenscr.rds")
 
-kable(tenscr[0:4,1:6], caption = "\\label{tab:tenscr}Total LSOA scores for home owners that own outright or mortgage data for England and Wales")|>
+kable(tenscr[1:5,1:5], row.names = F, caption = "\\label{tab:tenscr}Total LSOA scores for home owners that own outright or mortgage data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
   column_spec(1,width = "0.8in") |>
@@ -357,10 +387,11 @@ remove(tenscr)
 
 TS067 - Highest level of qualification - degree educated
 
-Education level data was included only for those people that have degree level education or above as seen in table \ref{tab:dedscr}. @gilg2005 found that active and committed environmental behaviour was most prominent among those with a level of degree education or higher. This was a finding that was also found to be important by @han2010, in which they found that more than 80% of the respondents to their study relating to green consumer decision making were degree educated. Education level is also highlighted as an important factor in the ability to have a good level of understanding of the complexity of environmental issues, and can be a driver of green behaviour [@chekima2016].
+Education level data was included only for those people that have degree level education or above, and can be seen in table \ref{tab:dedscr}. @gilg2005 found that active and committed environmental behaviour was most prominent among those with a level of education at degree or higher. This was a finding that was also found to be important by @han2010, in which they found that more than 80% of the respondents to their study relating to green consumer decision making were degree educated. Education level is also highlighted as an important factor in the ability to have a good level of understanding of the complexity of environmental issues, and can be a driver of green behaviour [@chekima2016].
 
 ```{r deg_ed_table, echo=FALSE}
 dedscr <- readRDS("dedscr.rds")
+# dedscr <- dedscr[order(dedscr$LSOA21CD),]
 # # Load the degree educated data
 #  dedscr <- read.csv("degree_educated.csv")
 # # 
@@ -373,12 +404,12 @@ dedscr <- readRDS("dedscr.rds")
 #  # dedscr <- dedscr |> dplyr::rename_at('score', ~'dedscr')
 #  # dedscr <- dedscr |> dplyr::rename_at('mnemonic', ~'LSOA21CD')
 # #  
-#  saveRDS(object = dedscr, file = "dedscr.rds")
+# saveRDS(object = dedscr, file = "dedscr.rds")
 
-kable(dedscr[0:4,1:5], caption = "\\label{tab:dedscr}Total LSOA scores for degree education level or above data for England and Wales")|>
+kable(dedscr[1:5,1:4], row.names = F, caption = "\\label{tab:dedscr}Total LSOA scores for degree education level or above data for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
-  column_spec(1,width = "0.8in") |>
+  column_spec(1,width = "1in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
 remove(dedscr)
@@ -390,6 +421,7 @@ Occupation data included those people whose occupations were classified as manag
 
 ```{r occ_data, echo=FALSE}
 occscr <- readRDS("occscr.rds")
+# occscr <- occscr[order(occscr$LSOA21CD),]
 # # Load the occupation data
 # occscr <- read.csv("occ.csv")
 # 
@@ -409,18 +441,18 @@ occscr <- readRDS("occscr.rds")
 # #  occscr <- occscr  |>  rename_at('mnemonic', ~'LSOA21CD')
 # 
 # # 
-#  saveRDS(object = occscr, file = "occscr.rds")
+ # saveRDS(object = occscr, file = "occscr.rds")
 
-kable(occscr[0:4,1:7], caption = "\\label{tab:occscr}Total LSOA scores for higher rated occupations for England and Wales")|>
+kable(occscr[1:5,1:6], row.names = F, caption = "\\label{tab:occscr}Total LSOA scores for higher rated occupations for England and Wales")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T) |>
-  column_spec(1,width = "0.8in") |>
+  column_spec(1,width = "1in") |>
   column_spec(2,width = "0.5in") |>
   column_spec(3,width = "0.75in")
 remove(occscr)
 ```
 
-Using excel to process the .csv files, the percentages were calculated from reported total households or individual populations for each of the 5 variables, and each was standardised using the scaling method in which each LSOA data point for each variable was scored / ranked from 0 to 1 using the following formula:-
+Using excel to process the .csv files, the percentages were calculated from reported total households or individual populations for each of the 5 variables, and each was standardised using the scaling method in which, for each variable, each LSOA was given a score / ranked from 0 to 1. The following formula was used for this:-
 
 $$
 x_{norm} = (x_{raw} - min_{i})/(max_{i} - min_{i})
@@ -428,7 +460,9 @@ $$
 
 These rankings were then multiplied up by 10 and rounded to the nearest integer to provide a final score for each individual LSOA for each variable between 0 and 10 inclusive.
 
-### EXPLAIN WHY WEIGHTING WAS NOT GIVEN TO ANY OF THESE - IE WHY THEY ARE EQUALLY IMPORTANT OR WHY NONE ARE MORE IMPORTANT THAN ANY OTHER.
+It was decided that there would be no different weightings given to any of the variables. There could be an argument to increase the weighting for either the education level or occupation variable to act as a proxy for spending power, but it was decided that with both variables being used in the study, they would provide a natural weighting, and would therefore not require any adjustments.
+
+AGE SHOULD ONT BE A VARIABLE AND SHOULD BE TESTED AFTER RESULTS HAVE BEEN SHOWN. THIS CAN HIGHLIGHT THE IMPORTANCE OF AGE RATHER THAN ARBITRARILY CHOOSING AN AGE A A VARIABLE TO INCLUDE IN THE SCORECARD.
 
 ### Combining score data and calculating totals
 
@@ -482,7 +516,7 @@ The scores for each individual variable were allocated to the matching LSOA in t
 ```{r lsoa_score_table, echo=FALSE}
 lsoas <- readRDS("lsoas.rds")
 
-kable(st_drop_geometry(lsoas[1:5,c(1,3,9:14)]), caption = "\\label{tab:lsoa_scores}Retail centres data.")|>
+kable(st_drop_geometry(lsoas[1:5,c(1,3,10:15)]), row.names = F, caption = "\\label{tab:lsoa_scores}Retail centres data.")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 remove(lsoas)
 ```
@@ -496,14 +530,14 @@ Population Weighted Centroids (PWC) data was retrieved at the LSOA scale from th
 # Load lsoas and pwc RDS files
 lsoa_pwc <- readRDS("lsoa_pwc.rds")
 
-kable(lsoa_pwc[1:5,c(2,4)], caption = "\\label{tab:lsoa_pwcs}LSOA population weighted centroid data")|>
+kable(lsoa_pwc[1:5,c(2,4)], row.names = F, caption = "\\label{tab:lsoa_pwcs}LSOA population weighted centroid data")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 remove(lsoa_pwc)
 ```
 
 ### Retail Centres
 
-Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales, so that once analysis of all current zero waste store locations had been completed, potential retail centres that lack the supply of this type of store could be identified. The retail centre data was processed through QGIS to identify the centroid of each polygon, which was then added to the main file and saved and can be seen in table \ref{tab:rc_data}.
+Retail centre boundaries for the study area were retrieved from the Consumer Data Research Centre [@consumerdataresearchcentre2022]. This data provided all retail centres in England and Wales, so that once analysis of all zero waste store locations had been completed, potential retail centres that lack the supply of this type of store could be identified. The retail centre data was processed through QGIS to identify the centroid of each polygon, which was then added to the main file and saved and can be seen in table \ref{tab:rc_data}.
 
 ```{r retail_centre_data, echo=FALSE}
 # Create a dataframe to summarise the LSOA Boundary and PWC data
@@ -519,16 +553,16 @@ all_rcs <- readRDS("all_rcs.rds")
 # retail_c <- retail_c  |>  dplyr::rename_at('Classifica', ~'Classification')
 # saveRDS(object = retail_c, file = "retail_c.rds")
 
-kable(st_drop_geometry(all_rcs[1:5,c(2:5)]), caption = "\\label{tab:rc_data}Retail centres data.")|>
+kable(st_drop_geometry(all_rcs[1:5,c(2:5)]), row.names = F, caption = "\\label{tab:rc_data}Retail centres data.")|>
   kable_styling(full_width = FALSE, latex_options = "HOLD_position", font_size = 8) |> row_spec(0,bold = T)
 remove(all_rcs)
 ```
 
 ### Creating a test scorecard using a known store location
 
-To test and refine the methods that will be used to process the full dataset of zero waste stores, a single test store was selected. This consisted of a store that was known and was located in a known area, which allowed for the method to be corrected due to erroneous or anomalous results.
+To test and refine the methods to be used to process the full dataset of zero waste stores, a single test store was selected. This consisted of a store that was known and was situated in a known area, which allowed for the method to be corrected if problems arose.
 
-The following test store results shows the process that will be followed for all ZWS. Once the ZWS data has been processed, the data for the retail centres that do not contain a zero waste store will be processed using the same methods. Table \ref{tab:bishytab} shows the store information data and figure \ref{fig:bishylocation}, a visual representation of the test area in question.
+The following test store results shows the process that will be followed for all ZWS. Once the ZWS data has been processed, the data for the retail centres that do not contain a zero waste store were be processed using the same methods. Table \ref{tab:bishytab} shows the store information data and figure \ref{fig:bishylocation}, a visual representation of the test area in question.
 
 \FloatBarrier
 
@@ -542,7 +576,7 @@ bishy <- readRDS("bishy.rds")
 # rename the geometry column
 # bishy <- bishy  |>  rename_at('geometry', ~'store_location')
 
-kable(st_drop_geometry(bishy[,1:7]), caption = "\\label{tab:bishytab}Test store data for the Bishy Weigh store in York, England")|>
+kable(st_drop_geometry(bishy[,1:7]), row.names = F, caption = "\\label{tab:bishytab}Test store data for the Bishy Weigh store in York, England")|>
   kable_styling(full_width = FALSE,latex_options = c("HOLD_position"), font_size = 8)|>
   row_spec(0,bold = T)
 remove(bishy)
@@ -553,13 +587,13 @@ remove(bishy)
 ```{r bishylocation, fig.height=4, fig.width=4, fig.cap="Location of The Bishy Weigh store in York", echo=FALSE}
 bishy <- readRDS("bishy.rds")
 ggplot(bishy) +
-  annotation_map_tile(zoomin = 0, type = "osm") +
+  annotation_map_tile(zoomin = -1, type = "hotstyle") +
   geom_sf(colour = "blue", aes(geometry = bishystorepoint, fill = st_nam)) +
   guides(fill = guide_legend(title = "Test Store Name")) +
   theme_void(base_size = 10) +
-  theme(plot.margin = margin(t = 0,  # Top margin
+  theme(plot.margin = margin(t = 10,  # Top margin
                              r = 0,  # Right margin
-                             b = 0,  # Bottom margin
+                             b = 10,  # Bottom margin
                              l = 0)) # Left margin
 remove(bishy, ywalktime20)
 ```
@@ -569,38 +603,6 @@ remove(bishy, ywalktime20)
 ### Calculating the isochrone
 
 Using the OpenRouteService [@openrouteservice], a 20-minute walk-time isochrone was calculated around the test store to define the catchment area. This distance/time was chosen partly due to the individual health benefits of walking [@tschentscher2013; @sari2010], and partly to fit in with the concept of a chrono-urbanism and temporally accessible city design concepts such as the 15 and 20 minute city for example. Some of the benefits of these concepts include decreasing vehicle pollution and helping towards achieving the goal of 'net-zero' amongst others [@ogorman2021; @moreno2021].
-
-### EXPAND THIS CONCEPTUAL LINK
-
-```{r bishy_iso}
-# Load the York isochrone data from the previously run code below
-# ywalktime20 <- readRDS("ywalktime20.rds")
-
-# Uses library(mapview) and library(openrouteservice)
-# Create an isochrone around the Bishy Weigh zero waste store
-
-# embed data in the output file
-# mapviewOptions(fgb = FALSE)
-
-# Get the coordinates of the bishy weigh
-#coordinates <- data.frame(lon = bishy$Lon, lat = bishy$Lat)
-
-## Calculate a 20 minute walking time to the store
-#ywalktime20 <- ors_isochrones(coordinates, range = 1200, interval = 1200,
-#                     output = "sf", profile = ors_profile("walking"))
-#values <- levels(factor(ywalktime20$value))
-#ranges <- split(ywalktime20, values)
-#ranges <- ranges[rev(values)]
-#names(ranges) <- sprintf("%s min", as.numeric(names(ranges))/60)
-
-# Convert the walktime20 isochrone to the correct CRS
-#ywalktime20 <- st_transform(ywalktime20, crs = st_crs(3857))
-
-#remove(coordinates, values, ranges)
-#
-# Save the York isochrone data
-#saveRDS(obj = ywalktime20, file = "ywalktime20.rds")
-```
 
 Once the isochrone had been calculated from the test store, it was mapped to ensure that the correct store location and catchment area had been calculated. See Figure \ref{fig:york_isochrone_test_map}.
 
@@ -741,7 +743,7 @@ Once the PWC that sat within the isochrone were found, the corresponding LSOA fo
 #   annotation_map_tile(zoomin = 0, type = "hotstyle") +
 #   # geom_sf(data = lsoa_clip, aes(geometry = lsoageometry, alpha = "")) +
 #   # guides(alpha = guide_legend(title = "LSOAs")) +
-#   geom_sf(data = pwc_clip, aes(geometry = pwcgeometry, shape = "")) +
+#   geom_sf(data = pwc_clip, aes(geometry = geometry, shape = "")) +
 #   guides(shape = guide_legend(title = "Population Weighted Centroids")) +
 #   geom_sf(data = bishy, aes(geometry = bishystorepoint, colour = st_nam)) +
 #   guides(colour = guide_legend(title = "Store Name")) +
@@ -887,10 +889,10 @@ bishy <- readRDS("bishy.rds")
 ggplot(lsoa_clip) +
   geom_sf(aes(fill = lsoatotscr)) +
   scale_fill_viridis_c(breaks=seq(0,50,by=1), alpha = 0.7) +
-  guides(fill = guide_legend(title = "Individual LSOA total scores\nfor the 5 variables", reverse = TRUE, ncol = 3)) +
-  geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
+  guides(fill = guide_legend(title = "Individual LSOA\ntotal scores",ncol = 3, reverse = TRUE)) +
+    geom_sf(data = bishy, aes(colour = bishy$st_nam)) +
   guides(colour = guide_legend(title = "Store Name")) +
-  theme_void(base_size = 10)
+  theme_void(base_size = 8)
 remove(lsoa_clip, bishy)
 ```
 
@@ -1277,7 +1279,17 @@ kable(a, caption = "\\label{tab:allzwsscrtable}Scorecard table for first 5 zero 
 remove(a, zws_joined_lsoa_scr, my_theme)
 ```
 
+\FloatBarrier
+
 Using the final store scorecards, a summary table and correlation plot were produced. See \ref{tab:zws_scrsummary} for the summary table and figure \ref{fig:corr_plot} for the correlation plot.
+
+```{r corr_plot, fig.height=4, fig.width=5, fig.cap="Plot showing correlations between total scores and the 5 variables for the stores data."}
+zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
+a_cor = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[,c(17,12:16)]))
+cor_plot <- plot(a_cor, cex = 0.3,
+     col = grey(0.145,alpha=0.5), upper.panel=panel.smooth)
+remove(a_cor, zws_joined_lsoa_scr, cor_plot)
+```
 
 \FloatBarrier
 
@@ -1375,14 +1387,6 @@ kable(scrs_summary, caption = "\\label{tab:zws_scrsummary}Scorecard summary tabl
   row_spec(0,bold = T, font_size = 8)
 
 remove(zws_joined_lsoa_scr, a, c, d, o, p, t, scrs_summary, my_theme)
-```
-
-```{r corr_plot, fig.height=4, fig.width=5, fig.cap="Plot showing correlations between total scores and the 5 variables for the stores data."}
-zws_joined_lsoa_scr <- readRDS("zws_joined_lsoa_scr.rds")
-a_cor = as.data.frame(st_drop_geometry(zws_joined_lsoa_scr[,c(17,12:16)]))
-cor_plot <- plot(a_cor, cex = 0.3,
-     col = grey(0.145,alpha=0.5), upper.panel=panel.smooth)
-remove(a_cor, zws_joined_lsoa_scr, cor_plot)
 ```
 
 \FloatBarrier
@@ -3469,7 +3473,7 @@ remove(plotmaxrc, plotminrc, rc_joined_lsoa_scr, rc_scrs_summary, rcmax, rcmin, 
 
 \FloatBarrier
 
-Distributions of all retail centre scores were then visualised, again using distibution histograms and can be seen in \ref{fig:all_rc_hists}.
+Distributions of all retail centre scores were then visualised, again using distribution histograms and can be seen in \ref{fig:all_rc_hists}.
 
 ```{r all_rc_hists, fig.cap="Histograms showing distributions for individual variable scores for all retail centres.", fig.width = 5, fig.height = 4}
 # ###################################################################################
@@ -4234,13 +4238,55 @@ remove(rc_joined_lsoa_scr, a, c, d, o, p, t, l, rc_scrs_summary, rc_eqzws_scrs_s
 
 \FloatBarrier
 
+```{r age_analysis}
+# femaleages <- readRDS("femaleages.rds")
+# my_theme <- readRDS("my_theme.rds")
+# allmatches <- readRDS("allmatches.rds")
+# joined_rc_results <- readRDS("joined_rc_results.rds")
+# lsoa_pwc <- readRDS("lsoa_pwc.rds")
+# lsoas <- readRDS("lsoas.rds")
+# ###################################################################################
+# # For each records in allmatches, find the ages from femaleages and add this data to the allmatches data
+# i = 0
+# i = i + 1
+# for (i in 1:nrow(allmatches)) {
+# 
+# # Find the PWCs in allmatches[i,] isochrone
+# pwcinam = lsoa_pwc[allmatches[i,]$rcwalktime,]
+#   
+# # Find the matching lsoas
+# lsoasinam = lsoas[(lsoas$LSOA21CD  %in% pwcinam$LSOA21CD),]  
+#   
+# # Find the age data for these lsoas
+# agesinam = femaleages[(femaleages$mnemonic %in% lsoasinam$LSOA21CD),]
+# 
+# # Sum each age category in agesinam
+#   agesinam <- agesinam |>
+#    bind_rows(summarise(agesinam[3:45], across(where(is.numeric), sum),
+#                        across(where(is.character), ~'Total')))
+# 
+# 
+# 
+#   
+# }
+# 
+# 
+# 
+# 
+# ###################################################################################
+# agesinamplotdata = as.data.frame(t(agesinam[10,3:45]))
+# agesinamplotdata <- agesinamplotdata  |> dplyr::rename_at('10', ~'score')
+# ggplot(agesinamplotdata, aes(x=agesinamplotdata$score) +
+#   geom_histogram(breaks = seq(0, 10, by = 1), colour = "orange", fill = "darkgrey")) + my_theme
+```
+
 \newpage
 
 # Results
 
 \FloatBarrier
 
-This section will analyse the results of the initial scorecard calculations for the locations containing zero waste stores. It will discuss the demographic composition of the 20 minute walking time catchment areas around the stores, and how the resulting scores may help to understand what makes these locations potentially most suitable for this sector of retail.
+This section will describe the results of the initial scorecard calculations for the locations containing zero waste stores. It will discuss the demographic composition of the 20 minute walking time catchment areas around the stores, before describing the results of the retail centre processing, resulting in the most optimal locations for new stores.
 
 ### Zero waste stores scorecard
 
@@ -4254,7 +4300,7 @@ This section will analyse the results of the initial scorecard calculations for 
 # saveRDS(object = zws_joined_lsoa_scr, file = "zws_joined_lsoa_scr.rds")
 ```
 
-Once the scorecards for the 128 stores had been calculated, summary tables were produced. All scores were calculated as means, based on the number of LSOA that appeared within the isochrone catchment area for each location and rounded to the nearest integer. For example, the first record of the examples in table \ref{tab:allzwsscrtable} shows that the mean for each variable (*carrank*, *dedrank*, *occrank*, *pplrank*, and *tenrank*) were 6, 3, 4, 5 and 7 respectively, while the total mean score (*lsoatotscr*) was 26.
+Once the scorecards for the stores had been calculated, summary tables were produced. All scores were calculated as means, based on the number of LSOA's that appeared within each isochrone catchment area and rounded to the nearest integer. For example, the first record of the examples in table \ref{tab:allzwsscrtable} shows that the mean for each variable (*carrank*, *dedrank*, *occrank*, *pplrank*, and *tenrank*) were 6, 3, 4, 5 and 7 respectively, while the total mean score (*lsoatotscr*) was 26.
 
 Table \ref{tab:zws_scrsummary} shows the summary values for each variable. Across all 129 stores, the total scores out of a possible maximum of 50 (*lsoatotscr*) ranged from 15 through to 32, a mean of 24 and an interquartile range of between 22 to 27 was observed. The variables were scored out of a possible 10, and the greatest range of scores was seen in the *tenrank* variable which ranged from 1 to 9. The interquartile range of this variable was between 5 and 7 with a mean of 6. The smallest range was seen in the *carrank* variable which was between 3 and 7, and had an interquartile range of 0 (25th % and 75% were both 6) and a mean of 6.
 
@@ -4275,14 +4321,14 @@ The highest scoring store as seen in \ref{fig:maxstr_map} is located within Tedd
 ```{r}
 # Get the retail centres for the min and max stores
 # Load the retail centres data
-rcs <- readRDS("joined_rc_results.rds")
-# Load the maxstore data
-maxstore <- readRDS("maxstore.rds")
-
-# Look to see if the store sits within a retail centre
-rcmaxstr = rcs[maxstore$zwsgeometry,]
-# Save the max store retail centre
-saveRDS(object = rcmaxstr, file = "rcmaxstr.rds")
+# rcs <- readRDS("joined_rc_results.rds")
+# # Load the maxstore data
+# maxstore <- readRDS("maxstore.rds")
+# 
+# # Look to see if the store sits within a retail centre
+# rcmaxstr = rcs[maxstore$zwsgeometry,]
+# # Save the max store retail centre
+# saveRDS(object = rcmaxstr, file = "rcmaxstr.rds")
 ```
 
 The lowest scoring store as seen in \ref{fig:minstr_map} is located within the City of Leicester area which is in the Midlands of England. The store was found not to be located in a retail centre, but is situated on the campus of Leicester University. The isochrone however covers a large area of the city.
@@ -4510,21 +4556,37 @@ Finally, the final set of potential retail centres that scored an average within
 
 # Discussion
 
-### The stores
+***The question as to whether socio-demographic variables that relate to EC behaviour can help to define optimal locations for ZWS will be discussed here. This section will discuss the various findings of this study and link them to the relevant literature. It will discuss the demographic variables in terms of their ability to provide evidence that justify store locations, the store locations and scores related to these variables, the retail centres and their scores and the possible optimal new stores locations based on variable scores.***
 
-The results of this study can be said to LINK TO THE LITERATURE.
+### The relevance of demographic characteristics used
 
-What do chosen the variables say?
+Figure \ref{fig:corr_plot} shows that there is a varying degree of strength in the relationship between the individual variables for each catchment area, with the majority being strong and positive. Overall, these relationships positively reflect the bulk of the literature related to demographic characteristics in the context of EC behaviours. It is important to note however, that there is also a body of work that contradicts some of the findings of these studies [@chekima2016, @figueroa-garcia2018, @panzone2016].
 
-Are some variables more associated with the total score for each LSOA?
+Occupation type and education level can individually indicate increased spending potential and environmental concern / awareness, resulting in more ethical consumption decisions. Occupation and education variables and the link between them (as seen in figure \ref{fig:corr_plot}) is consistent with the increased EC behaviours seen in the study by @chen2023. They found that the link between these and the resultant higher spending potential allowed respondents to make more environmentally ethical decisions around consumption. Individually, education was an important factor as seen in the results by @roberts1997, in which a higher level of education signified a higher level of environmental knowledge that influenced more EC behaviour. Occupation types that are often from degree education levels, and therefore offer higher earnings, combined to act as partial proxies for wealth and therefore spending power. This was required, because firstly the lack of availability of income data, and secondly, as @martinsons1997 points out, more educated and wealthier consumers are more likely to be more environmentally sensitive.
+
+Household composition can also be seen as a partial proxy for increased spending potential, but also as an indicator for behavioural influence and change, whilst tenure also reflects the increased spending potential. Tenure in this study was defined by home ownership, and is also linked to the variable for the number of people in a household, which was limited to two people per household with no resident children. Combined, these households generally have a greater spending power, but household composition also plays an important role in that members of the household are more likely to influence each others environmental consciousness [@diamantopoulos2003]. This study showed that there was a positive relationships between the number of the people in a household and home ownership (see figure \ref{fig:corr_plot}).
+
+Vehicle access was an important characteristic for two reasons. Car ownership amongst the most environmentally conscious is lower. However, this group of people often tend to own a single car that is used infrequently for longer journeys, or due to the lack of public transport options [@gilg2005]. This was perhaps the variable with the weakest relationship between other variables, but was important to include due to the aforementioned reasons.\
+
+### Zero waste stores and their catchment area scores
+
+Demographic constituents of a catchment area of an existing store are the logical starting point for analysis in retail [@birkin2017]. This can help particular retail suppliers target specific demographic markets, such as McDonald's who will target younger consumers from a wide range of backgrounds. In this study, catchment areas around the stores were defined as a 20 minute walk-time rather an an arbitrary distance and because of the choice of scale (LSOA), and captured a range of population differences, including the demographic variables used to define the scores.
+
+Comparison between the stores with the lowest and highest scores as seen in figures \ref{fig:minmaxcomp_plot}, \ref{fig:maxstr_map} and \ref{fig:minstr_map} indicates that the results for individual stores and their physical locations are less important than looking at the results as a complete set of data.
+
+For example, the store with the highest score, which was the 'Refill Larder' sited in Teddington in the London borough of Richmond upon Thames, on a Small Local Retail Centre, in a relatively wealthy urban location. Contrasted with this was the store with the lowest overall score, which was found on the University of Leicester campus called 'NADA'. Although not in a town centre, or an urban residential location, it is supplied with inherent footfall.
+
+This difference in score does not automatically equate to success or failure, and highlights potential issues in determining optimal locations based solely upon analysis of variables such as those used in this study.
+
+This points to the potential disadvantages of analysing individual store locations over looking at average catchment area scores.
+
+Without spending data it is difficult to say whether any store is more or less successful than any other, however, in terms of potential demand, the 'Refill Larder' may be more related to the variables used here, and may be more related to a combination of the variables, in which it scored highly across all five. The NADA store score does not score highly on any variable, but due to it's location, the score (especially for education level), becomes less relevant. Based on a university campus, it cannot be expected that the population are educated to degree level (yet). They are however on that path, and are therefore more likely to understand and engage with the environmental concepts involved in the ethos of zero waste stores.
 
 ### The Retail Centres
 
 Discuss RCs in relation to the results
 
 ### Methods discussion
-
-In **Coventry**, **15.4%** of the population was income-deprived in 2019. Of the 316 local authorities in England (excluding the Isles of Scilly), Coventry is ranked **68th most income-deprived** [@officefornationalstatistics2021]
 
 In **Richmond upon Thames**, **6.4%** of the population was income-deprived in 2019. Of the 316 local authorities in England (excluding the Isles of Scilly), Richmond upon Thames is ranked \*\*282nd most income-deprived [\*\* @officefornationalstatistics2021].
 
@@ -4534,24 +4596,40 @@ which may suggest variation in the demographic composition of the areas in which
 
 would have thought pplscr would have been more important due to shared incomes and no children, but this did not seem to be very correlated to increase in total scores
 
+All retail centres would fall within the realms of a realistic location to place a new store. This is due somewhat to the size of these stores and the amount of demand that is required to maintain their ability to remain open. The results of this study show this, with ........................ hinting at the possibility that these stores can be situated in any location, whether the retail centre is a small local centre or a large retail centre. Without sales data however, this is difficult to confirm or deny.
+
+How does this study relate to :-
+
+-   sustainable behaviour
+-   scorecards
+-   demographics
+-   retail in general
+-   
+
 \newpage
 
-# Limitations
-
-OA scale data would have been better
-
-House prices would be a good measure of wealth perhaps (See Teddington vs Coventry stores)
-
-\newpage
-
-# Conclusion
+# Conclusion & Recommendations
 
 WRITE THE CONCLUSIONS HERE
 
 \newpage
 
-# Bibliography
+Limitations / Rec
+
+OA scale data would have been better
+
+House prices would be a good measure of wealth perhaps (See Teddington vs Coventry stores)
+
+I would lok at car ownership again but use the ownership of electric cars rather than any other.
+
+The size of store and outgoings versus the spend required to keep it afloat would be a pertinent inversitgation, as this would highlight the percentage of a catchment area that is required, and relate that to EC consumer behaviours
+
+\newpage
+
+# References
 
 ::: {#refs}
 \noindent \vspace{-2em} \setlength{\parindent}{-0.5in} \setlength{\leftskip}{0.5in} \setlength{\parskip}{15pt}
 :::
+
+# Appendices
