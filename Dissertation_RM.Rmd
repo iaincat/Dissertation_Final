@@ -4522,3 +4522,7 @@ This study provides a starting point on which further research can be based to o
 :::
 
 # Appendices
+
+Source code available at: -
+
+https://github.com/iaincat/Dissertation_Final/blob/b742010e24d1c000f8f12f560c8f292b55c6be29/Dissertation_RM.Rmd
